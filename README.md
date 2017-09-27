@@ -1,2 +1,2 @@
-# cbsd-devops
-CBSD DevOps scripts
+# Reggae
+REGister Globaly Access Everywhere
