@@ -1,8 +1,8 @@
 BIN=/bin
 PREFIX?=/usr/local
-TEMPLATE_DIR=/share/cbsd-devops/templates
+TEMPLATE_DIR=/share/reggae/templates
 
-BIN_FILES = cbsd-devops
+BIN_FILES = reggae
 TEMPLATES = register.tpl
 
 all:

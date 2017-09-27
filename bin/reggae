@@ -1,7 +1,7 @@
 #!/bin/sh
 
 CONF_FILE="${1}"
-CONF_FILE=${CONF_FILE:="/usr/local/etc/cbsd-devops.conf"}
+CONF_FILE=${CONF_FILE:="/usr/local/etc/reggae.conf"}
 if [ -f "${CONF_FILE}" ]; then
     . "${CONF_FILE}"
 fi
@@ -11,7 +11,7 @@ JAIL_NAME=${jname}
 JAIL_IP=`echo ${ip4_addr} | cut -f 1 -d '/'`
 ACTION=`basename $0 | cut -f 1 -d '.'`
 CONSUL=${CONSUL:-"http://127.0.2.1:8500"}
-TEMPLATE=${TEMPLATE:-"/usr/local/share/cbsd-devops/templates/register.tpl"}
+TEMPLATE=${TEMPLATE:-"/usr/local/share/reggae/templates/register.tpl"}
 
 sed \
     -e "s/JAIL_NAME/${JAIL_NAME}/g" \
