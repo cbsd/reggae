@@ -19,5 +19,5 @@ sed \
     ${TEMPLATE} \
     >${TEMP_FILE}
 
-/usr/local/bin/curl -X PUT "${CONSUL}/v1/catalog/${ACTION}" -d @${TEMP_FILE}
+/usr/local/bin/curl -s -X PUT "${CONSUL}/v1/catalog/${ACTION}" -d @${TEMP_FILE} >/dev/null >&2
 rm -rf ${TEMP_FILE}

@@ -10,6 +10,9 @@ DOMAIN ?= example.com
 
 up: setup
 	@sudo cbsd jcreate jconf=${PWD}/cbsd.conf || true
+.if defined(EXTRA_FSTAB)
+	@sudo cp ${EXTRA_FSTAB} /cbsd/jails-fstab/fstab.${SERVICE}.local
+.endif
 .if !exists(/cbsd/jails-system/${SERVICE}/master_poststart.d/register.sh)
 	@sudo ln -s /usr/local/bin/reggae /cbsd/jails-system/${SERVICE}/master_poststart.d/register.sh
 .endif
@@ -49,3 +52,12 @@ login:
 
 exec:
 	@sudo cbsd jexec jname=${SERVICE} ${command}
+
+export: down
+.if !exists(build)
+	@mkdir build
+.endif
+	@echo -n "Exporting jail ... "
+	@sudo cbsd jexport jname=${SERVICE}
+	@sudo mv /cbsd/export/${SERVICE}.img build/
+	@sudo chown ${UID}:${GID} build/${SERVICE}.img
