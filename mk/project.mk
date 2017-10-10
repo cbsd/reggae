@@ -27,6 +27,16 @@ up: fetch setup
 .endfor
 .endif
 
+provision:
+.if defined(service)
+	@echo "=== ${service} ==="
+	@${MAKE} ${MAKEFLAGS} -C services/${service} provision
+.else
+.for service url in ${SERVICES}
+	@echo "=== ${service} ==="
+	@${MAKE} ${MAKEFLAGS} -C services/${service} provision
+.endfor
+.endif
 
 init:
 .if !exists(services)
