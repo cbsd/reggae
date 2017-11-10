@@ -1,23 +1,32 @@
 #!/bin/sh
 
-CONF_FILE="${1}"
-CONF_FILE=${CONF_FILE:="/usr/local/etc/reggae.conf"}
-if [ -f "${CONF_FILE}" ]; then
-    . "${CONF_FILE}"
-fi
+PROJECT_BIN_PATH=`dirname "${0}"`
+PROJECT_ROOT=`dirname "${PROJECT_BIN_PATH}"`
 
-TEMP_FILE=`mktemp`
-JAIL_NAME=${jname}
-JAIL_IP=`echo ${ip4_addr} | cut -f 1 -d '/'`
-ACTION=`basename $0 | cut -f 1 -d '.'`
-CONSUL=${CONSUL:-"http://127.0.2.1:8500"}
-TEMPLATE=${TEMPLATE:-"/usr/local/share/reggae/templates/register.tpl"}
+help() {
+    echo "Usage: $0 <action>" >&2
+    echo "  where action is 'init', 'register' or 'deregister'"
+}
 
-sed \
-    -e "s/JAIL_NAME/${JAIL_NAME}/g" \
-    -e "s/JAIL_IP/${JAIL_IP}/g" \
-    ${TEMPLATE} \
-    >${TEMP_FILE}
+case "${1}" in
+    "init")
+        shift
+        "${PROJECT_BIN_PATH}/init.sh" ${@}
+        break
+        ;;
+    "register")
+        shift
+        "${PROJECT_BIN_PATH}/register.sh" register
+        break
+        ;;
+    "deregister")
+        shift
+        "${PROJECT_BIN_PATH}/register.sh" deregister
+        break
+        ;;
+    *)
+        help
+        exit 1
+        ;;
+esac
 
-/usr/local/bin/curl -s -X PUT "${CONSUL}/v1/catalog/${ACTION}" -d @${TEMP_FILE} >/dev/null >&2
-rm -rf ${TEMP_FILE}
