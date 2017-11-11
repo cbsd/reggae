@@ -4,20 +4,23 @@
 
 UID ?= 1001
 GID ?= 1001
-DOMAIN ?= example.com
+DOMAIN ?= my.domain
+CBSD_WORKDIR!=sysrc -n cbsd_workdir
 
 .MAIN: up
 
 up: setup
 	@sudo cbsd jcreate jconf=${PWD}/cbsd.conf || true
 .if defined(EXTRA_FSTAB)
-	@sudo cp ${EXTRA_FSTAB} /cbsd/jails-fstab/fstab.${SERVICE}.local
+	@sudo cp ${EXTRA_FSTAB} ${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local
 .endif
-.if !exists(/cbsd/jails-system/${SERVICE}/master_poststart.d/register.sh)
-	@sudo ln -s /usr/local/bin/reggae /cbsd/jails-system/${SERVICE}/master_poststart.d/register.sh
+.if !exists(${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/register.sh)
+	@sudo cp /usr/local/share/reggae/templates/register.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/register.sh
+	@sudo chmod 755 ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/register.sh
 .endif
-.if !exists(/cbsd/jails-system/${SERVICE}/master_poststop.d/deregister.sh)
-	@sudo ln -s /usr/local/bin/reggae /cbsd/jails-system/${SERVICE}/master_poststop.d/deregister.sh
+.if !exists(${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststop.d/deregister.sh)
+	@sudo cp /usr/local/share/reggae/templates/deregister.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststop.d/deregister.sh
+	@sudo chmod 755 ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststop.d/deregister.sh
 .endif
 	@sudo cbsd jstart ${SERVICE} || true
 	@sudo chown ${UID}:${GID} cbsd.conf
@@ -59,5 +62,5 @@ export: down
 .endif
 	@echo -n "Exporting jail ... "
 	@sudo cbsd jexport jname=${SERVICE}
-	@sudo mv /cbsd/export/${SERVICE}.img build/
+	@sudo mv ${CBSD_WORKDIR}/export/${SERVICE}.img build/
 	@sudo chown ${UID}:${GID} build/${SERVICE}.img

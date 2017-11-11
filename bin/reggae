@@ -9,19 +9,19 @@ help() {
 }
 
 case "${1}" in
-    "init")
+    init)
         shift
-        "${PROJECT_BIN_PATH}/init.sh" ${@}
+        /usr/local/share/reggae/scripts/init.sh ${@}
         break
         ;;
-    "register")
+    register)
         shift
-        "${PROJECT_BIN_PATH}/register.sh" register
+        /usr/local/share/reggae/scripts/register.sh register
         break
         ;;
-    "deregister")
+    deregister)
         shift
-        "${PROJECT_BIN_PATH}/register.sh" deregister
+        /usr/local/share/reggae/scripts/register.sh deregister
         break
         ;;
     *)

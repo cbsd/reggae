@@ -8,7 +8,7 @@ JAIL_NAME=${jname}
 JAIL_IP=`echo ${ip4_addr} | cut -f 1 -d '/'`
 ACTION="${1}"
 CONSUL=${CONSUL:-"http://127.0.2.1:8500"}
-TEMPLATE=${TEMPLATE:-"${PROJECT_ROOT}/templates/register.tpl"}
+TEMPLATE=${TEMPLATE:-"/usr/local/share/reggae/templates/register.tpl"}
 
 sed \
     -e "s/JAIL_NAME/${JAIL_NAME}/g" \

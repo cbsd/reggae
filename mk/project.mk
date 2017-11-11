@@ -1,4 +1,4 @@
-DOMAIN ?= example.com
+DOMAIN ?= my.domain
 STAGE ?= prod
 RUNNING_UID := `id -u`
 RUNNING_GID := `id -g`
