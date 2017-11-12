@@ -1,0 +1,44 @@
+.TH "REGGAE-ANSIBLE" "1" "12 November 2017" "reggae-ansible" ""
+
+.SH NAME
+reggae-ansible \- initialize and setup host for use with reggae
+
+.SH SYNOPSIS
+\fBansible.mk\fR
+
+.SH "DESCRIPTION"
+.PP
+Reggae will run \fBdo_provision\fR target if defined, and that's how \fBansible.mk\fR inserts additional targets.
+
+.SH EXAMPLES
+If you include ansible.mk, Reggae will run provision on first invocation of
+\fBmake up\fR (or just make). If you want to repeat the provisioning, you have
+to explicitely run \fBmake provision\fR. Following is a minimal Makefile which
+will provision a jail with ansible:
+
+ SERVICE = mail
+ REGGAE_PATH = /usr/local/share/reggae
+ CUSTOM_TEMPLATES = templates
+ EXTRA_FSTAB = templates/fstab
+
+ .include <${REGGAE_PATH}/mk/ansible.mk>
+ .include <${REGGAE_PATH}/mk/service.mk>
+
+In \fBtemplates\fR you need to have at least \fBsite.yml.tpl\fR. Example of its
+contents is as following:
+
+ ---
+ - name: SERVICE provisioning
+   hosts: SERVICE
+   roles:
+     - common
+     - dovecot
+     - postfix
+ - dkim
+
+SERVICE will be replaced with the service name (in this case "mail"). Reggae
+will assume that all your roles are in \fBplaybook/roles\fR directory.
+
+.SH "ADDITIONAL INFORMATION"
+See \fBreggae(1)\fR for more info.
+
