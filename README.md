@@ -41,6 +41,7 @@ Second, *Reggae* will expect this hierarchy:
 
 Example of simple ansible tasks for `main.yml`:
 ```
+---
 - name: stop sendmail
   service:
     name: sendmail
