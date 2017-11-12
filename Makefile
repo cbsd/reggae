@@ -17,16 +17,25 @@ MAKEFILES = ansible.mk \
 	    service.mk
 SCRIPTS = init.sh \
 	  register.sh
+MAN_FILES = reggae.1 \
+	    reggae-init.1 \
+	    reggae-register.1
 
-all:
+
+all: compress_man
 	@echo 'Finished'
 
-install: install_bin install_templates install_makefiles install_scripts
+compress_man:
+.for man_file in ${MAN_FILES}
+	gzip -f -k man/${man_file}
+.endfor
+
+install: install_bin install_templates install_makefiles install_scripts install_man
 
 install_bin:
 	install -d ${DESTDIR}${PREFIX}${BIN}
 .for bin_file in ${BIN_FILES}
-	install bin/${bin_file} ${DESTDIR}${PREFIX}${BIN}
+	install -m 0755 bin/${bin_file} ${DESTDIR}${PREFIX}${BIN}
 .endfor
 
 install_templates:
@@ -53,4 +62,10 @@ install_scripts:
 	install -d ${DESTDIR}${PREFIX}${SCRIPTS_DIR}
 .for script_file in ${SCRIPTS}
 	install -m 0755 scripts/${script_file} ${DESTDIR}${PREFIX}${SCRIPTS_DIR}
+.endfor
+
+install_man:
+	install -d ${DESTDIR}${PREFIX}/man/man1
+.for man_file in ${MAN_FILES}
+	install -m 0644 man/${man_file}.gz ${DESTDIR}${PREFIX}/man/man1
 .endfor
