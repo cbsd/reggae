@@ -6,3 +6,64 @@ jail_if = "lo1"
 consul = 127.0.2.1
 rdr pass on $jail_if proto udp from any to any port 53 -> $consul port 8600
 ```
+
+## Makefiles
+There are two types of makefiles: services and projects. Service is single jail with a small set of apps running in it. If more than one jail is needed, use project. The following is the simplest service `Makefile`:
+
+```
+SERVICE = myservice
+REGGAE_PATH = /usr/local/share/reggae
+.include <${REGGAE_PATH}/mk/service.mk>
+```
+
+You can automatically provision your jail. Currently, only ansible provisioning is supported out of the box. First, you need to edit your `Makefile`:
+
+```
+SERVICE = myservice
+REGGAE_PATH = /usr/local/share/reggae
+CUSTOM_TEMPLATES = templates
+
+.include <${REGGAE_PATH}/mk/ansible.mk>
+.include <${REGGAE_PATH}/mk/service.mk>
+```
+
+Second, *Reggae* will expect this hierarchy:
+
+- playbook/
+  - inventory/
+  - group_vars/
+  - roles/
+    - myservice/
+      - tasks/
+        - main.yml
+- templates/
+  - site.yml.tpl
+
+Example of simple ansible tasks for `main.yml`:
+```
+- name: stop sendmail
+  service:
+    name: sendmail
+    state: stopped
+```
+
+Example of `site.yml.tpl`:
+```
+---
+- name: SERVICE provisioning
+  hosts: SERVICE
+  roles:
+    - myservice
+```
+
+You need to install ansible on the host running provisioning. Typing `make` with such a service will create `myservice` CBSD jail and stop sendmail in it.
+
+If you need multiple jails, easiest way to configure a project is to have your services as github repositories as described above and your project `Makefile` as following:
+```
+REGGAE_PATH = /usr/local/share/reggae
+SERVICES = myservice https://github.com/<user>/jail-myservice \
+           someother https://github.com/<user>/jail-someother
+
+.include <${REGGAE_PATH}/mk/project.mk>
+```
+Running `make` will invoke `make up` and if it is the first time you run it, `make provision` will also be executed.
