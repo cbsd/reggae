@@ -20,6 +20,7 @@ SCRIPTS = init.sh \
 MAN_FILES = reggae.1 \
 	    reggae-ansible.1 \
 	    reggae-init.1 \
+	    reggae-project.1 \
 	    reggae-register.1
 
 

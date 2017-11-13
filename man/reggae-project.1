@@ -1,0 +1,28 @@
+.TH "REGGAE-PROJECT" "1" "12 November 2017" "reggae-project" ""
+
+.SH NAME
+reggae-project \- use multiple services and jails in a single project
+
+.SH SYNOPSIS
+\fBproject.mk\fR
+
+.SH "DESCRIPTION"
+.PP
+For complex setups and fairly big number of services, it's best if you
+group them into projects.
+
+.SH EXAMPLES
+Easiest way to configure a project is to have your services as github
+repositories and your project Makefile as following:
+
+ REGGAE_PATH = /usr/local/share/reggae
+ SERVICES = myservice https://github.com/<user>/jail-myservice \\
+            someother https://github.com/<user>/jail-someother
+
+ .include <${REGGAE_PATH}/mk/project.mk>
+
+ Running make will invoke make up and if it is the first time you run it, make provision will also be executed.
+
+.SH "ADDITIONAL INFORMATION"
+See \fBreggae(1)\fR and \fBreggae-ansible\fR for more info.
+
