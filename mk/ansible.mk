@@ -1,4 +1,15 @@
+ANSIBLE!=sh -c "which ansible || true"
+
 do_provision:
+.if ${ANSIBLE:M*} == ""
+	@echo
+	@echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+	@echo "!!! No ansible binary on the host !!!"
+	@echo "!!! Trying to install one         !!!"
+	@echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+	@echo
+	@sudo pkg install ansible
+.endif
 	@sudo cbsd jexec jname=${SERVICE} pkg install -y python
 	@sudo ansible-playbook -i playbook/inventory/inventory playbook/site.yml
 
