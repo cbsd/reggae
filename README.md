@@ -3,7 +3,9 @@
 
 ```
 jail_if = "lo1"
+bridge_if = "bridge1"
 consul = 127.0.2.1
+nat on $ext_if from { ($jail_if:network), ($bridge_if:network) } to any -> ($ext_if)
 rdr pass on $jail_if proto udp from any to any port 53 -> $consul port 8600
 ```
 
