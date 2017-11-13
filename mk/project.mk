@@ -1,5 +1,9 @@
+.if exists(vars.mk)
+.include <vars.mk>
+.endif
+
+DEVEL_MODE ?= "NO"
 DOMAIN ?= my.domain
-STAGE ?= prod
 RUNNING_UID := `id -u`
 RUNNING_GID := `id -g`
 UID ?= ${RUNNING_UID}
@@ -53,9 +57,9 @@ fetch:
 setup:
 .for service url in ${SERVICES}
 	@rm -f services/${service}/vars.mk
+	@echo "DEVEL_MODE ?= ${DEVEL_MODE}" >>services/${service}/vars.mk
 	@echo "DOMAIN ?= ${DOMAIN}" >>services/${service}/vars.mk
 	@echo "GID ?= ${GID}" >>services/${service}/vars.mk
-	@echo "STAGE ?= ${STAGE}" >>services/${service}/vars.mk
 	@echo "UID ?= ${UID}" >>services/${service}/vars.mk
 .endfor
 

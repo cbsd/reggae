@@ -2,6 +2,7 @@
 .include <vars.mk>
 .endif
 
+DEVEL_MODE ?= "NO"
 UID ?= 1001
 GID ?= 1001
 DOMAIN ?= my.domain
@@ -13,6 +14,9 @@ up: setup
 	@sudo cbsd jcreate jconf=${PWD}/cbsd.conf || true
 .if defined(EXTRA_FSTAB)
 	@sudo cp ${EXTRA_FSTAB} ${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local
+.endif
+.if ${DEVEL_MODE} == "YES"
+	sudo sh -c "echo ${PWD} /usr/src nullfs rw 0 0 >>${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local"
 .endif
 .if !exists(${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/register.sh)
 	@sudo cp /usr/local/share/reggae/templates/register.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/register.sh
