@@ -1,4 +1,5 @@
 do_provision:
+	@sudo cbsd jexec jname=${SERVICE} pkg install -y python
 	@sudo ansible-playbook -i playbook/inventory/inventory playbook/site.yml
 
 do_setup:
