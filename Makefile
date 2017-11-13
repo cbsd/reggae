@@ -25,7 +25,6 @@ MAN_FILES = reggae.1 \
 
 
 all: compress_man
-	@echo 'Finished'
 
 compress_man:
 .for man_file in ${MAN_FILES}

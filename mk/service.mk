@@ -16,7 +16,7 @@ up: setup
 	@sudo cp ${EXTRA_FSTAB} ${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local
 .endif
 .if ${DEVEL_MODE} == "YES"
-	sudo sh -c "echo ${PWD} /usr/src nullfs rw 0 0 >>${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local"
+	@sudo sh -c "echo ${PWD} /usr/src nullfs rw 0 0 >>${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local"
 .endif
 .if !exists(${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/register.sh)
 	@sudo cp /usr/local/share/reggae/templates/register.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/register.sh
@@ -28,6 +28,13 @@ up: setup
 .endif
 	@sudo cbsd jstart ${SERVICE} || true
 	@sudo chown ${UID}:${GID} cbsd.conf
+.if ${DEVEL_MODE} == "YES"
+.if !exists(${CBSD_WORKDIR}/jails/${SERVICE}/usr/home/devel)
+	@sudo cbsd jexec jname=${SERVICE} pw group add devel -g ${GID}
+	@sudo cbsd jexec jname=${SERVICE} pw user add devel -u ${UID} -g devel -s /bin/tcsh -G wheel,operator -m
+	@sudo cbsd jexec jname=${SERVICE} chpass -p '$6$MIv4IXAika7jqFH2$GkYSBax0G9CIBG0DcgQMP5gG7Qt.CojExDcU7YOQy0K.pouAd.edvo/MaQPhVO0fISxjOD4J1nzRsGVXUAxGp1' devel
+.endif
+.endif
 .if !exists(.provisioned)
 	@${MAKE} ${MAKEFLAGS} provision
 .endif
