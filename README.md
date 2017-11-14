@@ -70,3 +70,27 @@ SERVICES = myservice https://github.com/<user>/jail-myservice \
 .include <${REGGAE_PATH}/mk/project.mk>
 ```
 Running `make` will invoke `make up` and if it is the first time you run it, `make provision` will also be executed.
+
+Supported make targets for project are:
+* destroy
+* devel service=\<service>
+* fetch
+* init
+* login service=\<service>
+* provision
+* setup
+* up
+
+All project targets can be suffiexed with `service=<service>` but in the above list only those which require a service are explicitely mentioned. If the service is passed as an argument, the target will be executed only on that service/jail.
+
+Supported make targets for service are:
+* destroy
+* devel
+* exec
+* export
+* login
+* provision
+* setup
+* up
+
+Special note for `devel` target: your repo must have `bin/dev.sh` which devel will try to run.
