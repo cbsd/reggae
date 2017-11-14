@@ -22,7 +22,9 @@ Supported make targets for service are:
  - up
 
 Special note for \fBdevel\fR target: your repo must have \fBbin/dev.sh\fR which
-devel will try to run.
+devel will try to run. Also, devel will only work if you have
+\fBDEVEL_MODE="YES"\fR in your vars.mk in service root. If you use it inside a
+project, project's \fBDEVEL_MODE\fR will be propagated.
 
 .SH EXAMPLES
 Easiest way to configure a service is Makefile as following:

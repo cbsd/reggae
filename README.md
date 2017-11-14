@@ -95,4 +95,4 @@ Supported make targets for service are:
 * setup
 * up
 
-Special note for `devel` target: your repo must have `bin/dev.sh` which devel will try to run. Also, devel will only work if you have `DEVEL_MODE="YES"` in your vars.mk in service root. If you use it inside a project, projects `DEVEL_MODE` will be propagated.
+Special note for `devel` target: your repo must have `bin/dev.sh` which devel will try to run. Also, devel will only work if you have `DEVEL_MODE="YES"` in your vars.mk in service root. If you use it inside a project, project's `DEVEL_MODE` will be propagated.
