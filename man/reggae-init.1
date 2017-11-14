@@ -14,7 +14,9 @@ This command will set up \fBCBSD\fR, bridge1 and lo1 for it's use. Also, it will
 It is recommended to use the following PF code in order to use Consul as DNS in other jails:
 
  jail_if = "lo1"
+ bridge_if = "bridge1"
  consul = 127.0.2.1
+ nat on $ext_if from { ($jail_if:network), ($bridge_if:network) } to any -> ($ext_if)
  rdr pass on $jail_if proto udp from any to any port 53 -> $consul port 8600
 
 .SH "ADDITIONAL INFORMATION"

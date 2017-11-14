@@ -75,3 +75,6 @@ export: down
 	@sudo cbsd jexport jname=${SERVICE}
 	@sudo mv ${CBSD_WORKDIR}/export/${SERVICE}.img build/
 	@sudo chown ${UID}:${GID} build/${SERVICE}.img
+
+devel:
+	@sudo jexec -U devel ${SERVICE} /usr/src/bin/dev.sh

@@ -11,6 +11,23 @@ reggae-project \- use multiple services and jails in a single project
 For complex setups and fairly big number of services, it's best if you
 group them into projects.
 
+Running make will invoke make up and if it is the first time you run it, make
+provision will also be executed.
+
+Supported make targets for project are:
+ - destroy
+ - devel service=<service>
+ - fetch
+ - init
+ - login service=<service>
+ - provision
+ - setup
+ - up
+
+All targets can be suffiexed with \fBservice=<service>\fR but in the above list
+only those which require a service are explicitely mentioned. If the service is
+passed as an argument, the target will be executed only on that service/jail.
+
 .SH EXAMPLES
 Easiest way to configure a project is to have your services as github
 repositories and your project Makefile as following:
@@ -21,8 +38,6 @@ repositories and your project Makefile as following:
 
  .include <${REGGAE_PATH}/mk/project.mk>
 
- Running make will invoke make up and if it is the first time you run it, make provision will also be executed.
-
 .SH "ADDITIONAL INFORMATION"
-See \fBreggae(1)\fR and \fBreggae-ansible\fR for more info.
-
+See \fBreggae(1)\fR, \fBreggae-service(1)\fR and \fBreggae-ansible(1)\fR for
+more info.

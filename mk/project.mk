@@ -83,3 +83,6 @@ down: setup
 	@${MAKE} ${MAKEFLAGS} -C services/${service} down
 .endfor
 .endif
+
+devel:
+	@${MAKE} ${MAKEFLAGS} -C services/${service} devel
