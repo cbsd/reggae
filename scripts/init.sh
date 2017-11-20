@@ -5,9 +5,9 @@ SHORT_HOSTNAME=`hostname -s`
 HOSTNAME=`hostname`
 RESOLVER=`grep '^nameserver' /etc/resolv.conf | head -n 1 | awk '{print $2}'`
 CLONED_INTERFACES=`sysrc -n cloned_interfaces`
-NATIP=`netstat -rn | grep '^default' | awk '{print $2}'`
-EGRESS=`netstat -rn | grep '^default' | awk '{print $4}'`
-NODEIP=`ifconfig ${EGRESS} | grep 'inet ' | awk '{print $2}'`
+NATIP=`netstat -rn | awk '/^default/{print $2}'`
+EGRESS=`netstat -rn | awk '/^default/{print $4}'`
+NODEIP=`ifconfig ${EGRESS} | awk '/inet /{print $2}'`
 TEMP_INITENV_CONF=`mktemp`
 
 rm -rf /tmp/ifaces.txt
