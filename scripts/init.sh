@@ -5,6 +5,10 @@ SHORT_HOSTNAME=`hostname -s`
 HOSTNAME=`hostname`
 RESOLVER=`grep '^nameserver' /etc/resolv.conf | head -n 1 | awk '{print $2}'`
 CLONED_INTERFACES=`sysrc -n cloned_interfaces`
+NATIP=`netstat -rn | grep '^default' | awk '{print $2}'`
+EGRESS=`netstat -rn | grep '^default' | awk '{print $4}'`
+NODEIP=`ifconfig ${EGRESS} | grep 'inet ' | awk '{print $2}'`
+TEMP_INITENV_CONF=`mktemp`
 
 rm -rf /tmp/ifaces.txt
 touch /tmp/ifaces.txt
@@ -26,7 +30,6 @@ fi
 BRIDGE1_INTERFACE=`grep '^bridge1$' /tmp/ifaces.txt`
 if [ -z "${BRIDGE1_INTERFACE}" ]; then
     CLONED_INTERFACES="${CLONED_INTERFACES} bridge1"
-    EGRESS=`netstat -rn | grep '^default' | awk '{print $4}'`
     sysrc ifconfig_bridge1="inet 172.16.0.1 netmask 255.255.255.0 description ${EGRESS}"
 fi
 
@@ -49,7 +52,15 @@ if [ -z "${SSHD_FLAGS}" ]; then
     sysrc sshd_flags=""
 fi
 
-env workdir="${CBSD_WORKDIR}" /usr/local/cbsd/sudoexec/initenv /usr/local/share/reggae/templates/initenv.conf
+sed \
+  -e "s:HOSTNAME:${HOSTNAME}:g" \
+  -e "s:NODEIP:${NODEIP}:g" \
+  -e "s:NAMESERVER:${RESOLVER}:g" \
+  -e "s:NATIP:${NATIP}:g" \
+  /usr/local/share/reggae/templates/initenv.conf >"${TEMP_INITENV_CONF}"
+
+env workdir="${CBSD_WORKDIR}" /usr/local/cbsd/sudoexec/initenv "${TEMP_INITENV_CONF}"
+rm -rf "${TEMP_INITENV_CONF}"
 service cbsdd start
 service cbsdrsyncd start
 echo 1 | cbsd jcreate jconf="/usr/local/share/reggae/templates/consul.conf"
