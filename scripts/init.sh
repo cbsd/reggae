@@ -1,5 +1,14 @@
-CBSD_WORKDIR="/cbsd"
-DOMAIN="my.domain"
+#!/bin/sh
+
+if [ -e "/usr/local/etc/reggae.conf" ]; then
+    . "/usr/local/etc/reggae.conf"
+fi
+CBSD_WORKDIR=${CBSD_WORKDIR:-"/cbsd"}
+DOMAIN=${DOMAIN:-"my.domain"}
+BRIDGE_INTERFACE=${BRIDGE_INTERFACCE:-"bridge1"}
+JAIL_INTERFACE=${JAIL_INTERFACE:-"lo1"}
+ZFS_POOL=${ZFS_POOL:-"zroot"}
+IP_POOL=${IP_POOL:-"10.0.0.0/24"}
 SSHD_FLAGS=`sysrc -n sshd_flags`
 SHORT_HOSTNAME=`hostname -s`
 HOSTNAME=`hostname`
@@ -17,20 +26,20 @@ for iface in ${CLONED_INTERFACES}; do
 done
 
 
-LO1_INTERFACE=`grep '^lo1$' /tmp/ifaces.txt`
+LO1_INTERFACE=`grep "^${JAIL_INTERFACE}$" /tmp/ifaces.txt`
 if [ -z "${LO1_INTERFACE}" ]; then
     if [ -z "${CLONED_INTERFACES}" ]; then
-        CLONED_INTERFACES="lo1"
+        CLONED_INTERFACES="${JAIL_INTERFACE}"
     else
-        CLONED_INTERFACES="${CLONED_INTERFACES} lo1"
+        CLONED_INTERFACES="${CLONED_INTERFACES} ${JAIL_INTERFACE}"
     fi
     sysrc ifconfig_lo1="up"
 fi
 
-BRIDGE1_INTERFACE=`grep '^bridge1$' /tmp/ifaces.txt`
+BRIDGE1_INTERFACE=`grep "^${BRIDGE_INTERFACE}$" /tmp/ifaces.txt`
 if [ -z "${BRIDGE1_INTERFACE}" ]; then
-    CLONED_INTERFACES="${CLONED_INTERFACES} bridge1"
-    sysrc ifconfig_bridge1="inet 172.16.0.1 netmask 255.255.255.0 description ${EGRESS}"
+    CLONED_INTERFACES="${CLONED_INTERFACES} ${BRIDGE_INTERFACE}"
+    sysrc ifconfig_${BRIDGE_INTERFACE}="inet 172.16.0.1 netmask 255.255.255.0 description ${EGRESS}"
 fi
 
 sysrc cloned_interfaces="${CLONED_INTERFACES}"
@@ -39,7 +48,7 @@ rm -rf /tmp/ifaces.txt
 
 
 if [ ! -d "${CBSD_WORKDIR}" ]; then
-    zfs create -o mountpoint=${CBSD_WORKDIR} zroot${CBSD_WORKDIR}
+    zfs create -o mountpoint=${CBSD_WORKDIR} ${ZFS_POOL}${CBSD_WORKDIR}
 fi
 
 if [ "${HOSTNAME}" == "${SHORT_HOSTNAME}" ]; then
@@ -57,6 +66,7 @@ sed \
   -e "s:NODEIP:${NODEIP}:g" \
   -e "s:NAMESERVER:${RESOLVER}:g" \
   -e "s:NATIP:${NATIP}:g" \
+  -e "s:IP_POOL:${IP_POOL}:g" \
   /usr/local/share/reggae/templates/initenv.conf >"${TEMP_INITENV_CONF}"
 
 env workdir="${CBSD_WORKDIR}" /usr/local/cbsd/sudoexec/initenv "${TEMP_INITENV_CONF}"

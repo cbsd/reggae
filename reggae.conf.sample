@@ -1,0 +1,8 @@
+# Following are default values
+
+BRIDGE_INTERFACE="bridge1"
+CBSD_WORKDIR="/cbsd"
+DOMAIN="my.domain"
+IP_POOL="10.0.0.0/24"
+JAIL_INTERFACE="lo1"
+ZFS_POOL="zroot"

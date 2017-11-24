@@ -33,6 +33,8 @@ compress_man:
 .endfor
 
 install: install_bin install_templates install_makefiles install_scripts install_man
+	install -d ${DESTDIR}${PREFIX}/etc
+	install -m 0644 reggae.conf.sample ${DESTDIR}${PREFIX}/etc
 
 install_bin:
 	install -d ${DESTDIR}${PREFIX}${BIN}
