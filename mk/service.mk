@@ -41,24 +41,24 @@ up: setup
 
 provision:
 	@touch .provisioned
-.if target(do_provision)
-	@${MAKE} ${MAKEFLAGS} do_provision
+.if target(do-provision)
+	@${MAKE} ${MAKEFLAGS} do-provision
 .endif
 
 down: setup
 	@sudo cbsd jstop ${SERVICE} || true
 
 destroy: down
-	@rm -f cbsd.conf vars.mk .provisioned
+	@rm -f cbsd.conf .provisioned
 	@sudo cbsd jremove ${SERVICE}
-.if target(do_clean)
-	@${MAKE} ${MAKEFLAGS} do_clean
+.if target(do-clean)
+	@${MAKE} ${MAKEFLAGS} do-clean
 .endif
 
 setup:
 	@sed -e "s:SERVICE:${SERVICE}:g" -e "s:DOMAIN:${DOMAIN}:g" ${REGGAE_PATH}/templates/cbsd.conf.tpl >cbsd.conf
-.if target(do_setup)
-	@${MAKE} ${MAKEFLAGS} do_setup
+.if target(do-setup)
+	@${MAKE} ${MAKEFLAGS} do-setup
 .endif
 
 login:
