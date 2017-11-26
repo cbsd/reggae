@@ -44,7 +44,12 @@ rm -rf /tmp/ifaces.txt
 
 
 if [ ! -d "${CBSD_WORKDIR}" ]; then
-    zfs create -o mountpoint=${CBSD_WORKDIR} ${ZFS_POOL}${CBSD_WORKDIR}
+    if [ "${USE_ZFS}" = "yes" ]; then
+        zfs create -o "mountpoint=${CBSD_WORKDIR}" "${ZFS_POOL}${CBSD_WORKDIR}"
+    else
+        ZFSFEAT="0"
+        mkdir "${CBSD_WORKDIR}"
+    fi
 fi
 
 if [ "${HOSTNAME}" == "${SHORT_HOSTNAME}" ]; then
@@ -63,6 +68,7 @@ sed \
   -e "s:NAMESERVER:${RESOLVER}:g" \
   -e "s:NATIP:${NATIP}:g" \
   -e "s:IP_POOL:${IP_POOL}:g" \
+  -e "s:ZFSFEAT:${ZFSFEAT}:g" \
   /usr/local/share/reggae/templates/initenv.conf >"${TEMP_INITENV_CONF}"
 
 env workdir="${CBSD_WORKDIR}" /usr/local/cbsd/sudoexec/initenv "${TEMP_INITENV_CONF}"
