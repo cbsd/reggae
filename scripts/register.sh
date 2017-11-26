@@ -1,6 +1,8 @@
-CONF_FILE="/usr/local/etc/reggae.conf"
-if [ -f "${CONF_FILE}" ]; then
-    . "${CONF_FILE}"
+#!/bin/sh
+
+
+if [ -f "/usr/local/etc/reggae.conf" ]; then
+    . "/usr/local/etc/reggae.conf"
 fi
 
 TEMP_FILE=`mktemp`

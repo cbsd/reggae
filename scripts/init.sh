@@ -1,14 +1,10 @@
 #!/bin/sh
 
-if [ -e "/usr/local/etc/reggae.conf" ]; then
+if [ -f "/usr/local/etc/reggae.conf" ]; then
     . "/usr/local/etc/reggae.conf"
 fi
-CBSD_WORKDIR=${CBSD_WORKDIR:-"/cbsd"}
-DOMAIN=${DOMAIN:-"my.domain"}
-BRIDGE_INTERFACE=${BRIDGE_INTERFACCE:-"bridge1"}
-JAIL_INTERFACE=${JAIL_INTERFACE:-"lo1"}
-ZFS_POOL=${ZFS_POOL:-"zroot"}
-IP_POOL=${IP_POOL:-"10.0.0.0/24"}
+. "./default.conf"
+
 SSHD_FLAGS=`sysrc -n sshd_flags`
 SHORT_HOSTNAME=`hostname -s`
 HOSTNAME=`hostname`

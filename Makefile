@@ -1,8 +1,9 @@
 BIN = /bin
 PREFIX ?= /usr/local
-TEMPLATE_DIR = /share/reggae/templates
-MAKE_DIR = /share/reggae/mk
-SCRIPTS_DIR = /share/reggae/scripts
+REGGAE_DIR = /share/reggae
+TEMPLATE_DIR = ${REGGAE_DIR}/templates
+MAKE_DIR = ${REGGAE_DIR}/mk
+SCRIPTS_DIR = ${REGGAE_DIR}/scripts
 BIN_FILES = reggae
 TEMPLATES = register.tpl \
 	    cbsd.conf.tpl \
@@ -16,7 +17,8 @@ MAKEFILES = ansible.mk \
 	    project.mk \
 	    service.mk
 SCRIPTS = init.sh \
-	  register.sh
+	  register.sh \
+	  default.conf
 MAN_FILES = reggae.1 \
 	    reggae-ansible.1 \
 	    reggae-init.1 \
