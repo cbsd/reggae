@@ -9,6 +9,8 @@ nat on $ext_if from { ($jail_if:network), ($bridge_if:network) } to any -> ($ext
 rdr pass on $jail_if proto udp from any to any port 53 -> $consul port 8600
 ```
 
+Through config file in `/usr/local/etc/reggae.conf` you can choose to use some other interfaces for `jail_if` and `bridge_if`. Once Reggae is installed, you'll have `/usr/local/etc/reggae.conf.sample` which lists all defaults options.
+
 ## Makefiles
 There are two types of makefiles: services and projects. Service is single jail with a small set of apps running in it. If more than one jail is needed, use project. The following is the simplest service `Makefile`:
 
