@@ -3,7 +3,9 @@
 if [ -f "/usr/local/etc/reggae.conf" ]; then
     . "/usr/local/etc/reggae.conf"
 fi
-. "./default.conf"
+
+SCRIPT_DIR=`dirname $0`
+. "${SCRIPT_DIR}/default.conf"
 
 SSHD_FLAGS=`sysrc -n sshd_flags`
 SHORT_HOSTNAME=`hostname -s`
@@ -14,6 +16,7 @@ NATIP=`netstat -rn | awk '/^default/{print $2}'`
 EGRESS=`netstat -rn | awk '/^default/{print $4}'`
 NODEIP=`ifconfig ${EGRESS} | awk '/inet /{print $2}'`
 TEMP_INITENV_CONF=`mktemp`
+ZFS_FEAT="1"
 
 rm -rf /tmp/ifaces.txt
 touch /tmp/ifaces.txt
@@ -22,8 +25,8 @@ for iface in ${CLONED_INTERFACES}; do
 done
 
 
-LO1_INTERFACE=`grep "^${JAIL_INTERFACE}$" /tmp/ifaces.txt`
-if [ -z "${LO1_INTERFACE}" ]; then
+LO_INTERFACE=`grep "^${JAIL_INTERFACE}$" /tmp/ifaces.txt`
+if [ -z "${LO_INTERFACE}" ]; then
     if [ -z "${CLONED_INTERFACES}" ]; then
         CLONED_INTERFACES="${JAIL_INTERFACE}"
     else
@@ -32,10 +35,10 @@ if [ -z "${LO1_INTERFACE}" ]; then
     sysrc ifconfig_lo1="up"
 fi
 
-BRIDGE1_INTERFACE=`grep "^${BRIDGE_INTERFACE}$" /tmp/ifaces.txt`
-if [ -z "${BRIDGE1_INTERFACE}" ]; then
+BRIDGE_INTERFACE=`grep "^${BRIDGE_INTERFACE}$" /tmp/ifaces.txt`
+if [ -z "${BRIDGE_INTERFACE}" ]; then
     CLONED_INTERFACES="${CLONED_INTERFACES} ${BRIDGE_INTERFACE}"
-    sysrc ifconfig_${BRIDGE_INTERFACE}="inet 172.16.0.1 netmask 255.255.255.0 description ${EGRESS}"
+    sysrc ifconfig_${BRIDGE_INTERFACE}="inet ${BRIDGE_IP} netmask 255.255.255.0 description ${EGRESS}"
 fi
 
 sysrc cloned_interfaces="${CLONED_INTERFACES}"
@@ -45,6 +48,7 @@ rm -rf /tmp/ifaces.txt
 
 if [ ! -d "${CBSD_WORKDIR}" ]; then
     if [ "${USE_ZFS}" = "yes" ]; then
+        ZFSFEAT="1"
         zfs create -o "mountpoint=${CBSD_WORKDIR}" "${ZFS_POOL}${CBSD_WORKDIR}"
     else
         ZFSFEAT="0"
