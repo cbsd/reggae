@@ -14,9 +14,14 @@ up: setup
 	@sudo cbsd jcreate jconf=${PWD}/cbsd.conf || true
 .if defined(EXTRA_FSTAB)
 	@sudo cp ${EXTRA_FSTAB} ${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local
+.else
+	@sudo rm -rf ${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local
 .endif
 .if ${DEVEL_MODE} == "YES"
 	@sudo sh -c "echo ${PWD} /usr/src nullfs rw 0 0 >>${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local"
+	@sudo cbsd jset jname=${SERVICE} astart=0
+.else
+	@sudo cbsd jset jname=${SERVICE} astart=1
 .endif
 .if !exists(${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/register.sh)
 	@sudo cp /usr/local/share/reggae/templates/register.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/register.sh
@@ -34,6 +39,10 @@ up: setup
 	@sudo cbsd jexec jname=${SERVICE} pw user add devel -u ${UID} -g devel -s /bin/tcsh -G wheel,operator -m
 	@sudo cbsd jexec jname=${SERVICE} chpass -p '$6$MIv4IXAika7jqFH2$GkYSBax0G9CIBG0DcgQMP5gG7Qt.CojExDcU7YOQy0K.pouAd.edvo/MaQPhVO0fISxjOD4J1nzRsGVXUAxGp1' devel
 .endif
+.else
+	@echo 'Deleting user "devel"'
+	-@sudo cbsd jexec jname=${SERVICE} pw user del devel -r >/dev/null 2>&1
+	@echo 'User "devel" deleted'
 .endif
 .if !exists(.provisioned)
 	@${MAKE} ${MAKEFLAGS} provision
