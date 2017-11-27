@@ -1,8 +1,8 @@
-# Following are default values
-
 CBSD_WORKDIR=${CBSD_WORKDIR:-"/cbsd"}
 DOMAIN=${DOMAIN:-"my.domain"}
 BRIDGE_INTERFACE=${BRIDGE_INTERFACCE:-"bridge1"}
+BRIDGE_IP=${BRIDGE_IP:-"172.16.0.1"}
 JAIL_INTERFACE=${JAIL_INTERFACE:-"lo1"}
+JAIL_IP_POOL=${JAIL_IP_POOL:-"10.0.0.0/24"}
+USE_ZFS=${USE_ZFS:="yes"}
 ZFS_POOL=${ZFS_POOL:-"zroot"}
-IP_POOL=${IP_POOL:-"10.0.0.0/24"}
