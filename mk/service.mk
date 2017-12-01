@@ -35,8 +35,8 @@ up: setup
 	@sudo chown ${UID}:${GID} cbsd.conf
 .if ${DEVEL_MODE} == "YES"
 .if !exists(${CBSD_WORKDIR}/jails/${SERVICE}/usr/home/devel)
-	@sudo cbsd jexec jname=${SERVICE} pw group add devel -g ${GID}
-	@sudo cbsd jexec jname=${SERVICE} pw user add devel -u ${UID} -g devel -s /bin/tcsh -G wheel,operator -m
+	@sudo cbsd jexec jname=${SERVICE} pw groupadd devel -g ${GID}
+	@sudo cbsd jexec jname=${SERVICE} pw useradd devel -u ${UID} -g devel -s /bin/tcsh -G wheel,operator -m
 	@sudo cbsd jexec jname=${SERVICE} chpass -p '$6$MIv4IXAika7jqFH2$GkYSBax0G9CIBG0DcgQMP5gG7Qt.CojExDcU7YOQy0K.pouAd.edvo/MaQPhVO0fISxjOD4J1nzRsGVXUAxGp1' devel
 .endif
 .else
