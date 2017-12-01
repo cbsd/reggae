@@ -71,7 +71,7 @@ sed \
   -e "s:NODEIP:${NODEIP}:g" \
   -e "s:NAMESERVER:${RESOLVER}:g" \
   -e "s:NATIP:${NATIP}:g" \
-  -e "s:IP_POOL:${IP_POOL}:g" \
+  -e "s:JAIL_IP_POOL:${JAIL_IP_POOL}:g" \
   -e "s:ZFSFEAT:${ZFSFEAT}:g" \
   /usr/local/share/reggae/templates/initenv.conf >"${TEMP_INITENV_CONF}"
 
