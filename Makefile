@@ -5,12 +5,17 @@ TEMPLATE_DIR = ${REGGAE_DIR}/templates
 MAKE_DIR = ${REGGAE_DIR}/mk
 SCRIPTS_DIR = ${REGGAE_DIR}/scripts
 BIN_FILES = reggae
-TEMPLATES = register.tpl \
-	    cbsd.conf.tpl \
+TEMPLATES = cbsd.conf.tpl \
 	    register.sh \
 	    deregister.sh \
 	    initenv.conf \
-	    consul.conf
+	    dhclient-exit-hooks \
+	    my.domain \
+	    named.conf \
+	    nsupdate-add.txt \
+	    nsupdate-delete.txt \
+	    resolver.conf \
+	    resolvconf.conf
 PLAYBOOK_TEMPLATES = playbook/inventory.tpl
 PLAYBOOK_GROUP_TEMPLATES = playbook/group_vars/all.tpl
 MAKEFILES = ansible.mk \

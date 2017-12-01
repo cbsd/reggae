@@ -1,0 +1,5 @@
+server 127.0.2.1
+
+zone my.domain
+update delete JAIL_NAME.my.domain
+send
