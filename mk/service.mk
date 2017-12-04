@@ -3,8 +3,10 @@
 .endif
 
 DEVEL_MODE ?= "NO"
-UID ?= 1001
-GID ?= 1001
+RUNNING_UID := `id -u`
+RUNNING_GID := `id -g`
+UID ?= ${RUNNING_UID}
+GID ?= ${RUNNING_GID}
 DOMAIN ?= my.domain
 CBSD_WORKDIR!=sysrc -n cbsd_workdir
 
@@ -34,7 +36,7 @@ up: setup
 	@sudo cbsd jstart ${SERVICE} || true
 	@sudo chown ${UID}:${GID} cbsd.conf
 .if ${DEVEL_MODE} == "YES"
-.if !exists(${CBSD_WORKDIR}/jails/${SERVICE}/usr/home/devel)
+.if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/devel)
 	@sudo cbsd jexec jname=${SERVICE} pw groupadd devel -g ${GID}
 	@sudo cbsd jexec jname=${SERVICE} pw useradd devel -u ${UID} -g devel -s /bin/tcsh -G wheel,operator -m
 	@sudo cbsd jexec jname=${SERVICE} chpass -p '$6$MIv4IXAika7jqFH2$GkYSBax0G9CIBG0DcgQMP5gG7Qt.CojExDcU7YOQy0K.pouAd.edvo/MaQPhVO0fISxjOD4J1nzRsGVXUAxGp1' devel

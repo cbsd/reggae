@@ -1,0 +1,5 @@
+server 127.0.2.1
+
+zone my.domain
+update add JAIL_NAME.my.domain 60 IN A JAIL_IP
+send
