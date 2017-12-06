@@ -1,6 +1,6 @@
 # $FreeBSD: head/etc/group 256365 2013-10-12 06:06:53Z rpaulo $
 #
-wheel:*:0:root
+wheel:*:0:root,provision
 daemon:*:1:
 kmem:*:2:
 sys:*:3:
@@ -31,3 +31,4 @@ www:*:80:
 hast:*:845:
 nogroup:*:65533:
 nobody:*:65534:
+provision:*:666:

@@ -90,6 +90,8 @@ service cbsdrsyncd start
 cp "${SCRIPT_DIR}/../cbsd-profile/jail-freebsd-reggae.conf" "${CBSD_WORKDIR}/etc/defaults/"
 cp -r "${SCRIPT_DIR}/../cbsd-profile/skel" "${CBSD_WORKDIR}/share/FreeBSD-jail-reggae-skel"
 cp -r "${SCRIPT_DIR}/../cbsd-profile/system" "${CBSD_WORKDIR}/share/jail-system-reggae"
+chown -R root:wheel "${CBSD_WORKDIR}/share/FreeBSD-jail-reggae-skel"
+chown -R 666:666 "${CBSD_WORKDIR}/share/FreeBSD-jail-reggae-skel/usr/home/provision"
 
 sed \
   -e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
