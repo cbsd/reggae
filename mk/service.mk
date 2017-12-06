@@ -25,14 +25,6 @@ up: setup
 .else
 	@sudo cbsd jset jname=${SERVICE} astart=1
 .endif
-.if !exists(${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/register.sh)
-	@sudo cp /usr/local/share/reggae/templates/register.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/register.sh
-	@sudo chmod 755 ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/register.sh
-.endif
-.if !exists(${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststop.d/deregister.sh)
-	@sudo cp /usr/local/share/reggae/templates/deregister.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststop.d/deregister.sh
-	@sudo chmod 755 ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststop.d/deregister.sh
-.endif
 	@sudo cbsd jstart ${SERVICE} || true
 	@sudo chown ${UID}:${GID} cbsd.conf
 .if ${DEVEL_MODE} == "YES"
