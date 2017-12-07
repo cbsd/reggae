@@ -25,13 +25,12 @@ up: setup
 .else
 	@sudo cbsd jset jname=${SERVICE} astart=1
 .endif
-.if !exists(${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/register.sh)
-	@sudo cp /usr/local/share/reggae/templates/register.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/register.sh
-	@sudo chmod 755 ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/register.sh
-.endif
-.if !exists(${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststop.d/deregister.sh)
-	@sudo cp /usr/local/share/reggae/templates/deregister.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststop.d/deregister.sh
-	@sudo chmod 755 ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststop.d/deregister.sh
+.if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys)
+	-@sudo mkdir ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh
+	@sudo chmod 700 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh
+	@sudo cp ~/.ssh/id_rsa.pub ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys
+	@sudo chmod 600 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys
+	@sudo chown -R 666:666 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh
 .endif
 	@sudo cbsd jstart ${SERVICE} || true
 	@sudo chown ${UID}:${GID} cbsd.conf

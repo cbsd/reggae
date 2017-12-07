@@ -4,10 +4,9 @@ REGGAE_DIR = /share/reggae
 TEMPLATE_DIR = ${REGGAE_DIR}/templates
 MAKE_DIR = ${REGGAE_DIR}/mk
 SCRIPTS_DIR = ${REGGAE_DIR}/scripts
+CBSD_PROFILE_DIR = ${REGGAE_DIR}/cbsd-profile
 BIN_FILES = reggae
 TEMPLATES = cbsd.conf.tpl \
-	    register.sh \
-	    deregister.sh \
 	    initenv.conf \
 	    dhclient-exit-hooks \
 	    my.domain \
@@ -30,6 +29,9 @@ MAN_FILES = reggae.1 \
 	    reggae-project.1 \
 	    reggae-register.1 \
 	    reggae-service.1
+CBSD_PROFILE_ITEMS = skel \
+		     system \
+		     reggae-jail.conf
 
 
 all: compress_man
@@ -39,7 +41,7 @@ compress_man:
 	gzip -f -k man/${man_file}
 .endfor
 
-install: install_bin install_templates install_makefiles install_scripts install_man
+install: install_bin install_templates install_makefiles install_scripts install_man install_profile
 	install -d ${DESTDIR}${PREFIX}/etc
 	install -m 0644 reggae.conf.sample ${DESTDIR}${PREFIX}/etc
 
@@ -80,3 +82,7 @@ install_man:
 .for man_file in ${MAN_FILES}
 	install -m 0644 man/${man_file}.gz ${DESTDIR}${PREFIX}/man/man1
 .endfor
+
+install_profile:
+	install -d ${DESTDIR}${PREFIX}/${CBSD_PROFILE_DIR}
+	cp -r cbsd-profile/* ${DESTDIR}${PREFIX}${CBSD_PROFILE_DIR}/
