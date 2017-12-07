@@ -16,6 +16,7 @@ EGRESS=`netstat -rn | awk '/^default/{print $4}'`
 NODEIP=`ifconfig ${EGRESS} | awk '/inet /{print $2}'`
 TEMP_INITENV_CONF=`mktemp`
 TEMP_RESOLVER_CONF=`mktemp`
+TEMP_DHCP_CONF=`mktemp`
 ZFS_FEAT="1"
 
 echo "dnsmasq_resolv=/tmp/resolv.conf" >/etc/resolvconf.conf
@@ -43,16 +44,15 @@ if [ -z "${LO_INTERFACE}" ]; then
     sysrc ifconfig_lo1="up"
 fi
 
-BRIDGE_INTERFACE=`grep "^${BRIDGE_INTERFACE}$" /tmp/ifaces.txt`
+BRIDGE_INTERFACE=`grep "^${VM_INTERFACE}$" /tmp/ifaces.txt`
 if [ -z "${BRIDGE_INTERFACE}" ]; then
-    CLONED_INTERFACES="${CLONED_INTERFACES} ${BRIDGE_INTERFACE}"
-    sysrc ifconfig_${BRIDGE_INTERFACE}="inet ${BRIDGE_IP} netmask 255.255.255.0 description ${EGRESS}"
+    CLONED_INTERFACES="${CLONED_INTERFACES} ${VM_INTERFACE}"
+    sysrc ifconfig_${VM_INTERFACE}="inet ${VM_INTERFACE_IP} netmask 255.255.255.0 description ${EGRESS}"
 fi
 
 sysrc cloned_interfaces="${CLONED_INTERFACES}"
 service netif cloneup
 rm -rf /tmp/ifaces.txt
-
 
 if [ ! -d "${CBSD_WORKDIR}" ]; then
     if [ "${USE_ZFS}" = "yes" ]; then
@@ -74,6 +74,15 @@ if [ -z "${SSHD_FLAGS}" ]; then
     sysrc sshd_flags=""
 fi
 
+if [ ! -e "/etc/devfs.rules" -o -z `grep -o 'devfsrules_jail_bpf=7' /etc/devfs.rules` ]; then
+    cat << EOF >>/etc/devfs.rules
+[devfsrules_jail_bpf=7]
+add include \$devfsrules_hide_all
+add include \$devfsrules_unhide_basic
+add include \$devfsrules_unhide_login
+add path 'bpf*' unhide
+EOF
+fi
 sed \
   -e "s:HOSTNAME:${HOSTNAME}:g" \
   -e "s:NODEIP:${NODEIP}:g" \
@@ -96,12 +105,10 @@ chown -R 666:666 "${CBSD_WORKDIR}/share/FreeBSD-jail-reggae-skel/usr/home/provis
 sed \
   -e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
   -e "s:DOMAIN:${DOMAIN}:g" \
+  -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
   ${SCRIPT_DIR}/../templates/resolver.conf >"${TEMP_RESOLVER_CONF}"
 
 cbsd jcreate inter=0 jconf="${TEMP_RESOLVER_CONF}"
-cat <<EOF >"${CBSD_WORKDIR}/jails-data/resolver-data/etc/rc.conf.d/named"
-named_enable="YES"
-EOF
 echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/resolver-data/etc/rc.conf.d/sendmail"
 echo 'named_enable="YES"' >"${CBSD_WORKDIR}/jails-data/resolver-data/etc/rc.conf.d/named"
 cbsd jstart resolver
@@ -111,19 +118,27 @@ if [ ! -f "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/cbsd.ke
     cbsd jexec jname=resolver rndc-confgen -a -c /usr/local/etc/namedb/cbsd.key -k cbsd
     chown bind:bind "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/cbsd.key"
 fi
-cp \
-    "${SCRIPT_DIR}/../templates/named.conf" \
-    "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/named.conf"
-cp \
+sed \
+  -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
+  "${SCRIPT_DIR}/../templates/named.conf" \
+  >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/named.conf"
+sed \
+  -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
     "${SCRIPT_DIR}/../templates/my.domain" \
-    "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/my.domain"
+    >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/my.domain"
 chown bind:bind "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/my.domain"
 /etc/dhclient-exit-hooks nohup
 cbsd jexec jname=resolver service named restart
 
 cat << EOF >"${CBSD_WORKDIR}/jails-system/resolver/master_poststart.d/add_resolver.sh"
 #!/bin/sh
-cp "/usr/local/share/reggae/templates/resolvconf.conf" /etc
+if [ -f "/usr/local/etc/reggae.conf" ]; then
+  . "/usr/local/etc/reggae.conf"
+fi
+. "/usr/local/share/reggae/scripts/default.conf"
+sed \
+  -e \"s:RESOLVER_IP:${RESOLVER_IP}:g\" \
+  "/usr/local/share/reggae/templates/resolvconf.conf" >/etc/resolvconf.conf
 resolvconf -u
 /etc/dhclient-exit-hooks
 EOF
@@ -137,11 +152,41 @@ EOF
 chmod +x "${CBSD_WORKDIR}/jails-system/resolver/master_poststart.d/add_resolver.sh"
 chmod +x "${CBSD_WORKDIR}/jails-system/resolver/master_prestop.d/remove_resolver.sh"
 
-#echo 'jnameserver="127.0.2.1"' > "${TEMP_INITENV_CONF}"
-sqlite3 "${CBSD_WORKDIR}/var/db/local.sqlite" "UPDATE local SET jnameserver='127.0.2.1'"
+#echo "jnameserver=\"${RESOLVER_IP}\"" > "${TEMP_INITENV_CONF}"
+sqlite3 "${CBSD_WORKDIR}/var/db/local.sqlite" "UPDATE local SET jnameserver='${RESOLVER_IP}'"
 cbsd initenv inter=0 # "${TEMP_INITENV_CONF}"
 
-cp "${SCRIPT_DIR}/../templates/resolvconf.conf" /etc/resolvconf.conf
+sed \
+  -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
+  "/usr/local/share/reggae/templates/resolvconf.conf" >/etc/resolvconf.conf
 resolvconf -u
 
-rm -f "${TEMP_INITENV_CONF}" "${TEMP_RESOLVER_CONF}"
+
+sed \
+  -e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
+  -e "s:DOMAIN:${DOMAIN}:g" \
+  -e "s:DHCP_IP:${DHCP_IP}:g" \
+  ${SCRIPT_DIR}/../templates/dhcp.conf >"${TEMP_DHCP_CONF}"
+
+cbsd jcreate inter=0 jconf="${TEMP_DHCP_CONF}"
+cp \
+  "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/cbsd.key" \
+  "${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/etc/"
+DHCP_BASE=`echo ${DHCP_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
+DHCP_SUBNET="${DHCP_BASE}.0/24"
+DHCP_SUBNET_FIRST="${DHCP_BASE}.1"
+DHCP_SUBNET_LAST="${DHCP_BASE}.200"
+sed \
+  -e "s:DOMAIN:${DOMAIN}:g" \
+  -e "s:VM_INTERFACE:${VM_INTERFACE}:g" \
+  -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
+  -e "s:DHCP_IP:${DHCP_IP}:g" \
+  -e "s:DHCP_SUBNET_FIRST:${DHCP_SUBNET_FIRST}:g" \
+  -e "s:DHCP_SUBNET_LAST:${DHCP_SUBNET_LAST}:g" \
+  -e "s:DHCP_SUBNET:${DHCP_SUBNET}:g" \
+  ${SCRIPT_DIR}/../templates/kea.conf >"${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/etc/kea/kea.conf"
+echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/sendmail"
+echo 'kea_enable="YES"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/kea"
+cbsd jstart dhcp
+
+rm -f "${TEMP_INITENV_CONF}" "${TEMP_RESOLVER_CONF}" "${TEMP_DHCP_CONF}"
