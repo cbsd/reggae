@@ -9,6 +9,8 @@ BIN_FILES = reggae
 TEMPLATES = cbsd.conf.tpl \
 	    initenv.conf \
 	    dhclient-exit-hooks \
+	    dhcp.conf \
+	    kea.conf \
 	    my.domain \
 	    named.conf \
 	    nsupdate-add.txt \

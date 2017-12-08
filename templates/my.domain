@@ -3,5 +3,5 @@ my.domain. SOA my.domain. resolver.my.domain. 42 1d 12h 1w 3h
 	; Serial, Refresh, Retry, Expire, Neg. cache TTL
             NS	my.domain.
 
-            A	127.0.2.1
-resolver    A   127.0.2.1
+            A	RESOLVER_IP
+resolver    A   RESOLVER_IP

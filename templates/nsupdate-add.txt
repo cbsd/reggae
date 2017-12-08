@@ -1,4 +1,4 @@
-server 127.0.2.1
+server RESOLVER_IP
 
 zone my.domain
 update add JAIL_NAME.my.domain 60 IN A JAIL_IP

@@ -1,9 +1,13 @@
 #!/bin/sh
 
 
+PROJECT_ROOT=`dirname $0`
+PROJECT_PATH=`readlink -f ${PROJECT_ROOT}/..`
+
 if [ -f "/usr/local/etc/reggae.conf" ]; then
     . "/usr/local/etc/reggae.conf"
 fi
+. "${PROJECT_PATH}/scripts/default.conf"
 
 CBSD_WORKDIR=`sysrc -n cbsd_workdir`
 TEMP_FILE=`mktemp ${CBSD_WORKDIR}/jails-data/resolver-data/tmp/tmp.XXXXXX`
@@ -19,6 +23,7 @@ fi
 sed \
     -e "s/JAIL_NAME/${JAIL_NAME}/g" \
     -e "s/JAIL_IP/${JAIL_IP}/g" \
+    -e "s/RESOLVER_IP/${RESOLVER_IP}/g" \
     ${TEMPLATE} \
     >${TEMP_FILE}
 
