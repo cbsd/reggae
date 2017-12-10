@@ -19,6 +19,8 @@ TEMP_RESOLVER_CONF=`mktemp`
 TEMP_DHCP_CONF=`mktemp`
 ZFS_FEAT="1"
 
+sysrc gateway_enable="YES"
+sysctl net.inet.ip.forwarding=1
 echo "dnsmasq_resolv=/tmp/resolv.conf" >/etc/resolvconf.conf
 resolvconf -u
 RAW_RESOLVERS=`awk '/^nameserver/{print $2}' /tmp/resolv.conf | tr '\n' ','`
@@ -118,6 +120,7 @@ if [ ! -f "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/cbsd.ke
     cbsd jexec jname=resolver rndc-confgen -a -c /usr/local/etc/namedb/cbsd.key -k cbsd
     chown bind:bind "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/cbsd.key"
 fi
+RNDC_KEY=`awk -F '"' '/secret/{print $2}' "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/cbsd.key"`
 sed \
   -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
   "${SCRIPT_DIR}/../templates/named.conf" \
@@ -132,13 +135,16 @@ cbsd jexec jname=resolver service named restart
 
 cat << EOF >"${CBSD_WORKDIR}/jails-system/resolver/master_poststart.d/add_resolver.sh"
 #!/bin/sh
+
 if [ -f "/usr/local/etc/reggae.conf" ]; then
   . "/usr/local/etc/reggae.conf"
 fi
 . "/usr/local/share/reggae/scripts/default.conf"
+EGRESS=`netstat -rn | awk '/^default/{print $4}'`
 sed \
-  -e \"s:RESOLVER_IP:${RESOLVER_IP}:g\" \
+  -e "s:RESOLVER_IP:\$\{RESOLVER_IP\}:g" \
   "/usr/local/share/reggae/templates/resolvconf.conf" >/etc/resolvconf.conf
+resolvconf -d "${EGRESS}"
 resolvconf -u
 /etc/dhclient-exit-hooks
 EOF
@@ -184,6 +190,7 @@ sed \
   -e "s:DHCP_SUBNET_FIRST:${DHCP_SUBNET_FIRST}:g" \
   -e "s:DHCP_SUBNET_LAST:${DHCP_SUBNET_LAST}:g" \
   -e "s:DHCP_SUBNET:${DHCP_SUBNET}:g" \
+  -e "s:RNDC_KEY:${RNDC_KEY}:g" \
   ${SCRIPT_DIR}/../templates/kea.conf >"${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/etc/kea/kea.conf"
 echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/sendmail"
 echo 'kea_enable="YES"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/kea"
