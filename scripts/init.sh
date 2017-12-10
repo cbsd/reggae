@@ -22,6 +22,7 @@ ZFS_FEAT="1"
 sysrc gateway_enable="YES"
 sysctl net.inet.ip.forwarding=1
 echo "dnsmasq_resolv=/tmp/resolv.conf" >/etc/resolvconf.conf
+resolvconf -d "${EGRESS}"
 resolvconf -u
 RAW_RESOLVERS=`awk '/^nameserver/{print $2}' /tmp/resolv.conf | tr '\n' ','`
 RESOLVERS="${RAW_RESOLVERS%?}"
@@ -129,7 +130,13 @@ sed \
   -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
     "${SCRIPT_DIR}/../templates/my.domain" \
     >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/my.domain"
-chown bind:bind "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/my.domain"
+sed \
+  -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
+    "${SCRIPT_DIR}/../templates/vm.my.domain" \
+    >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/vm.my.domain"
+chown bind:bind \
+    "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/my.domain"
+    "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/vm.my.domain"
 /etc/dhclient-exit-hooks nohup
 cbsd jexec jname=resolver service named restart
 
@@ -152,6 +159,7 @@ EOF
 cat << EOF >"${CBSD_WORKDIR}/jails-system/resolver/master_prestop.d/remove_resolver.sh"
 #!/bin/sh
 rm /etc/resolvconf.conf
+resolvconf -d "${EGRESS}"
 resolvconf -u
 EOF
 
@@ -166,7 +174,6 @@ sed \
   -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
   "/usr/local/share/reggae/templates/resolvconf.conf" >/etc/resolvconf.conf
 resolvconf -u
-
 
 sed \
   -e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \

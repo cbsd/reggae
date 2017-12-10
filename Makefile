@@ -12,6 +12,7 @@ TEMPLATES = cbsd.conf.tpl \
 	    dhcp.conf \
 	    kea.conf \
 	    my.domain \
+	    vm.my.domain \
 	    named.conf \
 	    nsupdate-add.txt \
 	    nsupdate-delete.txt \
