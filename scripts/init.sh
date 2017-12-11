@@ -158,7 +158,6 @@ EOF
 cat << EOF >"${CBSD_WORKDIR}/jails-system/resolver/master_prestop.d/remove_resolver.sh"
 #!/bin/sh
 rm /etc/resolvconf.conf
-resolvconf -d "${EGRESS}"
 resolvconf -u
 EOF
 
@@ -172,6 +171,7 @@ cbsd initenv inter=0 # "${TEMP_INITENV_CONF}"
 sed \
   -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
   "/usr/local/share/reggae/templates/resolvconf.conf" >/etc/resolvconf.conf
+resolvconf -d "${EGRESS}"
 resolvconf -u
 
 sed \
@@ -198,9 +198,10 @@ sed \
   -e "s:DHCP_SUBNET:${DHCP_SUBNET}:g" \
   -e "s:RNDC_KEY:${RNDC_KEY}:g" \
   ${SCRIPT_DIR}/../templates/kea.conf >"${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/etc/kea/kea.conf"
+cp ${SCRIPT_DIR}/../templates/keactrl.conf "${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/etc/kea/
 echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/sendmail"
 echo 'kea_enable="YES"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/kea"
 cbsd jstart dhcp
-cbsd jexec service kea restart
+cbsd jexec jname=dhcp service kea restart
 
 rm -f "${TEMP_INITENV_CONF}" "${TEMP_RESOLVER_CONF}" "${TEMP_DHCP_CONF}"

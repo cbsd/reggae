@@ -11,6 +11,7 @@ TEMPLATES = cbsd.conf.tpl \
 	    dhclient-exit-hooks \
 	    dhcp.conf \
 	    kea.conf \
+	    keactrl.conf \
 	    my.domain \
 	    vm.my.domain \
 	    named.conf \
