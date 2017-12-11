@@ -22,7 +22,6 @@ ZFS_FEAT="1"
 sysrc gateway_enable="YES"
 sysctl net.inet.ip.forwarding=1
 echo "dnsmasq_resolv=/tmp/resolv.conf" >/etc/resolvconf.conf
-resolvconf -d "${EGRESS}"
 resolvconf -u
 RAW_RESOLVERS=`awk '/^nameserver/{print $2}' /tmp/resolv.conf | tr '\n' ','`
 RESOLVERS="${RAW_RESOLVERS%?}"
@@ -202,5 +201,6 @@ sed \
 echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/sendmail"
 echo 'kea_enable="YES"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/kea"
 cbsd jstart dhcp
+cbsd jexec service kea restart
 
 rm -f "${TEMP_INITENV_CONF}" "${TEMP_RESOLVER_CONF}" "${TEMP_DHCP_CONF}"
