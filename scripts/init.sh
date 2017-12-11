@@ -146,19 +146,13 @@ if [ -f "/usr/local/etc/reggae.conf" ]; then
   . "/usr/local/etc/reggae.conf"
 fi
 . "/usr/local/share/reggae/scripts/default.conf"
-EGRESS=`netstat -rn | awk '/^default/{print $4}'`
-sed \
-  -e "s:RESOLVER_IP:\$\{RESOLVER_IP\}:g" \
-  "/usr/local/share/reggae/templates/resolvconf.conf" >/etc/resolvconf.conf
-resolvconf -d "${EGRESS}"
-resolvconf -u
+echo nameserver ${RESOLVER_IP} >/etc/resolv.conf
 /etc/dhclient-exit-hooks
 EOF
 
 cat << EOF >"${CBSD_WORKDIR}/jails-system/resolver/master_prestop.d/remove_resolver.sh"
 #!/bin/sh
-rm /etc/resolvconf.conf
-resolvconf -u
+cp /tmp/resolv.conf /etc
 EOF
 
 chmod +x "${CBSD_WORKDIR}/jails-system/resolver/master_poststart.d/add_resolver.sh"
@@ -167,12 +161,6 @@ chmod +x "${CBSD_WORKDIR}/jails-system/resolver/master_prestop.d/remove_resolver
 #echo "jnameserver=\"${RESOLVER_IP}\"" > "${TEMP_INITENV_CONF}"
 sqlite3 "${CBSD_WORKDIR}/var/db/local.sqlite" "UPDATE local SET jnameserver='${RESOLVER_IP}'"
 cbsd initenv inter=0 # "${TEMP_INITENV_CONF}"
-
-sed \
-  -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
-  "/usr/local/share/reggae/templates/resolvconf.conf" >/etc/resolvconf.conf
-resolvconf -d "${EGRESS}"
-resolvconf -u
 
 sed \
   -e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
@@ -198,10 +186,11 @@ sed \
   -e "s:DHCP_SUBNET:${DHCP_SUBNET}:g" \
   -e "s:RNDC_KEY:${RNDC_KEY}:g" \
   ${SCRIPT_DIR}/../templates/kea.conf >"${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/etc/kea/kea.conf"
-cp ${SCRIPT_DIR}/../templates/keactrl.conf "${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/etc/kea/
+cp ${SCRIPT_DIR}/../templates/keactrl.conf "${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/etc/kea/"
 echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/sendmail"
 echo 'kea_enable="YES"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/kea"
 cbsd jstart dhcp
 cbsd jexec jname=dhcp service kea restart
 
+echo nameserver ${RESOLVER_IP} >/etc/resolv.conf
 rm -f "${TEMP_INITENV_CONF}" "${TEMP_RESOLVER_CONF}" "${TEMP_DHCP_CONF}"

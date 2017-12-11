@@ -17,8 +17,7 @@ TEMPLATES = cbsd.conf.tpl \
 	    named.conf \
 	    nsupdate-add.txt \
 	    nsupdate-delete.txt \
-	    resolver.conf \
-	    resolvconf.conf
+	    resolver.conf
 PLAYBOOK_TEMPLATES = playbook/inventory.tpl
 PLAYBOOK_GROUP_TEMPLATES = playbook/group_vars/all.tpl
 MAKEFILES = ansible.mk \
