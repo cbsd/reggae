@@ -5,7 +5,7 @@ CBSD_WORKDIR=`sysrc -n cbsd_workdir`
 
 echo "forwarders {" >"${TEMP_FILE}"
 for resolver in `awk '/^nameserver/{print $2}' /tmp/resolv.conf`; do
-  echo -e "\t${resolver};" >>"${TEMP_FILE}"
+    echo -e "\t${resolver};" >>"${TEMP_FILE}"
 done
 echo "};" >>"${TEMP_FILE}"
 

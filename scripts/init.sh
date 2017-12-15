@@ -18,13 +18,50 @@ TEMP_INITENV_CONF=`mktemp`
 TEMP_RESOLVER_CONF=`mktemp`
 TEMP_DHCP_CONF=`mktemp`
 ZFS_FEAT="1"
+EGRESS_CONFIG=`sysrc -n ifconfig_${EGRESS}`
+DHCP_CONFIG=`echo ${EGRESS_CONFIG} | grep -io dhcp`
+STATIC=NO
+
+
+if [ -z "${DHCP_CONFIG}" ]; then
+    STATIC=YES
+fi
+
+
+setup_firewall() {
+    if [ ! -e /etc/pf.conf ]; then
+		sed \
+			-e "s:EGRESS:${EGRESS}:g" \
+			-e "s:VM_INTERFACE:${VM_INTERFACE}:g" \
+			-e "s:JAIL_INTERFACE:${JAIL_INTERFACE}:g" \
+			"${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
+        sysrc pflog_enable="YES"
+        sysrc pf_enable="YES"
+        service pflog start
+        service pf start
+    fi
+}
+
+
+setup_resolv_conf() {
+    echo "dnsmasq_resolv=/tmp/resolv.conf" >/etc/resolvconf.conf
+    if [ "${STATIC}" = "YES" ]; then
+        if [ ! -e /tmp/resolv.conf ]; then
+            cp /etc/resolv.conf /tmp
+        fi
+    else
+        if [ -e /tmp/resolv.conf ]; then
+            resolvconf -d "${EGRESS}"
+        fi
+        resolvconf -u
+    fi
+}
 
 
 setup_network() {
     sysrc gateway_enable="YES"
     sysctl net.inet.ip.forwarding=1
-    echo "dnsmasq_resolv=/tmp/resolv.conf" >/etc/resolvconf.conf
-    resolvconf -u
+    setup_resolv_conf
     RAW_RESOLVERS=`awk '/^nameserver/{print $2}' /tmp/resolv.conf | tr '\n' ','`
     RESOLVERS="${RAW_RESOLVERS%?}"
     if [ ! -z `echo "${RESOLVERS}" | grep -o ',$'` ]; then
@@ -55,6 +92,7 @@ setup_network() {
 
     sysrc cloned_interfaces="${CLONED_INTERFACES}"
     service netif cloneup
+    setup_firewall
     rm -rf /tmp/ifaces.txt
 }
 
@@ -158,21 +196,13 @@ setup_resolver() {
     /etc/dhclient-exit-hooks nohup
     cbsd jexec jname=resolver service named restart
 
-    cat << EOF >"${CBSD_WORKDIR}/jails-system/resolver/master_poststart.d/add_resolver.sh"
-#!/bin/sh
+    cp \
+        "${SCRIPT_DIR}/../templates/add_resolver.sh" \
+        "${CBSD_WORKDIR}/jails-system/resolver/master_poststart.d/"
 
-if [ -f "/usr/local/etc/reggae.conf" ]; then
-  . "/usr/local/etc/reggae.conf"
-fi
-. "/usr/local/share/reggae/scripts/default.conf"
-echo nameserver ${RESOLVER_IP} >/etc/resolv.conf
-/etc/dhclient-exit-hooks
-EOF
-
-    cat << EOF >"${CBSD_WORKDIR}/jails-system/resolver/master_prestop.d/remove_resolver.sh"
-#!/bin/sh
-cp /tmp/resolv.conf /etc
-EOF
+    cp \
+        "${SCRIPT_DIR}/../templates/remove_resolver.sh" \
+        "${CBSD_WORKDIR}/jails-system/resolver/master_poststart.d/"
 
     chmod +x "${CBSD_WORKDIR}/jails-system/resolver/master_poststart.d/add_resolver.sh"
     chmod +x "${CBSD_WORKDIR}/jails-system/resolver/master_prestop.d/remove_resolver.sh"

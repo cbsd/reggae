@@ -7,17 +7,20 @@ SCRIPTS_DIR = ${REGGAE_DIR}/scripts
 CBSD_PROFILE_DIR = ${REGGAE_DIR}/cbsd-profile
 BIN_FILES = reggae
 TEMPLATES = cbsd.conf.tpl \
-	    initenv.conf \
+	    add_resolver.sh \
 	    dhclient-exit-hooks \
 	    dhcp.conf \
+	    initenv.conf \
 	    kea.conf \
 	    keactrl.conf \
 	    my.domain \
-	    vm.my.domain \
 	    named.conf \
 	    nsupdate-add.txt \
 	    nsupdate-delete.txt \
-	    resolver.conf
+	    pf.conf \
+	    remove_resolver.sh \
+	    resolver.conf \
+	    vm.my.domain
 PLAYBOOK_TEMPLATES = playbook/inventory.tpl
 PLAYBOOK_GROUP_TEMPLATES = playbook/group_vars/all.tpl
 MAKEFILES = ansible.mk \
