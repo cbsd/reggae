@@ -25,6 +25,8 @@ else
     resolvconf -u
 fi
 
-echo nameserver ${RESOLVER_IP} >/etc/resolv.conf
+SEARCH=`awk /^search/{print $2} /tmp/resolv.conf`
+echo "search ${SEARCH}" >/etc/resolv.conf
+echo nameserver ${RESOLVER_IP} >>/etc/resolv.conf
 /etc/dhclient-exit-hooks
 

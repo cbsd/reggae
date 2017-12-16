@@ -207,9 +207,8 @@ setup_resolver() {
     chmod +x "${CBSD_WORKDIR}/jails-system/resolver/master_poststart.d/add_resolver.sh"
     chmod +x "${CBSD_WORKDIR}/jails-system/resolver/master_prestop.d/remove_resolver.sh"
 
-    #echo "jnameserver=\"${RESOLVER_IP}\"" > "${TEMP_INITENV_CONF}"
-    sqlite3 "${CBSD_WORKDIR}/var/db/local.sqlite" "UPDATE local SET jnameserver='${RESOLVER_IP}'"
-    cbsd initenv inter=0 # "${TEMP_INITENV_CONF}"
+    echo "jnameserver=\"${RESOLVER_IP}\"" > "${TEMP_INITENV_CONF}"
+    cbsd initenv inter=0 "${TEMP_INITENV_CONF}"
 }
 
 
