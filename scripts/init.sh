@@ -202,7 +202,7 @@ setup_resolver() {
 
     cp \
         "${SCRIPT_DIR}/../templates/remove_resolver.sh" \
-        "${CBSD_WORKDIR}/jails-system/resolver/master_poststart.d/"
+        "${CBSD_WORKDIR}/jails-system/resolver/master_prestop.d/"
 
     chmod +x "${CBSD_WORKDIR}/jails-system/resolver/master_poststart.d/add_resolver.sh"
     chmod +x "${CBSD_WORKDIR}/jails-system/resolver/master_prestop.d/remove_resolver.sh"
