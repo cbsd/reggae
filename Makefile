@@ -7,7 +7,6 @@ SCRIPTS_DIR = ${REGGAE_DIR}/scripts
 CBSD_PROFILE_DIR = ${REGGAE_DIR}/cbsd-profile
 BIN_FILES = reggae
 TEMPLATES = cbsd.conf.tpl \
-	    add_resolver.sh \
 	    dhclient-exit-hooks \
 	    dhcp.conf \
 	    initenv.conf \
@@ -18,7 +17,7 @@ TEMPLATES = cbsd.conf.tpl \
 	    nsupdate-add.txt \
 	    nsupdate-delete.txt \
 	    pf.conf \
-	    remove_resolver.sh \
+	    resolvconf.conf \
 	    resolver.conf \
 	    vm.my.domain
 PLAYBOOK_TEMPLATES = playbook/inventory.tpl
