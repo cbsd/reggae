@@ -26,8 +26,7 @@ MAKEFILES = ansible.mk \
 	    project.mk \
 	    service.mk
 SCRIPTS = init.sh \
-	  register.sh \
-	  default.conf
+	  register.sh
 MAN_FILES = reggae.1 \
 	    reggae-ansible.1 \
 	    reggae-init.1 \
@@ -49,6 +48,7 @@ compress_man:
 install: install_bin install_templates install_makefiles install_scripts install_man install_profile
 	install -d ${DESTDIR}${PREFIX}/etc
 	install -m 0644 reggae.conf.sample ${DESTDIR}${PREFIX}/etc
+	install -m 0644 reggae.conf.sample ${DESTDIR}${PREFIX}${SCRIPTS_DIR}/default.conf
 
 install_bin:
 	install -d ${DESTDIR}${PREFIX}${BIN}
@@ -89,5 +89,5 @@ install_man:
 .endfor
 
 install_profile:
-	install -d ${DESTDIR}${PREFIX}/${CBSD_PROFILE_DIR}
+	install -d ${DESTDIR}${PREFIX}${CBSD_PROFILE_DIR}
 	cp -r cbsd-profile/* ${DESTDIR}${PREFIX}${CBSD_PROFILE_DIR}/
