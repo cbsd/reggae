@@ -37,8 +37,8 @@ setup_firewall() {
 			"${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
         sysrc pflog_enable="YES"
         sysrc pf_enable="YES"
-        service pflog start
-        service pf start
+        service pflog restart
+        service pf restart
     fi
 }
 
@@ -46,11 +46,6 @@ setup_firewall() {
 setup_network() {
     sysrc gateway_enable="YES"
     sysctl net.inet.ip.forwarding=1
-    RAW_RESOLVERS=`awk '/^nameserver/{print $2}' /tmp/resolv.conf | tr '\n' ','`
-    RESOLVERS="${RAW_RESOLVERS%?}"
-    if [ ! -z `echo "${RESOLVERS}" | grep -o ',$'` ]; then
-        RESOLVERS=${RAW_RESOLVERS}
-    fi
 
     rm -rf /tmp/ifaces.txt
     touch /tmp/ifaces.txt
@@ -124,6 +119,14 @@ EOF
 
 
 setup_cbsd() {
+    echo "dnsmasq_resolv=/tmp/resolv.conf" >/etc/resolvconf.conf
+    resolvconf -u
+    RAW_RESOLVERS=`awk '/^nameserver/{print $2}' /tmp/resolv.conf | tr '\n' ','`
+    RESOLVERS="${RAW_RESOLVERS%?}"
+    if [ ! -z `echo "${RESOLVERS}" | grep -o ',$'` ]; then
+        RESOLVERS=${RAW_RESOLVERS}
+    fi
+
     sed \
       -e "s:HOSTNAME:${HOSTNAME}:g" \
       -e "s:NODEIP:${NODEIP}:g" \
@@ -168,15 +171,16 @@ setup_resolver() {
       >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/named.conf"
     sed \
       -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
-        "${SCRIPT_DIR}/../templates/my.domain" \
-        >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/my.domain"
+      "${SCRIPT_DIR}/../templates/my.domain" \
+      >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/my.domain"
     sed \
       -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
-        "${SCRIPT_DIR}/../templates/vm.my.domain" \
-        >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/vm.my.domain"
+      "${SCRIPT_DIR}/../templates/vm.my.domain" \
+      >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/vm.my.domain"
+
     chown bind:bind \
-        "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/my.domain"
-        "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/vm.my.domain"
+      "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/my.domain"
+      "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/vm.my.domain"
     /etc/dhclient-exit-hooks nohup
     cbsd jexec jname=resolver service named restart
     echo "jnameserver=\"${RESOLVER_IP}\"" > "${TEMP_INITENV_CONF}"
@@ -220,8 +224,6 @@ setup_dhcp() {
 if [ -e /tmp/resolv.conf ]; then
     echo "/tmp/resolv.conf already exists. Exiting"
     exit 0
-else
-    cp /etc/resolv.conf /tmp/
 fi
 
 setup_network

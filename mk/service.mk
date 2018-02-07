@@ -26,7 +26,9 @@ up: setup
 	@sudo cbsd jset jname=${SERVICE} astart=1
 .endif
 .if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys)
+.if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh)
 	-@sudo mkdir ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh
+.endif
 	@sudo chmod 700 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh
 	@sudo cp ~/.ssh/id_rsa.pub ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys
 	@sudo chmod 600 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys
