@@ -152,8 +152,9 @@ setup_basejail() {
     if [ -e "${BASEJAIL}/usr/sbin/hbsd-update" ]; then
       hbsd-update -r "${BASEJAIL}"
     else
-      freebsd-update -b "${BASEJAIL}" fetch
-      freebsd-update -b "${BASEJAIL}" install
+      FBSD_UPDATE="freebsd-update -f "${SCRIPT_DIR}/../templates/freebsd-update.conf" -b "${BASEJAIL}" --not-running-from-cron"
+      ${FBSD_UPDATE} fetch
+      ${FBSD_UPDATE} install
     fi
     cbsd jremove empty
 }
@@ -197,6 +198,7 @@ setup_resolver() {
     cbsd jexec jname=resolver service named restart
     echo "jnameserver=\"${RESOLVER_IP}\"" > "${TEMP_INITENV_CONF}"
     cbsd initenv inter=0 "${TEMP_INITENV_CONF}"
+    service pf restart
 }
 
 
