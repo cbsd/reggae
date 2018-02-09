@@ -28,21 +28,6 @@ if [ -z "${DHCP_CONFIG}" ]; then
 fi
 
 
-setup_firewall() {
-    if [ ! -e /etc/pf.conf ]; then
-      sed \
-        -e "s:EGRESS:${EGRESS}:g" \
-        -e "s:VM_INTERFACE:${VM_INTERFACE}:g" \
-        -e "s:JAIL_INTERFACE:${JAIL_INTERFACE}:g" \
-        "${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
-      sysrc pflog_enable="YES"
-      sysrc pf_enable="YES"
-      service pflog restart
-      service pf restart
-    fi
-}
-
-
 setup_network() {
     sysrc gateway_enable="YES"
     sysctl net.inet.ip.forwarding=1
@@ -72,6 +57,21 @@ setup_network() {
     sysrc cloned_interfaces="${CLONED_INTERFACES}"
     service netif cloneup
     rm -rf /tmp/ifaces.txt
+}
+
+
+setup_firewall() {
+    if [ ! -e /etc/pf.conf ]; then
+      sed \
+        -e "s:EGRESS:${EGRESS}:g" \
+        -e "s:VM_INTERFACE:${VM_INTERFACE}:g" \
+        -e "s:JAIL_INTERFACE:${JAIL_INTERFACE}:g" \
+        "${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
+      sysrc pflog_enable="YES"
+      sysrc pf_enable="YES"
+    fi
+    service pflog restart
+    service pf restart
 }
 
 
@@ -256,4 +256,4 @@ sed \
   "${SCRIPT_DIR}/../templates/resolvconf.conf" >/etc/resolvconf.conf
 resolvconf -u
 rm -f "${TEMP_INITENV_CONF}" "${TEMP_RESOLVER_CONF}" "${TEMP_DHCP_CONF}"
-service pf reload
+service pf restart
