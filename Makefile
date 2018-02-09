@@ -27,8 +27,7 @@ MAKEFILES = ansible.mk \
 	    project.mk \
 	    service.mk
 SCRIPTS = init.sh \
-	   register.sh \
-	   update.sh
+	   register.sh
 MAN_FILES = reggae.1 \
 	    reggae-ansible.1 \
 	    reggae-init.1 \
