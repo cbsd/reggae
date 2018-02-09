@@ -30,15 +30,15 @@ fi
 
 setup_firewall() {
     if [ ! -e /etc/pf.conf ]; then
-		sed \
-			-e "s:EGRESS:${EGRESS}:g" \
-			-e "s:VM_INTERFACE:${VM_INTERFACE}:g" \
-			-e "s:JAIL_INTERFACE:${JAIL_INTERFACE}:g" \
-			"${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
-        sysrc pflog_enable="YES"
-        sysrc pf_enable="YES"
-        service pflog restart
-        service pf restart
+      sed \
+        -e "s:EGRESS:${EGRESS}:g" \
+        -e "s:VM_INTERFACE:${VM_INTERFACE}:g" \
+        -e "s:JAIL_INTERFACE:${JAIL_INTERFACE}:g" \
+        "${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
+      sysrc pflog_enable="YES"
+      sysrc pf_enable="YES"
+      service pflog restart
+      service pf restart
     fi
 }
 
@@ -71,7 +71,6 @@ setup_network() {
 
     sysrc cloned_interfaces="${CLONED_INTERFACES}"
     service netif cloneup
-    setup_firewall
     rm -rf /tmp/ifaces.txt
 }
 
@@ -240,6 +239,7 @@ if [ -e /tmp/resolv.conf ]; then
 fi
 
 setup_network
+setup_firewall
 setup_file_system
 setup_hostname
 setup_ssh
