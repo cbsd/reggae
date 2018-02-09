@@ -253,3 +253,4 @@ sed \
   "${SCRIPT_DIR}/../templates/resolvconf.conf" >/etc/resolvconf.conf
 resolvconf -u
 rm -f "${TEMP_INITENV_CONF}" "${TEMP_RESOLVER_CONF}" "${TEMP_DHCP_CONF}"
+service pf reload
