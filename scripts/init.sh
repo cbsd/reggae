@@ -150,12 +150,13 @@ setup_cbsd() {
 setup_basejail() {
     BASEJAIL=/cbsd/basejail/base_amd64_amd64_11.1
     cbsd jcreate inter=0 jconf="${SCRIPT_DIR}/../templates/empty.jconf"
-    cp /etc/resolv.conf "${BASEJAIL}/etc"
-    mount -t nullfs /dev "${BASEJAIL}/dev"
-    cp "${SCRIPT_DIR}/update.sh" "${BASEJAIL}/tmp"
-    chroot "${BASEJAIL}" /tmp/update.sh
+    if [ -e "${BASEJAIL}/usr/sbin/hbsd-update" ]; then
+      hbsd-update -r "${BASEJAIL}"
+    else
+      freebsd-update -b "${BASEJAIL}" fetch
+      freebsd-update -b "${BASEJAIL}" install
+    fi
     cbsd jremove empty
-    umount "${BASEJAIL}/dev"
 }
 
 
