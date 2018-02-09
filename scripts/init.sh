@@ -147,6 +147,18 @@ setup_cbsd() {
 }
 
 
+setup_basejail() {
+    BASEJAIL=/cbsd/basejail/base_amd64_amd64_11.1
+    cbsd jcreate inter=0 jconf="${SCRIPT_DIR}/../templates/empty.jconf"
+    cp /etc/resolv.conf "${BASEJAIL}/etc"
+    mount -t nullfs /dev "${BASEJAIL}/dev"
+    cp "${SCRIPT_DIR}/update.sh" "${BASEJAIL}/tmp"
+    chroot "${BASEJAIL}" /tmp/update.sh
+    cbsd jremove empty
+    umount "${BASEJAIL}/dev"
+}
+
+
 setup_resolver() {
     sed \
       -e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
@@ -232,6 +244,7 @@ setup_hostname
 setup_ssh
 setup_devfs
 setup_cbsd
+setup_basejail
 setup_resolver
 setup_dhcp
 
