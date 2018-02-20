@@ -231,8 +231,8 @@ setup_dhcp() {
     cp ${SCRIPT_DIR}/../templates/keactrl.conf "${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/etc/kea/"
     echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/sendmail"
     echo 'kea_enable="YES"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/kea"
+    echo 'service kea start' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.local"
     cbsd jstart dhcp
-    cbsd jexec jname=dhcp service kea restart
 }
 
 if [ -e /tmp/resolv.conf ]; then
