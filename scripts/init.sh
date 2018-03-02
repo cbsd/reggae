@@ -153,7 +153,7 @@ setup_basejail() {
       hbsd-update -r "${BASEJAIL}"
     else
       FBSD_UPDATE="freebsd-update -f "${SCRIPT_DIR}/../templates/freebsd-update.conf" -b "${BASEJAIL}" --not-running-from-cron"
-      ${FBSD_UPDATE} fetch
+      env PAGER=cat ${FBSD_UPDATE} fetch
       ${FBSD_UPDATE} install
     fi
     cbsd jremove empty
