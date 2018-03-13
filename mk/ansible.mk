@@ -1,6 +1,9 @@
 ANSIBLE!=sh -c "which ansible || true"
 
 do-provision:
+.if exists(requirements.yml)
+	@ansible-galaxy install -p playbook/roles -r requirements.yml
+.endif
 	@sudo cbsd jexec jname=${SERVICE} pkg install -y python
 	@sudo ansible-playbook -i playbook/inventory/inventory playbook/site.yml
 
@@ -19,9 +22,6 @@ do-setup:
 	@echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 	@echo
 	@sudo pkg install ansible
-.endif
-.if exists(requirements.yml)
-	@ansible-galaxy install -p playbook/roles -r requirements.yml
 .endif
 
 do-clean:
