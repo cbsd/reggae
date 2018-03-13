@@ -61,7 +61,7 @@ provision:
 down: setup
 	@sudo cbsd jstop ${SERVICE} || true
 
-destroy: down
+destroy:
 	@rm -f cbsd.conf .provisioned
 	@sudo cbsd jremove ${SERVICE}
 .if target(do-clean)

@@ -15,9 +15,11 @@ JAIL_NAME=${jname}
 JAIL_IP=`echo ${ip4_addr} | cut -f 1 -d '/'`
 ACTION="${1}"
 TEMPLATE="/usr/local/share/reggae/templates/nsupdate-add.txt"
+PF_ACTION="add"
 
 if [ "${ACTION}" = "deregister" ]; then
     TEMPLATE="/usr/local/share/reggae/templates/nsupdate-delete.txt"
+    PF_ACTION="delete"
 fi
 
 sed \
@@ -28,5 +30,6 @@ sed \
     >${TEMP_FILE}
 
 cbsd jexec jname=resolver nsupdate -k /usr/local/etc/namedb/cbsd.key ${TEMP_FILE#${CBSD_WORKDIR}/jails-data/resolver-data}
+pfctl -t cbsd -T ${PF_ACTION} ${JAIL_IP}
 rm -rf ${TEMP_FILE}
 
