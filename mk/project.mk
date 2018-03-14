@@ -73,7 +73,11 @@ destroy:
 .endif
 
 login:
+.if defined(service)
 	@${MAKE} ${MAKEFLAGS} -C services/${service} login
+.else
+	@sudo cbsd jlogin
+.endif
 
 down: setup
 .if defined(service)
