@@ -86,7 +86,9 @@ export: down
 .endif
 	@echo -n "Exporting jail ... "
 	@sudo cbsd jexport jname=${SERVICE}
+	@echo "Moving ${SERVICE}.img to build dir ..."
 	@sudo mv ${CBSD_WORKDIR}/export/${SERVICE}.img build/
+	@echo "Chowning ${SERVICE}.img to ${UID}:${GID} ..."
 	@sudo chown ${UID}:${GID} build/${SERVICE}.img
 
 devel: up
