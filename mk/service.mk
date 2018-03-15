@@ -8,7 +8,7 @@ RUNNING_GID := `id -g`
 UID ?= ${RUNNING_UID}
 GID ?= ${RUNNING_GID}
 DOMAIN ?= my.domain
-CBSD_WORKDIR!=sysrc -n cbsd_workdir
+CBSD_WORKDIR != sysrc -n cbsd_workdir
 
 .MAIN: up
 
