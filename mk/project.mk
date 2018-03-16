@@ -73,7 +73,11 @@ destroy:
 .endif
 
 login:
+.if defined(service)
 	@${MAKE} ${MAKEFLAGS} -C services/${service} login
+.else
+	@sudo cbsd jlogin
+.endif
 
 down: setup
 .if defined(service)
@@ -86,3 +90,14 @@ down: setup
 
 devel:
 	@${MAKE} ${MAKEFLAGS} -C services/${service} devel
+
+export:
+.if defined(service)
+	@echo "exporting ${service}"
+	@${MAKE} ${MAKEFLAGS} -C services/${service} export
+.else
+.for service url in ${SERVICES}
+	@echo "exporting ${service}"
+	@${MAKE} ${MAKEFLAGS} -C services/${service} export
+.endfor
+.endif

@@ -8,7 +8,7 @@ RUNNING_GID := `id -g`
 UID ?= ${RUNNING_UID}
 GID ?= ${RUNNING_GID}
 DOMAIN ?= my.domain
-CBSD_WORKDIR!=sysrc -n cbsd_workdir
+CBSD_WORKDIR != sysrc -n cbsd_workdir
 
 .MAIN: up
 
@@ -41,13 +41,13 @@ up: setup
 	@sudo cbsd jexec jname=${SERVICE} pw groupadd devel -g ${GID}
 	@sudo cbsd jexec jname=${SERVICE} pw useradd devel -u ${UID} -g devel -s /bin/tcsh -G wheel,operator -m
 	@sudo cbsd jexec jname=${SERVICE} chpass -p '$6$MIv4IXAika7jqFH2$GkYSBax0G9CIBG0DcgQMP5gG7Qt.CojExDcU7YOQy0K.pouAd.edvo/MaQPhVO0fISxjOD4J1nzRsGVXUAxGp1' devel
-	@sudo cbsd jexec jname=${SERVICE} pwd_mkdb /etc/master.passwd
 .endif
 .else
 	@echo 'Deleting user "devel"'
 	-@sudo cbsd jexec jname=${SERVICE} pw user del devel -r >/dev/null 2>&1
 	@echo 'User "devel" deleted'
 .endif
+	@sudo cbsd jexec jname=${SERVICE} pwd_mkdb /etc/master.passwd
 .if !exists(.provisioned)
 	@${MAKE} ${MAKEFLAGS} provision
 .endif
@@ -86,7 +86,9 @@ export: down
 .endif
 	@echo -n "Exporting jail ... "
 	@sudo cbsd jexport jname=${SERVICE}
+	@echo "Moving ${SERVICE}.img to build dir ..."
 	@sudo mv ${CBSD_WORKDIR}/export/${SERVICE}.img build/
+	@echo "Chowning ${SERVICE}.img to ${UID}:${GID} ..."
 	@sudo chown ${UID}:${GID} build/${SERVICE}.img
 
 devel: up
