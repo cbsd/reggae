@@ -4,6 +4,10 @@ TEMP_FILE=`mktemp`
 CBSD_WORKDIR=`sysrc -n cbsd_workdir`
 
 resolvconf -u
+if [ ! -e /tmp/resolv.conf ]; then
+  cp /etc/resolv.conf /tmp
+fi
+
 echo "forwarders {" >"${TEMP_FILE}"
 for resolver in `awk '/^nameserver/{print $2}' /tmp/resolv.conf`; do
     echo -e "\t${resolver};" >>"${TEMP_FILE}"

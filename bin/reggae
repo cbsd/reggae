@@ -5,13 +5,28 @@ PROJECT_ROOT=`dirname "${PROJECT_BIN_PATH}"`
 
 help() {
     echo "Usage: $0 <action>" >&2
-    echo "  where action is 'init', 'register' or 'deregister'"
+    echo "  where action is 'init', 'network-init', 'cbsd-init', 'register' or 'deregister'"
 }
 
 case "${1}" in
     init)
         shift
         /usr/local/share/reggae/scripts/init.sh ${@}
+        break
+        ;;
+    network-init)
+        shift
+        /usr/local/share/reggae/scripts/network-init.sh ${@}
+        break
+        ;;
+    cbsd-init)
+        shift
+        /usr/local/share/reggae/scripts/cbsd-init.sh ${@}
+        break
+        ;;
+    master-init)
+        shift
+        /usr/local/share/reggae/scripts/master-init.sh ${@}
         break
         ;;
     register)

@@ -28,6 +28,9 @@ MAKEFILES = ansible.mk \
 	    project.mk \
 	    service.mk
 SCRIPTS = init.sh \
+	   cbsd-init.sh \
+	   master-init.sh \
+	   network-init.sh \
 	   register.sh
 MAN_FILES = reggae.1 \
 	    reggae-ansible.1 \
