@@ -57,10 +57,15 @@ network() {
 
 pf() {
     if [ ! -e /etc/pf.conf ]; then
+      RDR=""
+      if [ "${STATIC}" = "NO" ]; then
+        RDR="rdr pass on $ext_if proto tcp from any to any port ssh -> 127.0.0.1"
+      fi
       sed \
         -e "s:EGRESS:${EGRESS}:g" \
         -e "s:VM_INTERFACE:${VM_INTERFACE}:g" \
         -e "s:JAIL_INTERFACE:${JAIL_INTERFACE}:g" \
+        -e "s:RDR:${RDR}:g" \
         "${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
       sysrc pflog_enable="YES"
       sysrc pf_enable="YES"
