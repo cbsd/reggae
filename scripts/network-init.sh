@@ -59,7 +59,7 @@ pf() {
     if [ ! -e /etc/pf.conf ]; then
       RDR=""
       if [ "${STATIC}" = "NO" ]; then
-        RDR="rdr pass on $ext_if proto tcp from any to any port ssh -> 127.0.0.1"
+        RDR="rdr pass on \$ext_if proto tcp from any to any port ssh -> 127.0.0.1"
       fi
       sed \
         -e "s:EGRESS:${EGRESS}:g" \
