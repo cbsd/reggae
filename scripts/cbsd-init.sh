@@ -43,43 +43,30 @@ EOF
 
 
 setup_cbsd() {
-    RESOLVERS="8.8.8.8"
+  RESOLVERS="8.8.8.8"
 
-    sed \
-      -e "s:HOSTNAME:${HOSTNAME}:g" \
-      -e "s:NODEIP:${NODEIP}:g" \
-      -e "s:RESOLVERS:${RESOLVERS}:g" \
-      -e "s:NATIP:${NATIP}:g" \
-      -e "s:JAIL_IP_POOL:${JAIL_IP_POOL}:g" \
-      -e "s:ZFSFEAT:${ZFSFEAT}:g" \
-      ${SCRIPT_DIR}/../templates/initenv.conf >"${TEMP_INITENV_CONF}"
+  sed \
+    -e "s:HOSTNAME:${HOSTNAME}:g" \
+    -e "s:NODEIP:${NODEIP}:g" \
+    -e "s:RESOLVERS:${RESOLVERS}:g" \
+    -e "s:NATIP:${NATIP}:g" \
+    -e "s:JAIL_IP_POOL:${JAIL_IP_POOL}:g" \
+    -e "s:ZFSFEAT:${ZFSFEAT}:g" \
+    ${SCRIPT_DIR}/../templates/initenv.conf >"${TEMP_INITENV_CONF}"
 
-    env workdir="${CBSD_WORKDIR}" /usr/local/cbsd/sudoexec/initenv "${TEMP_INITENV_CONF}"
-    service cbsdd start
-    service cbsdrsyncd start
-    cp "${SCRIPT_DIR}/../cbsd-profile/jail-freebsd-reggae.conf" "${CBSD_WORKDIR}/etc/defaults/"
-    cp -r "${SCRIPT_DIR}/../cbsd-profile/skel" "${CBSD_WORKDIR}/share/FreeBSD-jail-reggae-skel"
-    cp -r "${SCRIPT_DIR}/../cbsd-profile/system" "${CBSD_WORKDIR}/share/jail-system-reggae"
-    chown -R root:wheel "${CBSD_WORKDIR}/share/FreeBSD-jail-reggae-skel"
-    chown -R 666:666 "${CBSD_WORKDIR}/share/FreeBSD-jail-reggae-skel/usr/home/provision"
-}
-
-
-setup_basejail() {
-    BASEJAIL="${CBSD_WORKDIR}/basejail/base_amd64_amd64_11.1"
-    cbsd jcreate inter=0 jconf="${SCRIPT_DIR}/../templates/empty.jconf"
-    if [ -e "${BASEJAIL}/usr/sbin/hbsd-update" ]; then
-      hbsd-update -r "${BASEJAIL}"
-    else
-      FBSD_UPDATE="freebsd-update -f "${SCRIPT_DIR}/../templates/freebsd-update.conf" -b "${BASEJAIL}" --not-running-from-cron"
-      env PAGER=cat ${FBSD_UPDATE} fetch
-      ${FBSD_UPDATE} install
-    fi
-    cbsd jremove empty
+  env workdir="${CBSD_WORKDIR}" /usr/local/cbsd/sudoexec/initenv "${TEMP_INITENV_CONF}"
+  service cbsdd start
+  service cbsdrsyncd start
+  cp "${SCRIPT_DIR}/../cbsd-profile/jail-freebsd-reggae.conf" "${CBSD_WORKDIR}/etc/defaults/"
+  cp -r "${SCRIPT_DIR}/../cbsd-profile/skel" "${CBSD_WORKDIR}/share/FreeBSD-jail-reggae-skel"
+  cp -r "${SCRIPT_DIR}/../cbsd-profile/system" "${CBSD_WORKDIR}/share/jail-system-reggae"
+  chown -R root:wheel "${CBSD_WORKDIR}/share/FreeBSD-jail-reggae-skel"
+  chown -R 666:666 "${CBSD_WORKDIR}/share/FreeBSD-jail-reggae-skel/usr/home/provision"
+  cbsd repo action=get sources=base
+  cbsd upgrade target=world
 }
 
 
 setup_file_system
 setup_devfs
 setup_cbsd
-setup_basejail
