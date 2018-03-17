@@ -52,7 +52,7 @@ up: setup
 	@${MAKE} ${MAKEFLAGS} provision
 .endif
 
-provision:
+provision: setup
 	@touch .provisioned
 .if target(do-provision)
 	@${MAKE} ${MAKEFLAGS} do-provision
