@@ -71,6 +71,7 @@ pf() {
         -e "s:JAIL_INTERFACE:${JAIL_INTERFACE}:g" \
         -e "s:JAIL_IP_POOL:${JAIL_IP_POOL}:g" \
         -e "s:VM_IP_POOL:${VM_IP_POOL}:g" \
+        -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
         -e "s:RDR:${RDR}:g" \
         "${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
       sysrc pflog_enable="YES"

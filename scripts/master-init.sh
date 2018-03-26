@@ -33,6 +33,10 @@ resolver() {
     cbsd jcreate inter=0 jconf="${TEMP_RESOLVER_CONF}"
     echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/resolver-data/etc/rc.conf.d/sendmail"
     echo 'named_enable="YES"' >"${CBSD_WORKDIR}/jails-data/resolver-data/etc/rc.conf.d/named"
+    sed \
+      -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
+      "${SCRIPT_DIR}/../templates/rndc.conf" \
+      >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/rndc.conf"
     cbsd jstart resolver
     cp "${SCRIPT_DIR}/../templates/dhclient-exit-hooks" /etc
     chmod 700 /etc/dhclient-exit-hooks

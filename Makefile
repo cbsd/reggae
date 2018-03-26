@@ -19,6 +19,7 @@ TEMPLATES = cbsd.conf.tpl \
 	    nsupdate-add.txt \
 	    nsupdate-delete.txt \
 	    pf.conf \
+	    rndc.conf \
 	    resolvconf.conf \
 	    resolver.conf \
 	    vm.my.domain
