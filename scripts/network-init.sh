@@ -61,10 +61,16 @@ pf() {
       if [ "${STATIC}" = "NO" ]; then
         RDR="rdr pass on \$ext_if proto tcp from any to any port ssh -> 127.0.0.1"
       fi
+      RESOLVER_BASE=`echo ${RESOLVER_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
+      JAIL_IP_POOL="${RESOLVER_BASE}.0/24"
+      DHCP_BASE=`echo ${DHCP_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
+      VM_IP_POOL="${DHCP_BASE}.0/24"
       sed \
         -e "s:EGRESS:${EGRESS}:g" \
         -e "s:VM_INTERFACE:${VM_INTERFACE}:g" \
         -e "s:JAIL_INTERFACE:${JAIL_INTERFACE}:g" \
+        -e "s:JAIL_IP_POOL:${JAIL_IP_POOL}:g" \
+        -e "s:VM_IP_POOL:${VM_IP_POOL}:g" \
         -e "s:RDR:${RDR}:g" \
         "${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
       sysrc pflog_enable="YES"
