@@ -1,7 +1,7 @@
 $TTL 60
-my.domain. SOA my.domain. resolver.my.domain. 42 1d 12h 1w 3h
+ZONE_BASE. SOA ZONE_BASE. resolver.ZONE_BASE. 42 1d 12h 1w 3h
 	; Serial, Refresh, Retry, Expire, Neg. cache TTL
-            NS	my.domain.
+            NS	ZONE_BASE.
 
             A	RESOLVER_IP
 resolver    A   RESOLVER_IP

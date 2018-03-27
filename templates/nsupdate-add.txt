@@ -1,5 +1,5 @@
 server RESOLVER_IP
 
-zone my.domain
-update add JAIL_NAME.my.domain 60 IN A JAIL_IP
+zone DOMAIN
+update add JAIL_NAME.DOMAIN 60 IN A JAIL_IP
 send

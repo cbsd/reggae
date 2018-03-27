@@ -1,5 +1,5 @@
 server RESOLVER_IP
 
-zone my.domain
-update delete JAIL_NAME.my.domain
+zone DOMAIN
+update delete JAIL_NAME.DOMAIN
 send

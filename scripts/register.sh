@@ -27,6 +27,7 @@ if [ "${JAIL_NAME}" != "resolver" ]; then
       -e "s/JAIL_NAME/${JAIL_NAME}/g" \
       -e "s/JAIL_IP/${JAIL_IP}/g" \
       -e "s/RESOLVER_IP/${RESOLVER_IP}/g" \
+      -e "s/DOMAIN/${DOMAIN}/g" \
       ${TEMPLATE} \
       >${TEMP_FILE}
 

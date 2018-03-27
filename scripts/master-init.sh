@@ -30,6 +30,8 @@ resolver() {
       -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
       ${SCRIPT_DIR}/../templates/resolver.conf >"${TEMP_RESOLVER_CONF}"
 
+    ZONE_BASE=`hostname`
+
     cbsd jcreate inter=0 jconf="${TEMP_RESOLVER_CONF}"
     echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/resolver-data/etc/rc.conf.d/sendmail"
     echo 'named_enable="YES"' >"${CBSD_WORKDIR}/jails-data/resolver-data/etc/rc.conf.d/named"
@@ -47,20 +49,23 @@ resolver() {
     RNDC_KEY=`awk -F '"' '/secret/{print $2}' "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/cbsd.key"`
     sed \
       -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
+      -e "s:ZONE_BASE:${ZONE_BASE}:g" \
       "${SCRIPT_DIR}/../templates/named.conf" \
       >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/named.conf"
     sed \
       -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
+      -e "s:ZONE_BASE:${ZONE_BASE}:g" \
       "${SCRIPT_DIR}/../templates/my.domain" \
-      >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/my.domain"
+      >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/${ZONE_BASE}"
     sed \
       -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
+      -e "s:ZONE_BASE:${ZONE_BASE}:g" \
       "${SCRIPT_DIR}/../templates/vm.my.domain" \
-      >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/vm.my.domain"
+      >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/vm.${ZONE_BASE}"
 
     chown bind:bind \
-      "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/my.domain"
-      "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/vm.my.domain"
+      "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/${ZONE_BASE}"
+      "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/vm.${ZONE_BASE}"
 
     if [ "${STATIC}" = "NO" ]; then
       sed \
