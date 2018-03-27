@@ -69,10 +69,10 @@ destroy:
 .endif
 
 setup:
-	@sed
-		-e "s:SERVICE:${SERVICE}:g"
-		-e "s:DOMAIN:${DOMAIN}:g"
-		-e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g"
+	@sed \
+		-e "s:SERVICE:${SERVICE}:g" \
+		-e "s:DOMAIN:${DOMAIN}:g" \
+		-e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
 		${REGGAE_PATH}/templates/cbsd.conf.tpl >cbsd.conf
 .if target(do-setup)
 	@${MAKE} ${MAKEFLAGS} do-setup
