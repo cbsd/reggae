@@ -40,6 +40,11 @@ case "${1}" in
         /usr/local/share/reggae/scripts/register.sh deregister
         break
         ;;
+    get-config)
+        shift
+        /usr/local/share/reggae/scripts/get-config.sh ${@}
+        break
+        ;;
     *)
         help
         exit 1

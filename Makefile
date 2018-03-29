@@ -30,6 +30,7 @@ MAKEFILES = ansible.mk \
 	    service.mk
 SCRIPTS = init.sh \
 	   cbsd-init.sh \
+	   get-config.sh \
 	   master-init.sh \
 	   network-init.sh \
 	   register.sh
