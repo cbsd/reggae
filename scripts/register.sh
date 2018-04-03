@@ -11,7 +11,7 @@ fi
 
 CBSD_WORKDIR=`sysrc -n cbsd_workdir`
 JAIL_NAME=${jname}
-JAIL_IP=`echo ${ip4_addr} | cut -f 1 -d '/'`
+JAIL_IP=${ipv4_first}
 ACTION="${1}"
 TEMPLATE="/usr/local/share/reggae/templates/nsupdate-add.txt"
 PF_ACTION="add"
