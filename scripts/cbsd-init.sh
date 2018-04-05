@@ -37,6 +37,7 @@ add include \$devfsrules_hide_all
 add include \$devfsrules_unhide_basic
 add include \$devfsrules_unhide_login
 add path 'bpf*' unhide
+add path 'pf*' unhide
 EOF
     fi
 }

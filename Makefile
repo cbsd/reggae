@@ -9,10 +9,9 @@ BIN_FILES = reggae
 TEMPLATES = cbsd.conf.tpl \
 	    dhclient-exit-hooks \
 	    dhcp.conf \
+	    dhcpd.conf \
 	    freebsd-update.conf \
 	    initenv.conf \
-	    kea.conf \
-	    keactrl.conf \
 	    empty.jconf \
 	    my.domain \
 	    named.conf \
