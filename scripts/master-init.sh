@@ -99,24 +99,26 @@ dhcp() {
       "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/cbsd.key" \
       "${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/etc/"
     DHCP_BASE=`echo ${DHCP_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
-    DHCP_SUBNET="${DHCP_BASE}.0/24"
+    REVERSE_ZONE=`echo ${DHCP_IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
+    DHCP_SUBNET="${DHCP_BASE}"
     DHCP_SUBNET_FIRST="${DHCP_BASE}.1"
     DHCP_SUBNET_LAST="${DHCP_BASE}.200"
     sed \
       -e "s:DOMAIN:${DOMAIN}:g" \
       -e "s:VM_INTERFACE_IP:${VM_INTERFACE_IP}:g" \
-      -e "s:VM_INTERFACE:${VM_INTERFACE}:g" \
       -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
-      -e "s:DHCP_IP:${DHCP_IP}:g" \
+      -e "s:REVERSE_ZONE:${REVERSE_ZONE}:g" \
       -e "s:DHCP_SUBNET_FIRST:${DHCP_SUBNET_FIRST}:g" \
       -e "s:DHCP_SUBNET_LAST:${DHCP_SUBNET_LAST}:g" \
       -e "s:DHCP_SUBNET:${DHCP_SUBNET}:g" \
-      -e "s:RNDC_KEY:${RNDC_KEY}:g" \
-      ${SCRIPT_DIR}/../templates/kea.conf >"${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/etc/kea/kea.conf"
-    cp ${SCRIPT_DIR}/../templates/keactrl.conf "${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/etc/kea/"
+      ${SCRIPT_DIR}/../templates/dhcpd.conf >"${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/etc/dhcpd.conf"
     echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/sendmail"
-    echo 'kea_enable="YES"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/kea"
-    echo 'service kea start' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.local"
+    echo 'dhcpd_enable="YES"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"
+    echo 'dhcpd_flags="-q"' >>"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"
+    echo "dhcpd_ifaces=\"${VM_INTERFACE}\"" >>"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"
+    echo 'dhcpd_conf="/usr/local/etc/dhcpd.conf"' >>"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"
+    echo 'dhcpd_withumask="022"' >>"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"
+
     cbsd jstart dhcp
 }
 
