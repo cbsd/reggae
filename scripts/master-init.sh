@@ -47,25 +47,32 @@ resolver() {
         chown bind:bind "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/cbsd.key"
     fi
     RNDC_KEY=`awk -F '"' '/secret/{print $2}' "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/cbsd.key"`
+    REVERSE_ZONE=`echo ${DHCP_IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
+    RESOLVER_IP_LAST=`echo ${RESOLVER_IP} | awk -F '.' '{print $4}'`
     sed \
       -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
       -e "s:ZONE_BASE:${ZONE_BASE}:g" \
+      -e "s:REVERSE_ZONE:${REVERSE_ZONE}:g" \
       "${SCRIPT_DIR}/../templates/named.conf" \
       >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/named.conf"
     sed \
+      -e "s:RESOLVER_IP_LAST:${RESOLVER_IP_LAST}:g" \
+      -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
+      -e "s:ZONE_BASE:${ZONE_BASE}:g" \
+      "${SCRIPT_DIR}/../templates/my.domain.rev" \
+      >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/${ZONE_BASE}.rev"
+    sed \
+      -e "s:RESOLVER_IP_LAST:${RESOLVER_IP_LAST}:g" \
       -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
       -e "s:ZONE_BASE:${ZONE_BASE}:g" \
       "${SCRIPT_DIR}/../templates/my.domain" \
       >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/${ZONE_BASE}"
-    sed \
-      -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
-      -e "s:ZONE_BASE:${ZONE_BASE}:g" \
-      "${SCRIPT_DIR}/../templates/vm.my.domain" \
-      >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/vm.${ZONE_BASE}"
 
+    echo "Changing permissions"
     chown bind:bind \
-      "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/${ZONE_BASE}"
-      "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/vm.${ZONE_BASE}"
+      "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/${ZONE_BASE}" \
+      "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/${ZONE_BASE}.rev"
+    echo "Permissions changed"
 
     if [ "${STATIC}" = "NO" ]; then
       sed \
@@ -100,7 +107,6 @@ dhcp() {
       "${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/etc/"
     DHCP_BASE=`echo ${DHCP_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
     REVERSE_ZONE=`echo ${DHCP_IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
-    DHCP_SUBNET="${DHCP_BASE}"
     DHCP_SUBNET_FIRST="${DHCP_BASE}.1"
     DHCP_SUBNET_LAST="${DHCP_BASE}.200"
     sed \
@@ -110,7 +116,7 @@ dhcp() {
       -e "s:REVERSE_ZONE:${REVERSE_ZONE}:g" \
       -e "s:DHCP_SUBNET_FIRST:${DHCP_SUBNET_FIRST}:g" \
       -e "s:DHCP_SUBNET_LAST:${DHCP_SUBNET_LAST}:g" \
-      -e "s:DHCP_SUBNET:${DHCP_SUBNET}:g" \
+      -e "s:DHCP_BASE:${DHCP_BASE}:g" \
       ${SCRIPT_DIR}/../templates/dhcpd.conf >"${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/etc/dhcpd.conf"
     echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/sendmail"
     echo 'dhcpd_enable="YES"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"

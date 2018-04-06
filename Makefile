@@ -14,14 +14,14 @@ TEMPLATES = cbsd.conf.tpl \
 	    initenv.conf \
 	    empty.jconf \
 	    my.domain \
+	    my.domain.rev \
 	    named.conf \
 	    nsupdate-add.txt \
 	    nsupdate-delete.txt \
 	    pf.conf \
 	    rndc.conf \
 	    resolvconf.conf \
-	    resolver.conf \
-	    vm.my.domain
+	    resolver.conf
 PLAYBOOK_TEMPLATES = playbook/inventory.tpl
 PLAYBOOK_GROUP_TEMPLATES = playbook/group_vars/all.tpl
 MAKEFILES = ansible.mk \

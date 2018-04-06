@@ -1,7 +1,0 @@
-$TTL 60
-vm.ZONE_BASE. SOA vm.ZONE_BASE. resolver.vm.ZONE_BASE. 42 1d 12h 1w 3h
-	; Serial, Refresh, Retry, Expire, Neg. cache TTL
-            NS	vm.ZONE_BASE.
-
-            A	RESOLVER_IP
-resolver    A   RESOLVER_IP
