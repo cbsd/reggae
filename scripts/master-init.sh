@@ -59,6 +59,7 @@ resolver() {
       -e "s:RESOLVER_IP_LAST:${RESOLVER_IP_LAST}:g" \
       -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
       -e "s:ZONE_BASE:${ZONE_BASE}:g" \
+      -e "s:REVERSE_ZONE:${REVERSE_ZONE}:g" \
       "${SCRIPT_DIR}/../templates/my.domain.rev" \
       >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/${ZONE_BASE}.rev"
     sed \
