@@ -121,7 +121,7 @@ dhcp() {
     echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/sendmail"
     echo 'dhcpd_enable="YES"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"
     echo 'dhcpd_flags="-q"' >>"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"
-    echo "dhcpd_ifcaces=\"${VM_INTERFACE}\"" >>"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"
+    echo "dhcpd_ifaces=\"${VM_INTERFACE}\"" >>"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"
     echo 'dhcpd_conf="/usr/local/etc/dhcpd.conf"' >>"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"
     echo 'dhcpd_withumask="022"' >>"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"
 
