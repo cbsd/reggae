@@ -106,6 +106,8 @@ dhcp() {
     cp \
       "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/cbsd.key" \
       "${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/etc/"
+    cp ${SCRIPT_DIR}/../templates/dhcpd-hook.sh "${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/bin/"
+    chmod 755 "${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/bin/dhcpd-hook.sh"
     DHCP_BASE=`echo ${DHCP_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
     REVERSE_ZONE=`echo ${DHCP_IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
     DHCP_SUBNET_FIRST="${DHCP_BASE}.1"

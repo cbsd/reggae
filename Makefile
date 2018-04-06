@@ -10,6 +10,7 @@ TEMPLATES = cbsd.conf.tpl \
 	    dhclient-exit-hooks \
 	    dhcp.conf \
 	    dhcpd.conf \
+	    dhcpd-hook.sh \
 	    freebsd-update.conf \
 	    initenv.conf \
 	    empty.jconf \
