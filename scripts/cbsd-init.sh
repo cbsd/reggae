@@ -37,12 +37,8 @@ add include \$devfsrules_hide_all
 add include \$devfsrules_unhide_basic
 add include \$devfsrules_unhide_login
 add path 'bpf*' unhide
-add path 'pf*' unhide
-
-[system=10]
-add path 'pf*' mode 0660 group 136
+add path 'pf*' unhide mode 0660 group 136
 EOF
-    sysrc devfs_system_ruleset="system"
     fi
 }
 
