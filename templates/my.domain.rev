@@ -2,4 +2,3 @@ $TTL 60
 REVERSE_ZONE. SOA ZONE_BASE. resolver.ZONE_BASE. 42 1d 12h 1w 3h
            NS  resolver.ZONE_BASE.
 
-RESOLVER_IP_LAST           PTR resolver.ZONE_BASE

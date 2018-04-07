@@ -23,9 +23,13 @@ fi
 
 if [ "${JAIL_NAME}" != "resolver" ]; then
   TEMP_FILE=`mktemp ${CBSD_WORKDIR}/jails-data/resolver-data/tmp/tmp.XXXXXX`
+  JAIL_IP_LAST=`echo ${JAIL_IP} | awk -F '.' '{print $4}'`
+  REVERSE_ZONE=`echo ${JAIL_IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
   sed \
       -e "s/JAIL_NAME/${JAIL_NAME}/g" \
+      -e "s/JAIL_IP_LAST/${JAIL_IP_LAST}/g" \
       -e "s/JAIL_IP/${JAIL_IP}/g" \
+      -e "s/REVERSE_ZONE/${REVERSE_ZONE}/g" \
       -e "s/RESOLVER_IP/${RESOLVER_IP}/g" \
       -e "s/DOMAIN/${DOMAIN}/g" \
       ${TEMPLATE} \
@@ -35,4 +39,3 @@ if [ "${JAIL_NAME}" != "resolver" ]; then
   rm -rf ${TEMP_FILE}
 fi
 pfctl -t cbsd -T ${PF_ACTION} ${JAIL_IP}
-

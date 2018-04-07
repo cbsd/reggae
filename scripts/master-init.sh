@@ -49,19 +49,27 @@ resolver() {
     RNDC_KEY=`awk -F '"' '/secret/{print $2}' "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/cbsd.key"`
     REVERSE_ZONE=`echo ${DHCP_IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
     RESOLVER_IP_LAST=`echo ${RESOLVER_IP} | awk -F '.' '{print $4}'`
+    JAIL_REVERSE_ZONE=`echo ${RESOLVER_IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
     sed \
       -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
       -e "s:ZONE_BASE:${ZONE_BASE}:g" \
+      -e "s:JAIL_REVERSE_ZONE:${JAIL_REVERSE_ZONE}:g" \
       -e "s:REVERSE_ZONE:${REVERSE_ZONE}:g" \
       "${SCRIPT_DIR}/../templates/named.conf" \
       >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/named.conf"
     sed \
-      -e "s:RESOLVER_IP_LAST:${RESOLVER_IP_LAST}:g" \
-      -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
       -e "s:ZONE_BASE:${ZONE_BASE}:g" \
       -e "s:REVERSE_ZONE:${REVERSE_ZONE}:g" \
       "${SCRIPT_DIR}/../templates/my.domain.rev" \
       >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/${ZONE_BASE}.rev"
+    echo "${RESOLVER_IP_LAST} PTR resolver.${ZONE_BASE}" \
+      >>"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/${ZONE_BASE}.rev"
+
+    sed \
+      -e "s:ZONE_BASE:${ZONE_BASE}:g" \
+      -e "s:REVERSE_ZONE:${JAIL_REVERSE_ZONE}:g" \
+      "${SCRIPT_DIR}/../templates/my.domain.rev" \
+      >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/${ZONE_BASE}.jail.rev"
     sed \
       -e "s:RESOLVER_IP_LAST:${RESOLVER_IP_LAST}:g" \
       -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \

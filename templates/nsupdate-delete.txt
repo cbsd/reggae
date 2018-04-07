@@ -3,3 +3,7 @@ server RESOLVER_IP
 zone DOMAIN
 update delete JAIL_NAME.DOMAIN
 send
+
+zone REVERSE_ZONE
+update delete JAIL_IP_LAST.REVERSE_ZONE
+send
