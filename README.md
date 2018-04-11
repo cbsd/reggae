@@ -1,5 +1,5 @@
 # Reggae
-*REGister Globaly Access Everywhere* is a package which helps in common DevOps tasks relying on CBSD for management of jails and virtual machines on FreeBSD. If you ever used Vagrant, Reggae is best described as alternative to Vagrant. To use it, you have to install it and run `reggae init` which will setup your `bridge1` and `lo1` interfaces for its use. Once initialized you will need to redirect port to use Consul as DNS. Following is an example in PF:
+*REGister Globaly Access Everywhere* is a package which helps in common DevOps tasks relying on CBSD for management of jails and virtual machines on FreeBSD. If you have ever used Vagrant, Reggae is best described as an alternative to Vagrant. To use it, you have to install it and run `reggae init` which will setup your `bridge1` and `lo1` interfaces for its use. Once initialized you will need to redirect a port to use Consul as DNS. Following is an example in PF:
 
 ```
 jail_if = "lo1"
@@ -12,7 +12,7 @@ rdr pass on $jail_if proto udp from any to any port 53 -> $consul port 8600
 Through config file in `/usr/local/etc/reggae.conf` you can choose to use some other interfaces for `jail_if` and `bridge_if`. Once Reggae is installed, you'll have `/usr/local/etc/reggae.conf.sample` which lists all defaults options.
 
 ## Makefiles
-There are two types of makefiles: services and projects. Service is single jail with a small set of apps running in it. If more than one jail is needed, use project. The following is the simplest service `Makefile`:
+There are two types of makefiles: services and projects. Service is for a single jail with a small set of apps running in it. If more than one jail is needed, use project. The following is the simplest service `Makefile`:
 
 ```
 SERVICE = myservice
@@ -31,7 +31,7 @@ CUSTOM_TEMPLATES = templates
 .include <${REGGAE_PATH}/mk/service.mk>
 ```
 
-Second, *Reggae* will expect this hierarchy:
+Secondly, *Reggae* will expect this hierarchy:
 
 - playbook/
   - inventory/
@@ -63,7 +63,7 @@ Example of `site.yml.tpl`:
 
 You need to install ansible on the host running provisioning. Typing `make` with such a service will create `myservice` CBSD jail and stop sendmail in it.
 
-If you need multiple jails, easiest way to configure a project is to have your services as github repositories as described above and your project `Makefile` as following:
+If you need multiple jails, the easiest way to configure a project is to have your services in github repositories as described above and your project `Makefile` as following:
 ```
 REGGAE_PATH = /usr/local/share/reggae
 SERVICES = myservice https://github.com/<user>/jail-myservice \
@@ -73,7 +73,7 @@ SERVICES = myservice https://github.com/<user>/jail-myservice \
 ```
 Running `make` will invoke `make up` and if it is the first time you run it, `make provision` will also be executed.
 
-Supported make targets for project are:
+Supported make targets for the project type are:
 * destroy
 * devel service=\<service>
 * fetch
@@ -83,11 +83,11 @@ Supported make targets for project are:
 * setup
 * up
 
-Special note for `devel` target: you must add `DEVEL_MODE="YES"` to vars.mk in the project root.
+Special note for the `devel` target: you must add `DEVEL_MODE="YES"` to vars.mk in the project root.
 
-All project targets can be suffiexed with `service=<service>` but in the above list only those which require a service are explicitely mentioned. If the service is passed as an argument, the target will be executed only on that service/jail.
+All project targets can be suffixed with `service=<service>` but in the above list only those which require a service are explicitely mentioned. If the service is passed as an argument, the target will be executed only on that service/jail.
 
-Supported make targets for service are:
+Supported make targets for the service type are:
 * destroy
 * devel
 * exec
@@ -97,4 +97,4 @@ Supported make targets for service are:
 * setup
 * up
 
-Special note for `devel` target: your repo must have `bin/dev.sh` which devel will try to run. Also, devel will only work if you have `DEVEL_MODE="YES"` in your vars.mk in service root. If you use it inside a project, project's `DEVEL_MODE` will be propagated.
+Special note for the `devel` target: your repo must have `bin/dev.sh` which devel will try to run. Also, devel will only work if you have `DEVEL_MODE="YES"` in your vars.mk in service root. If you use it inside a project, project's `DEVEL_MODE` will be propagated.
