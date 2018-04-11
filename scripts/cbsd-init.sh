@@ -66,6 +66,7 @@ setup_cbsd() {
   chown -R root:wheel "${CBSD_WORKDIR}/share/FreeBSD-jail-reggae-skel"
   chown -R 666:666 "${CBSD_WORKDIR}/share/FreeBSD-jail-reggae-skel/usr/home/provision"
   cbsd repo action=get sources=base
+  cbsd baseupdate
 }
 
 
