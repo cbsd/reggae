@@ -5,19 +5,19 @@
 
 To use Reggae you need to have the following packages installed: `cbsd` and `sqlite3`. CBSD needs to be configured beforehand as well. To install Reggae run:
 ```
-git clone https://github.com/cbsd/reggae.git && cd reggae/ && make && make install
+git clone https://github.com/cbsd/reggae.git
+cd reggae
+make
+make install
+reggae network-init
+# service pflog restart
+# service pf restart
+# service sshd restart
+reggae cbsd-init
+reggae master-init
 ```
-When installed, run `reggae init` which will setup your `bridge1` and `lo1` interfaces for its use. Once initialized you will need to redirect a port to use Consul as DNS. Following is an example in PF:
 
-```
-jail_if = "lo1"
-bridge_if = "bridge1"
-consul = 127.0.2.1
-nat on $ext_if from { ($jail_if:network), ($bridge_if:network) } to any -> ($ext_if)
-rdr pass on $jail_if proto udp from any to any port 53 -> $consul port 8600
-```
-
-Through config file in `/usr/local/etc/reggae.conf` you can choose to use some other interfaces for `jail_if` and `bridge_if`. Once Reggae is installed, you'll have `/usr/local/etc/reggae.conf.sample` which lists all defaults options.
+Through config file in `/usr/local/etc/reggae.conf` you can choose to use non-default values for anything Reggae is using, and can use `/usr/local/etc/reggae.conf.sample` as a reference of all defaults options.
 
 ## Makefiles
 There are two types of makefiles: services and projects. Service is for a single jail with a small set of apps running in it. If more than one jail is needed, use project. The following is the simplest service `Makefile`:
