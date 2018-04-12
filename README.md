@@ -1,5 +1,13 @@
 # Reggae
-*REGister Globaly Access Everywhere* is a package which helps in common DevOps tasks relying on CBSD for management of jails and virtual machines on FreeBSD. If you have ever used Vagrant, Reggae is best described as an alternative to Vagrant. To use it, you have to install it and run `reggae init` which will setup your `bridge1` and `lo1` interfaces for its use. Once initialized you will need to redirect a port to use Consul as DNS. Following is an example in PF:
+*REGister Globaly Access Everywhere* is a package which helps in common DevOps tasks relying on CBSD for management of jails and virtual machines on FreeBSD. If you have ever used Vagrant, Reggae is best described as an alternative to Vagrant.
+
+## Installation
+
+To use Reggae you need to have the following packages installed: `cbsd` and `sqlite3`. CBSD needs to be configured beforehand as well. To install Reggae run:
+```
+git clone https://github.com/cbsd/reggae.git && cd reggae/ && make && make install
+```
+When installed, run `reggae init` which will setup your `bridge1` and `lo1` interfaces for its use. Once initialized you will need to redirect a port to use Consul as DNS. Following is an example in PF:
 
 ```
 jail_if = "lo1"
