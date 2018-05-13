@@ -25,18 +25,21 @@ TEMPLATES = cbsd.conf.tpl \
 	    resolvconf.conf \
 	    resolver.conf \
 	    Makefile.ansible \
-	    Makefile.default
+	    Makefile.default \
+	    Makefile.shell
 PLAYBOOK_TEMPLATES = playbook/inventory.tpl
 PLAYBOOK_GROUP_TEMPLATES = playbook/group_vars/all.tpl
 MAKEFILES = ansible.mk \
 	    project.mk \
+	    shell.mk \
 	    service.mk
 SCRIPTS = init.sh \
 	   cbsd-init.sh \
 	   get-config.sh \
 	   master-init.sh \
 	   network-init.sh \
-	   register.sh
+	   register.sh \
+	   shell-provision.sh
 MAN_FILES = reggae.1 \
 	    reggae-ansible.1 \
 	    reggae-init.1 \

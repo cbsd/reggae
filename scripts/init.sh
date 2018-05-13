@@ -32,4 +32,9 @@ if [ "${PROVISIONER}" = "ansible" ]; then
   echo -n "Populating from skel for ${PROVISIONER} ... "
   cp -r "${PROJECT_ROOT}"/skel/ansible/* .
   echo "done"
+elif [ "${PROVISIONER}" = "shell" ]; then
+  echo -n "Populating from skel for ${PROVISIONER} ... "
+  mkdir playbook
+  cp -r "${PROJECT_ROOT}"/skel/shell/* playbook/
+  echo "done"
 fi
