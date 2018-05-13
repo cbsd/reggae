@@ -26,11 +26,13 @@ TEMPLATES = cbsd.conf.tpl \
 	    resolver.conf \
 	    Makefile.ansible \
 	    Makefile.default \
+	    Makefile.salt \
 	    Makefile.shell
 PLAYBOOK_TEMPLATES = playbook/inventory.tpl
 PLAYBOOK_GROUP_TEMPLATES = playbook/group_vars/all.tpl
 MAKEFILES = ansible.mk \
 	    project.mk \
+	    salt.mk \
 	    shell.mk \
 	    service.mk
 SCRIPTS = init.sh \
