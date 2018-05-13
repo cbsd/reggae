@@ -36,6 +36,7 @@ MAKEFILES = ansible.mk \
 SCRIPTS = init.sh \
 	   cbsd-init.sh \
 	   get-config.sh \
+	   master.sh \
 	   master-init.sh \
 	   network-init.sh \
 	   register.sh \
@@ -63,6 +64,7 @@ install: install_bin install_templates install_makefiles install_scripts install
 	install -m 0644 reggae.conf.sample ${DESTDIR}${PREFIX}/etc
 	install -m 0644 reggae.conf.sample ${DESTDIR}${PREFIX}${SCRIPTS_DIR}/default.conf
 	cp -r skel ${DESTDIR}${PREFIX}${REGGAE_DIR}
+	cp -r master ${DESTDIR}${PREFIX}${REGGAE_DIR}
 
 install_bin:
 	install -d ${DESTDIR}${PREFIX}${BIN}
