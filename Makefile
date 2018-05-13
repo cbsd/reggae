@@ -12,6 +12,7 @@ TEMPLATES = cbsd.conf.tpl \
 	    dhcpd.conf \
 	    dhcpd-hook.sh \
 	    freebsd-update.conf \
+	    gitignore \
 	    initenv.conf \
 	    empty.jconf \
 	    my.domain \
@@ -22,7 +23,9 @@ TEMPLATES = cbsd.conf.tpl \
 	    pf.conf \
 	    rndc.conf \
 	    resolvconf.conf \
-	    resolver.conf
+	    resolver.conf \
+	    Makefile.ansible \
+	    Makefile.default
 PLAYBOOK_TEMPLATES = playbook/inventory.tpl
 PLAYBOOK_GROUP_TEMPLATES = playbook/group_vars/all.tpl
 MAKEFILES = ansible.mk \
@@ -56,6 +59,7 @@ install: install_bin install_templates install_makefiles install_scripts install
 	install -d ${DESTDIR}${PREFIX}/etc
 	install -m 0644 reggae.conf.sample ${DESTDIR}${PREFIX}/etc
 	install -m 0644 reggae.conf.sample ${DESTDIR}${PREFIX}${SCRIPTS_DIR}/default.conf
+	cp -r skel ${DESTDIR}${PREFIX}${REGGAE_DIR}
 
 install_bin:
 	install -d ${DESTDIR}${PREFIX}${BIN}
