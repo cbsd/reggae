@@ -1,0 +1,9 @@
+build
+cbsd.conf
+playbook/group_vars/all
+playbook/inventory/inventory
+playbook/roles/*
+!playbook/roles/.keep
+playbook/site.yml
+vars.mk
+site.retry

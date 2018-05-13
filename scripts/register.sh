@@ -1,23 +1,23 @@
 #!/bin/sh
 
 
-PROJECT_ROOT=`dirname $0`
-PROJECT_PATH=`readlink -f ${PROJECT_ROOT}/..`
+SCRIPT_DIR=`dirname $0`
+PROJECT_ROOT=`readlink -f ${SCRIPT_DIR}/..`
 
 if [ -f "/usr/local/etc/reggae.conf" ]; then
     . "/usr/local/etc/reggae.conf"
 fi
-. "${PROJECT_PATH}/scripts/default.conf"
+. "${PROJECT_ROOT}/scripts/default.conf"
 
 CBSD_WORKDIR=`sysrc -n cbsd_workdir`
 JAIL_NAME=${jname}
 JAIL_IP=${ipv4_first}
 ACTION="${1}"
-TEMPLATE="/usr/local/share/reggae/templates/nsupdate-add.txt"
+TEMPLATE=""${PROJECT_ROOT}"/templates/nsupdate-add.txt"
 PF_ACTION="add"
 
 if [ "${ACTION}" = "deregister" ]; then
-    TEMPLATE="/usr/local/share/reggae/templates/nsupdate-delete.txt"
+    TEMPLATE=""${PROJECT_ROOT}"/templates/nsupdate-delete.txt"
     PF_ACTION="delete"
 fi
 

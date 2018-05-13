@@ -1,7 +1,6 @@
 #!/bin/sh
 
-PROJECT_BIN_PATH=`dirname "${0}"`
-PROJECT_ROOT=`dirname "${PROJECT_BIN_PATH}"`
+SCRIPT_ROOT="${SCRIPT_ROOT:=/usr/local/share/reggae/scripts}"
 
 help() {
     echo "Usage: $0 <action>"
@@ -12,37 +11,37 @@ help() {
 case "${1}" in
     init)
         shift
-        /usr/local/share/reggae/scripts/init.sh ${@}
+        "${SCRIPT_ROOT}/init.sh" ${@}
         break
         ;;
     network-init)
         shift
-        /usr/local/share/reggae/scripts/network-init.sh ${@}
+        "${SCRIPT_ROOT}/network-init.sh" ${@}
         break
         ;;
     cbsd-init)
         shift
-        /usr/local/share/reggae/scripts/cbsd-init.sh ${@}
+        "${SCRIPT_ROOT}/cbsd-init.sh" ${@}
         break
         ;;
     master-init)
         shift
-        /usr/local/share/reggae/scripts/master-init.sh ${@}
+        "${SCRIPT_ROOT}/master-init.sh" ${@}
         break
         ;;
     register)
         shift
-        /usr/local/share/reggae/scripts/register.sh register
+        "${SCRIPT_ROOT}/register.sh" register
         break
         ;;
     deregister)
         shift
-        /usr/local/share/reggae/scripts/register.sh deregister
+        "${SCRIPT_ROOT}/register.sh" deregister
         break
         ;;
     get-config)
         shift
-        /usr/local/share/reggae/scripts/get-config.sh ${@}
+        "${SCRIPT_ROOT}/get-config.sh" ${@}
         break
         ;;
     *)
