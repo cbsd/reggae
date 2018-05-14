@@ -26,19 +26,23 @@ TEMPLATES = cbsd.conf.tpl \
 	    resolver.conf \
 	    Makefile.ansible \
 	    Makefile.default \
+	    Makefile.salt \
 	    Makefile.shell
 PLAYBOOK_TEMPLATES = playbook/inventory.tpl
 PLAYBOOK_GROUP_TEMPLATES = playbook/group_vars/all.tpl
 MAKEFILES = ansible.mk \
 	    project.mk \
+	    salt.mk \
 	    shell.mk \
 	    service.mk
 SCRIPTS = init.sh \
 	   cbsd-init.sh \
 	   get-config.sh \
+	   master.sh \
 	   master-init.sh \
 	   network-init.sh \
 	   register.sh \
+	   salt-provision.sh \
 	   shell-provision.sh
 MAN_FILES = reggae.1 \
 	    reggae-ansible.1 \
@@ -63,6 +67,7 @@ install: install_bin install_templates install_makefiles install_scripts install
 	install -m 0644 reggae.conf.sample ${DESTDIR}${PREFIX}/etc
 	install -m 0644 reggae.conf.sample ${DESTDIR}${PREFIX}${SCRIPTS_DIR}/default.conf
 	cp -r skel ${DESTDIR}${PREFIX}${REGGAE_DIR}
+	cp -r master ${DESTDIR}${PREFIX}${REGGAE_DIR}
 
 install_bin:
 	install -d ${DESTDIR}${PREFIX}${BIN}

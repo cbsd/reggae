@@ -44,6 +44,11 @@ case "${1}" in
         "${SCRIPT_ROOT}/get-config.sh" ${@}
         break
         ;;
+    master)
+        shift
+        "${SCRIPT_ROOT}/master.sh" ${@}
+        break
+        ;;
     *)
         help
         exit 1

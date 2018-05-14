@@ -34,6 +34,7 @@ up: setup
 	@sudo chmod 600 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys
 	@sudo chown -R 666:666 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh
 .endif
+	@sudo sed -i -e 's:quarterly:latest:g' ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/pkg/FreeBSD.conf >/dev/null 2>&1 || true
 	@sudo cbsd jstart ${SERVICE} || true
 	@sudo chown ${UID}:${GID} cbsd.conf
 .if ${DEVEL_MODE} == "YES"
@@ -48,6 +49,9 @@ up: setup
 	@echo 'User "devel" deleted'
 .endif
 	@sudo cbsd jexec jname=${SERVICE} pwd_mkdb /etc/master.passwd
+.if target(post-up)
+	@${MAKE} ${MAKEFLAGS} post-up
+.endif
 .if !exists(.provisioned)
 	@${MAKE} ${MAKEFLAGS} provision
 .endif
