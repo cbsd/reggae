@@ -42,6 +42,7 @@ SCRIPTS = init.sh \
 	   master-init.sh \
 	   network-init.sh \
 	   register.sh \
+	   salt-provision.sh \
 	   shell-provision.sh
 MAN_FILES = reggae.1 \
 	    reggae-ansible.1 \
