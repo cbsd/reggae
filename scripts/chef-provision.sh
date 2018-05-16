@@ -12,12 +12,14 @@ fi
 PLAYBOOK_DIR="${PWD}/playbook"
 
 init() {
+  mount_nullfs "${PWD}/playbook" "${CBSD_WORKDIR}/jails/${SERVICE}/root/chef"
 }
 
 cleanup() {
+  umount "${CBSD_WORKDIR}/jails/${SERVICE}/root/chef"
 }
 
 trap "cleanup" HUP INT ABRT BUS TERM  EXIT
 
 init
-# cbsd jexec "jname=${SERVICE}" 'puppet apply /usr/local/etc/puppet/manifests/site.pp'
+cbsd jexec "jname=${SERVICE}" 'cd /root/chef && chef-client --local-mode --override-runlist core'
