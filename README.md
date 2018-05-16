@@ -19,6 +19,8 @@ reggae master-init
 
 Through config file in `/usr/local/etc/reggae.conf` you can choose to use non-default values for anything Reggae is using, and can use `/usr/local/etc/reggae.conf.sample` as a reference of all defaults options.
 
+Or you can just [see it all in action](https://www.youtube.com/watch?v=6GPKO6Gp7b0&list=PLtcibmaW4u3tJj8m1bKH8TbmYWxayX5VC), first!
+
 ## Getting started
 
 First, create empty directory for your jail/service and initialize it.
