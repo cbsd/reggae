@@ -1,5 +1,5 @@
 # Reggae
-*REGister Globaly Access Everywhere* is a package which helps in common DevOps tasks relying on CBSD for management of jails and virtual machines on FreeBSD. If you have ever used Vagrant, Reggae is best described as an alternative to Vagrant.
+*REGister Globaly Access Everywhere* is a package which helps in common DevOps tasks relying on CBSD for management of jails and virtual machines on FreeBSD. If you have ever used Vagrant or Docker Compose, Reggae is best described as an alternative to those.
 
 ## Installation
 
@@ -19,81 +19,17 @@ reggae master-init
 
 Through config file in `/usr/local/etc/reggae.conf` you can choose to use non-default values for anything Reggae is using, and can use `/usr/local/etc/reggae.conf.sample` as a reference of all defaults options.
 
-## Makefiles
-There are two types of makefiles: services and projects. Service is for a single jail with a small set of apps running in it. If more than one jail is needed, use project. The following is the simplest service `Makefile`:
+## Getting started
 
+First, create empty directory for your jail/service and initialize it.
 ```
-SERVICE = myservice
-REGGAE_PATH = /usr/local/share/reggae
-.include <${REGGAE_PATH}/mk/service.mk>
+mkdir myservice
+cd myservice
+reggae init
 ```
+It will create the simplest Reggae config. When you run `make`, you'll get jail named `myservice`. If you want to name it differently, change `SERVICE = myservice` line in `Makefile`.
 
-You can automatically provision your jail. Currently, only ansible provisioning is supported out of the box. First, you need to edit your `Makefile`:
-
-```
-SERVICE = myservice
-REGGAE_PATH = /usr/local/share/reggae
-CUSTOM_TEMPLATES = templates
-
-.include <${REGGAE_PATH}/mk/ansible.mk>
-.include <${REGGAE_PATH}/mk/service.mk>
-```
-
-Secondly, *Reggae* will expect this hierarchy:
-
-- playbook/
-  - inventory/
-  - group_vars/
-  - roles/
-    - myservice/
-      - tasks/
-        - main.yml
-- templates/
-  - site.yml.tpl
-
-Example of simple ansible tasks for `main.yml`:
-```
----
-- name: stop sendmail
-  service:
-    name: sendmail
-    state: stopped
-```
-
-Example of `site.yml.tpl`:
-```
----
-- name: SERVICE provisioning
-  hosts: SERVICE
-  roles:
-    - myservice
-```
-
-You need to install ansible on the host running provisioning. Typing `make` with such a service will create `myservice` CBSD jail and stop sendmail in it.
-
-If you need multiple jails, the easiest way to configure a project is to have your services in github repositories as described above and your project `Makefile` as following:
-```
-REGGAE_PATH = /usr/local/share/reggae
-SERVICES = myservice https://github.com/<user>/jail-myservice \
-           someother https://github.com/<user>/jail-someother
-
-.include <${REGGAE_PATH}/mk/project.mk>
-```
 Running `make` will invoke `make up` and if it is the first time you run it, `make provision` will also be executed.
-
-Supported make targets for the project type are:
-* destroy
-* devel service=\<service>
-* fetch
-* init
-* login service=\<service>
-* provision
-* setup
-* up
-
-Special note for the `devel` target: you must add `DEVEL_MODE="YES"` to vars.mk in the project root.
-
-All project targets can be suffixed with `service=<service>` but in the above list only those which require a service are explicitely mentioned. If the service is passed as an argument, the target will be executed only on that service/jail.
 
 Supported make targets for the service type are:
 * destroy
@@ -105,4 +41,25 @@ Supported make targets for the service type are:
 * setup
 * up
 
-Special note for the `devel` target: your repo must have `bin/dev.sh` which devel will try to run. Also, devel will only work if you have `DEVEL_MODE="YES"` in your vars.mk in service root. If you use it inside a project, project's `DEVEL_MODE` will be propagated.
+Special note for the `devel` target: your repo must have `bin/devel.sh` which be ran inside jail. Also, devel will only work if you have `DEVEL_MODE="YES"` in your vars.mk in service root. If you use it inside a project, project's `DEVEL_MODE` will be propagated.
+
+Supported make targets for the project type are:
+* destroy
+* devel
+* fetch
+* init
+* login service=\<service>
+* provision
+* setup
+* up
+
+Special note for the `devel` target: your repo must have `bin/devel.sh` which be ran on the host. All project targets can be suffixed with `service=<service>` but in the above list only those which require a service are explicitely mentioned. If the service is passed as an argument, the target will be executed only on that service/jail.
+
+## Provisioners
+
+Reggae supports following provisioners:
+* Ansible
+* Chef
+* Puppet
+* Salt Stack
+* Shell
