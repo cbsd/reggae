@@ -25,6 +25,7 @@ TEMPLATES = cbsd.conf.tpl \
 	    resolvconf.conf \
 	    resolver.conf \
 	    Makefile.ansible \
+	    Makefile.chef \
 	    Makefile.default \
 	    Makefile.puppet \
 	    Makefile.salt \
@@ -32,6 +33,7 @@ TEMPLATES = cbsd.conf.tpl \
 PLAYBOOK_TEMPLATES = playbook/inventory.tpl
 PLAYBOOK_GROUP_TEMPLATES = playbook/group_vars/all.tpl
 MAKEFILES = ansible.mk \
+	    chef.mk \
 	    project.mk \
 	    puppet.mk \
 	    salt.mk \
@@ -39,6 +41,7 @@ MAKEFILES = ansible.mk \
 	    service.mk
 SCRIPTS = init.sh \
 	   cbsd-init.sh \
+	   chef-provision.sh \
 	   get-config.sh \
 	   master.sh \
 	   master-init.sh \
