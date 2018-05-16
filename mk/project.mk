@@ -63,6 +63,13 @@ setup:
 	@echo "UID ?= ${UID}" >>services/${service}/vars.mk
 .endfor
 
+devel: up
+.if defined(service)
+	@${MAKE} ${MAKEFLAGS} -C services/${service} devel
+.else
+	@bin/devel.sh
+.endif
+
 destroy:
 .if defined(service)
 	@${MAKE} ${MAKEFLAGS} -C services/${service} destroy
@@ -87,9 +94,6 @@ down: setup
 	@${MAKE} ${MAKEFLAGS} -C services/${service} down
 .endfor
 .endif
-
-devel:
-	@${MAKE} ${MAKEFLAGS} -C services/${service} devel
 
 export:
 .if defined(service)
