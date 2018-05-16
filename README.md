@@ -60,8 +60,16 @@ Special note for the `devel` target: your repo must have `bin/devel.sh` which be
 ## Provisioners
 
 Reggae supports following provisioners:
-* Ansible
-* Chef
-* Puppet
-* Salt Stack
-* Shell
+* ansible
+* chef
+* puppet
+* salt
+* shell
+
+To create a service with minimal provisioner skeleton, only slight modification in initialization is needed:
+```
+mkdir myservice
+cd myservice
+reggae init <provisioner>
+```
+Reggae will generate `playbook` directory where all files for your provisioner will be.
