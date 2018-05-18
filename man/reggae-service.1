@@ -1,43 +1,59 @@
-.TH "REGGAE-SERVICE" "1" "12 November 2017" "reggae-service" ""
-
-.SH NAME
-reggae-service \- use a single jail to run set of processes
-
-.SH SYNOPSIS
-\fBservice.mk\fR
-
-.SH "DESCRIPTION"
-.PP
-Running make will invoke make up and if it is the first time you run it, make
-provision will also be executed.
-
-Supported make targets for service are:
- - destroy
- - devel
- - exec
- - export
- - login
- - provision
- - setup
- - up
-
-Special note for \fBdevel\fR target: your repo must have \fBbin/dev.sh\fR which
-devel will try to run. Also, devel will only work if you have
-\fBDEVEL_MODE="YES"\fR in your vars.mk in service root. If you use it inside a
-project, project's \fBDEVEL_MODE\fR will be propagated.
-
-.SH EXAMPLES
-Easiest way to configure a service is Makefile as following:
-
- SERVICE = myservice
- REGGAE_PATH = /usr/local/share/reggae
-
- .include <${REGGAE_PATH}/mk/service.mk>
-
-
-.SH "ADDITIONAL INFORMATION"
-See \fBreggae(1)\fR, \fBreggae-project(1)\fR and \fBreggae-ansible(1)\fR for
-more info.
-
-
-
+.Dd $Mdocdate: May 20 2018 $
+.Dt REGGAE_SERVICE 1
+.Os
+.Sh NAME
+.Nm reggae-service
+.Nd service provisioner for CBSD jails
+.Sh SYNOPSIS
+.Nm
+.Sh DESCRIPTION
+.Pp
+A service consists of:
+.Bl -bullet
+.It
+\fBMakefile\fR - configured for use with service
+.It
+\fB.gitignore\fR - containing all reggae generated files and directories
+.El
+.Pp
+You can add aditional mount points by creating \fBtemplates/fstab\fR:
+.Pp
+.Dl /usr/ports /usr/ports nullfs rw 0 0
+.Pp
+Special note for the devel target: your repo must have bin/devel.sh which be
+ran inside jail. Also, devel will only work if you have DEVEL_MODE=YES in your
+vars.mk in service root. If you use it inside a project, project's DEVEL_MODE
+will be propagated.
+.Pp
+You can run \fBmake <target>\fR on the service:
+.Bl -bullet -offset indent -compact
+.It
+destroy
+.It
+devel
+.It
+exec
+.It
+export
+.It
+login
+.It
+provision
+.It
+setup
+.It
+up
+.El
+.Sh EXAMPLES
+.Pp
+Quickest way to get basic service is:
+.Pp
+.Dl mkdir myservice
+.Dl cd myservice
+.Dl reggae init
+.Dl make
+.Sh SEE ALSO
+.Xr reggae-project 1
+.Xr reggae-provision 1
+.Sh AUTHORS
+Goran Mekić <meka@tilda.center>

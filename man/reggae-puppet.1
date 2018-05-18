@@ -1,0 +1,34 @@
+.Dd $Mdocdate: May 20 2018 $
+.Dt REGGAE_PUPPET 1
+.Os
+.Sh NAME
+.Nm reggae-puppet
+.Nd puppet provisioner for CBSD jails
+.Sh SYNOPSIS
+.Nm
+.Sh DESCRIPTION
+.Pp
+A service with puppet provisioner consists of:
+.Bl -bullet
+.It
+\fBMakefile\fR - configured for use with puppet
+.It
+\fBplaybook\fR - containing cookbooks/core/recipes/default.rb dummy script
+.El
+.Pp
+When ran with this configuration, reggae will first check if puppet executable
+is available inside jail, and if it isn't, it will install it from packages.
+Then it will mount playbook directory on /usr/local/etc/puppet/manifests inside
+jail. To do actual provisioning, Reggae uses \fBpuppet apply\fR.
+.Sh EXAMPLES
+.Pp
+Quickest way to get basic service provisioned with Puppet is:
+.Pp
+.Dl mkdir myservice
+.Dl cd myservice
+.Dl reggae init puppet
+.Dl make
+.Sh SEE ALSO
+.Xr reggae-provision 1
+.Sh AUTHORS
+Goran Mekić <meka@tilda.center>
