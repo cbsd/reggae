@@ -54,9 +54,12 @@ SCRIPTS = init.sh \
 	   shell-provision.sh
 MAN_FILES = reggae.1 \
 	    reggae-ansible.1 \
-	    reggae-init.1 \
+	    reggae-chef.1 \
 	    reggae-project.1 \
+	    reggae-provision.1 \
+	    reggae-puppet.1 \
 	    reggae-register.1 \
+	    reggae-salt.1 \
 	    reggae-service.1
 CBSD_PROFILE_ITEMS = skel \
 		     system \
