@@ -1,0 +1,37 @@
+.Dd $Mdocdate: May 20 2018 $
+.Dt REGGAE_PROVISION 1
+.Os
+.Sh NAME
+.Nm reggae-provision
+.Nd Setup and configure jail in automated way
+.Sh SYNOPSIS
+.Nm reggae init <provisioner>
+.Sh DESCRIPTION
+.Pp
+Supported
+.Em provisioners
+are:
+.Bl -bullet -offset indent -compact
+.It
+Ansible
+.It
+Chef
+.It
+Puppet
+.It
+Salt Stack
+.It
+Shell
+.El
+Reggae will generate playbook directory where all files for your provisioner will be.
+.Sh EXAMPLES
+.Pp
+.Dl reggae init shell
+.Sh SEE ALSO
+.Xr reggae-ansible 1
+.Xr reggae-chef 1
+.Xr reggae-puppet 1
+.Xr reggae-salt 1
+.Xr reggae-shell 1
+.Sh AUTHORS
+Goran Mekić <meka@tilda.center>

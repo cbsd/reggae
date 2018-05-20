@@ -1,15 +1,22 @@
-.TH "REGGAE-REGISTER" "1" "12 November 2017" "reggae-register" ""
+.Dd $Mdocdate: May 20 2018 $
+.Dt REGGAE_REGISTER 1
+.Os
+.Sh NAME
+.Nm reggae-register
+.Nd register provisioner for CBSD jails
+.Sh SYNOPSIS
+.Nm
+.Sh DESCRIPTION
+.Pp
+Every jail will be registered to:
+.Bl -bullet -offset indent
+.It
+\fBresolver\fR - jailed DNS used by Reggae
+.It
+\fBPF\fR - firewall of choice for Reggae
+.El
+.Sh SEE ALSO
+.Xr reggae 1
+.Sh AUTHORS
+Goran Mekić <meka@tilda.center>
 
-.SH NAME
-reggae-register \- register and deregister jails in consul
-
-.SH SYNOPSIS
-\fBreggae\fR register <register|deregister>
-
-.SH "DESCRIPTION"
-.PP
-This is a hook which is invoked by CBSD when starting and stopping jail with \fBregister\fR or \fBderegister\fR as it's argument. It expects \fBjname\fR and \fBip4_addr\fR environemnt variables to be set.
-
-
-.SH "ADDITIONAL INFORMATION"
-See \fBreggae(1)\fR for more info.

@@ -1,63 +1,37 @@
-.TH "REGGAE-ANSIBLE" "1" "12 November 2017" "reggae-ansible" ""
-
-.SH NAME
-reggae-ansible \- initialize and setup host for use with reggae
-
-.SH SYNOPSIS
-\fBansible.mk\fR
-
-.SH "DESCRIPTION"
-.PP
-Reggae will run \fBdo_provision\fR target if defined, and that's how \fBansible.mk\fR inserts additional targets.
-
-.SH EXAMPLES
-If you include ansible.mk, Reggae will run provision on first invocation of
-\fBmake up\fR (or just make). If you want to repeat the provisioning, you have
-to explicitely run \fBmake provision\fR. Following is a minimal \fBMakefile\fR which
-will provision a jail with ansible:
-
- SERVICE = myservice
- REGGAE_PATH = /usr/local/share/reggae
- CUSTOM_TEMPLATES = templates
-
- .include <${REGGAE_PATH}/mk/ansible.mk>
- .include <${REGGAE_PATH}/mk/service.mk>
-
-
-Reggae will expect this hierarchy:
-
-  playbook/
-  inventory/
-  group_vars/
-  roles/
-    myservice/
-      tasks/
-        main.yml
-  templates/
-    site.yml.tpl
-
-
-Example of simple ansible tasks from \fBmain.yml\fR:
-
- ---
- - name: stop sendmail
-   service:
-     name: sendmail
-     state: stopped
-
-
-In \fBtemplates\fR you need to have at least \fBsite.yml.tpl\fR:
-
- ---
- - name: SERVICE provisioning
-   hosts: SERVICE
-   roles:
-     - myservice
-
-
-You need to install ansible on the host running provisioning. Typing \fBmake\fR
-will create \fBmyservice\fR CBSD jail and stop sendmail in it.
-
-.SH "ADDITIONAL INFORMATION"
-See \fBreggae(1)\fR for more info.
-
+.Dd $Mdocdate: May 20 2018 $
+.Dt REGGAE_ANSIBLE 1
+.Os
+.Sh NAME
+.Nm reggae-ansible
+.Nd Ansible provisioner for CBSD jails
+.Sh SYNOPSIS
+.Nm
+.Sh DESCRIPTION
+.Pp
+A service with ansible provisioner consists of:
+.Bl -bullet
+.It
+\fBMakefile\fR - configured for use with Ansible
+.It
+\fBplaybook\fR - containing group_vars, inventory and roles directories as placeholders for files generated on the fly, but can be used to configure your playbook
+.It
+\fBrequirements.yml\fR - list of requirements, with only one initially. All requirements from this file are downloaded from Ansible Galaxy
+templates/site.yml.tpl - this file should be edited to add/remove roles, playbooks, etc.
+.El
+.Pp
+When ran with this configuration, reggae will first check if ansible executable
+is available on  the host, and if it isn't, it will run \fBpkg install ansible\fR.
+If you use Python's virtual environments, for example, you can avoid having
+ansible available to everyone on the system.
+.Sh EXAMPLES
+.Pp
+Quickest way to get basic service provisioned with Ansible is:
+.Pp
+.Dl mkdir myservice
+.Dl cd myservice
+.Dl reggae init ansible
+.Dl make
+.Sh SEE ALSO
+.Xr reggae-provision 1
+.Sh AUTHORS
+Goran Mekić <meka@tilda.center>

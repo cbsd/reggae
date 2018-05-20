@@ -1,20 +1,58 @@
-.TH "REGGAE" "1" "12 November 2017" "reggae" ""
-
-.SH NAME
-reggae \- devops helper
-
-.SH SYNOPSIS
-\fBreggae\fR <init|register> [OPTIONS]
-
-.SH "DESCRIPTION"
-.PP
+.Dd $Mdocdate: May 20 2018 $
+.Dt REGGAE 1
+.Os
+.Sh NAME
+.Nm reggae
+.Nd \fBREG\fRister \fBG\fRlobaly \fBA\fRccess \fBEv\fRerywhere is a package which helps in common DevOps tasks
+.Sh SYNOPSIS
+.Nm reggae <command>
+.Sh DESCRIPTION
+.Pp
 \fBReggae\fR is an open source package which relays on \fBCBSD\fR to provide lower level management for jails and virtual machines.
-.PP
-Through CLI you can only invoke two commands: \fBinit\fR to setup your host and \fBCBSD\fR and \fBregister\fR which is used as a post-start hook and expect certain environment variables to be set.
-
-.RE
-.SH "BUGS"
+.Pp
+If you have ever used Vagrant or Docker Compose, Reggae is best described as an
+alternative to those. It enables you easy development inside jail while code
+editing is done on the host. It makes transition from development to production
+easier by using provisioners. It makes host clean of all requirements of
+development and puts them inside jail which is easily stopped, started,
+provisioned, and destroyed.
+.Pp
+To initialize Reggae run the following as root:
+.Pp
+.Dl reggae network-init
+.Dl # service pflog restart
+.Dl # service pf restart
+.Dl service sshd restart
+.Dl reggae cbsd-init
+.Dl reggae master-init
+.Pp
+PF is initialized only if /etc/pf.conf doesn't exist already. In those cases PF
+services should be restarted.
+.Pp
+Through config file in /usr/local/etc/reggae.conf you can change values for
+anything Reggae is using. \fBreggae network-init\fR will make sure sshd is
+listening to lo0 on hosts with dynamic IP, and on lo0 and egress if the IP is
+static.  This way host sshd doesn't have a conflict with the jailed one. Also,
+if IP is dynamic, PF will be configured so it redirects all requests for SSH on
+egress to lo0. One of the advantages is that you can use ssh's
+\fBProxyCommand\fR to login to jail, even though jail is behind NAT.
+.Pp
+Ater \fBreggae master-init\fR, you'll get two master jails: DHCP and DNS. They
+are used to lease IPs to virtual machines and to register all resources in DNS
+so that you can use FQDN instead of IP addresses. The DNS jail IP is used in
+/etc/resolvconf.conf if host has dynamic IP on egress, so that changes of
+network parameters are passed to the appropriate jail. Also, host will use DNS
+jail IP in /etc/resolv.conf. In short, it enables you to not remember jail IPs
+when you have to use them, but use <jail name>.<domain> to reference them, in
+which case comes from /usr/local/etc/reggae.conf.
+.Sh SEE ALSO
+.Xr reggae-init 1
+.Xr reggae-project 1
+.Xr reggae-project-init 1
+.Xr reggae-provision 1
+.Xr reggae-register 1
+.Xr reggae-service 1
+.Sh BUGS
 Report bugs to https://github.com/mekanix/reggae/issues.
-
-.SH "ADDITIONAL INFORMATION"
-See \fBreggae-init(1)\fR, \fBreggae-register(1)\fR, \fBreggae-project(1)\fR and \fBreggae-ansible(1)\fR for more info.
+.Sh AUTHORS
+Goran Mekić <meka@tilda.center>

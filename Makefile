@@ -27,6 +27,7 @@ TEMPLATES = cbsd.conf.tpl \
 	    Makefile.ansible \
 	    Makefile.chef \
 	    Makefile.default \
+	    Makefile.project \
 	    Makefile.puppet \
 	    Makefile.salt \
 	    Makefile.shell
@@ -47,6 +48,7 @@ SCRIPTS = init.sh \
 	   master-init.sh \
 	   network-init.sh \
 	   puppet-provision.sh \
+	   project-init.sh \
 	   register.sh \
 	   salt-provision.sh \
 	   shell-provision.sh

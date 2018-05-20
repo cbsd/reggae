@@ -14,6 +14,15 @@ TEMP_DIR_JAILED=${TEMP_DIR#${CBSD_WORKDIR}/jails-data/${SERVICE}-data}
 PLAYBOOK_DIR="${PWD}/playbook"
 trap "/bin/rm -rf ${TEMP_DIR}" HUP INT ABRT BUS TERM  EXIT
 
-echo "${PWD}"
-cp -rp ${PLAYBOOK_DIR}/* ${TEMP_DIR}/
-cbsd jexec "jname=${SERVICE}" ${TEMP_DIR_JAILED}/provision.sh $@
+init() {
+  mount_nullfs "${PWD}/playbook" "${CBSD_WORKDIR}/jails/${SERVICE}/root/shell"
+}
+
+cleanup() {
+  umount "${CBSD_WORKDIR}/jails/${SERVICE}/root/shell"
+}
+
+trap "cleanup" HUP INT ABRT BUS TERM  EXIT
+
+init
+cbsd jexec "jname=${SERVICE}" "/root/shell/provision.sh $@"
