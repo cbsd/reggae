@@ -49,9 +49,6 @@ up: setup
 	@echo 'User "devel" deleted'
 .endif
 	@sudo cbsd jexec jname=${SERVICE} pwd_mkdb /etc/master.passwd
-.if target(post-up)
-	@${MAKE} ${MAKEFLAGS} post-up
-.endif
 .if !exists(.provisioned)
 	@${MAKE} ${MAKEFLAGS} provision
 .endif
@@ -78,7 +75,7 @@ setup:
 		-e "s:DOMAIN:${DOMAIN}:g" \
 		-e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
 		${REGGAE_PATH}/templates/cbsd.conf.tpl >cbsd.conf
-.for provisioner in ${PROVIDIONERS}
+.for provisioner in ${PROVISIONERS}
 	@${MAKE} ${MAKEFLAGS} setup-${provisioner}
 .endfor
 

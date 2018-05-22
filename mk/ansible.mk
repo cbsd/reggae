@@ -9,7 +9,7 @@ provision-ansible:
 	@sudo ansible-playbook -i ansible/inventory/inventory ansible/site.yml
 
 setup-ansible:
-	@sed -e "s:SERVICE:${SERVICE}:g" ${CUSTOM_TEMPLATES}/site.yml.tpl >ansible/site.yml
+	@sed -e "s:SERVICE:${SERVICE}:g" templates/site.yml.tpl >ansible/site.yml
 	@sed -e "s:SERVICE:${SERVICE}:g" ${REGGAE_PATH}/templates/ansible/inventory.tpl >ansible/inventory/inventory
 	@sed -e "s:SERVICE:${SERVICE}:g" -e "s:DOMAIN:${DOMAIN}:g" ${REGGAE_PATH}/templates/ansible/group_vars/all.tpl >ansible/group_vars/all
 .if !exists(ansible/roles)

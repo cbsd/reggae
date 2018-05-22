@@ -9,6 +9,6 @@ provision-shell:
 	@sudo ${REGGAE_PATH}/scripts/shell-provision.sh ${SERVICE}
 .endif
 
-clean-chef:
+clean-shell:
 
-setup-chef:
+setup-shell:
