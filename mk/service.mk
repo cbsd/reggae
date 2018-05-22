@@ -58,9 +58,9 @@ up: setup
 
 provision: setup
 	@touch .provisioned
-.if target(do-provision)
-	@${MAKE} ${MAKEFLAGS} do-provision
-.endif
+.for provisioner in ${PROVISIONERS}
+	@${MAKE} ${MAKEFLAGS} provision-${provisioner}
+.endfor
 
 down: setup
 	@sudo cbsd jstop ${SERVICE} || true
@@ -68,9 +68,9 @@ down: setup
 destroy:
 	@rm -f cbsd.conf .provisioned
 	@sudo cbsd jremove ${SERVICE}
-.if target(do-clean)
-	@${MAKE} ${MAKEFLAGS} do-clean
-.endif
+.for provisioner in ${PROVISIONERS}
+	@${MAKE} ${MAKEFLAGS} clean-${provisioner}
+.endfor
 
 setup:
 	@sed \
@@ -78,9 +78,9 @@ setup:
 		-e "s:DOMAIN:${DOMAIN}:g" \
 		-e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
 		${REGGAE_PATH}/templates/cbsd.conf.tpl >cbsd.conf
-.if target(do-setup)
-	@${MAKE} ${MAKEFLAGS} do-setup
-.endif
+.for provisioner in ${PROVIDIONERS}
+	@${MAKE} ${MAKEFLAGS} setup-${provisioner}
+.endfor
 
 login:
 	@sudo cbsd jlogin ${SERVICE}

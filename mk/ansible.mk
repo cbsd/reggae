@@ -1,13 +1,14 @@
+PROVISIONERS += ansible
 ANSIBLE!=sh -c "which ansible || true"
 
-do-provision:
+provision-ansible:
 .if exists(requirements.yml)
 	@ansible-galaxy install -p ansible/roles -r requirements.yml
 .endif
 	@sudo cbsd jexec jname=${SERVICE} pkg install -y python
 	@sudo ansible-playbook -i ansible/inventory/inventory ansible/site.yml
 
-do-setup:
+setup-ansible:
 	@sed -e "s:SERVICE:${SERVICE}:g" ${CUSTOM_TEMPLATES}/site.yml.tpl >ansible/site.yml
 	@sed -e "s:SERVICE:${SERVICE}:g" ${REGGAE_PATH}/templates/ansible/inventory.tpl >ansible/inventory/inventory
 	@sed -e "s:SERVICE:${SERVICE}:g" -e "s:DOMAIN:${DOMAIN}:g" ${REGGAE_PATH}/templates/ansible/group_vars/all.tpl >ansible/group_vars/all
@@ -24,5 +25,5 @@ do-setup:
 	@sudo pkg install ansible
 .endif
 
-do-clean:
+clean-ansible:
 	@rm -rf ansible/inventory/inventory ansible/site.yml ansible/group_vars/all
