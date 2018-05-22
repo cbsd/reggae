@@ -39,6 +39,7 @@ SCRIPTS = init.sh \
 	   cbsd-init.sh \
 	   chef-provision.sh \
 	   get-config.sh \
+	   import.sh \
 	   master.sh \
 	   master-init.sh \
 	   network-init.sh \
