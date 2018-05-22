@@ -24,13 +24,8 @@ TEMPLATES = cbsd.conf.tpl \
 	    rndc.conf \
 	    resolvconf.conf \
 	    resolver.conf \
-	    Makefile.ansible \
-	    Makefile.chef \
-	    Makefile.default \
 	    Makefile.project \
-	    Makefile.puppet \
-	    Makefile.salt \
-	    Makefile.shell
+	    Makefile.service
 ANSIBLE_TEMPLATES = ansible/inventory.tpl
 ANSIBLE_GROUP_TEMPLATES = ansible/group_vars/all.tpl
 MAKEFILES = ansible.mk \

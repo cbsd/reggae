@@ -16,6 +16,7 @@ init() {
 }
 
 cleanup() {
+  rm -rf "${CBSD_WORKDIR}/jails/${SERVICE}/root/chef/nodes"
   umount "${CBSD_WORKDIR}/jails/${SERVICE}/root/chef"
 }
 
