@@ -15,7 +15,7 @@ PLAYBOOK_DIR="${PWD}/playbook"
 trap "/bin/rm -rf ${TEMP_DIR}" HUP INT ABRT BUS TERM  EXIT
 
 init() {
-  mount_nullfs "${PWD}/playbook" "${CBSD_WORKDIR}/jails/${SERVICE}/root/shell"
+  mount_nullfs "${PWD}/shell" "${CBSD_WORKDIR}/jails/${SERVICE}/root/shell"
 }
 
 cleanup() {

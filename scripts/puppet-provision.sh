@@ -12,7 +12,7 @@ fi
 PLAYBOOK_DIR="${PWD}/playbook"
 
 init() {
-  mount_nullfs "${PWD}/playbook" "${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/puppet/manifests"
+  mount_nullfs "${PWD}/puppet/manifests" "${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/puppet/manifests"
 }
 
 cleanup() {

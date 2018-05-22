@@ -31,8 +31,8 @@ TEMPLATES = cbsd.conf.tpl \
 	    Makefile.puppet \
 	    Makefile.salt \
 	    Makefile.shell
-PLAYBOOK_TEMPLATES = playbook/inventory.tpl
-PLAYBOOK_GROUP_TEMPLATES = playbook/group_vars/all.tpl
+ANSIBLE_TEMPLATES = ansible/inventory.tpl
+ANSIBLE_GROUP_TEMPLATES = ansible/group_vars/all.tpl
 MAKEFILES = ansible.mk \
 	    chef.mk \
 	    project.mk \
@@ -88,16 +88,16 @@ install_bin:
 
 install_templates:
 	install -d ${DESTDIR}${PREFIX}${TEMPLATE_DIR}
-	install -d ${DESTDIR}${PREFIX}${TEMPLATE_DIR}/playbook
-	install -d ${DESTDIR}${PREFIX}${TEMPLATE_DIR}/playbook/group_vars
+	install -d ${DESTDIR}${PREFIX}${TEMPLATE_DIR}/ansible
+	install -d ${DESTDIR}${PREFIX}${TEMPLATE_DIR}/ansible/group_vars
 .for template_file in ${TEMPLATES}
 	install -m 0644 templates/${template_file} ${DESTDIR}${PREFIX}${TEMPLATE_DIR}
 .endfor
-.for template_file in ${PLAYBOOK_TEMPLATES}
-	install -m 0644 templates/${template_file} ${DESTDIR}${PREFIX}${TEMPLATE_DIR}/playbook
+.for template_file in ${ANSIBLE_TEMPLATES}
+	install -m 0644 templates/${template_file} ${DESTDIR}${PREFIX}${TEMPLATE_DIR}/ansible
 .endfor
-.for template_file in ${PLAYBOOK_GROUP_TEMPLATES}
-	install -m 0644 templates/${template_file} ${DESTDIR}${PREFIX}${TEMPLATE_DIR}/playbook/group_vars
+.for template_file in ${ANSIBLE_GROUP_TEMPLATES}
+	install -m 0644 templates/${template_file} ${DESTDIR}${PREFIX}${TEMPLATE_DIR}/ansible/group_vars
 .endfor
 
 install_makefiles:

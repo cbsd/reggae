@@ -12,7 +12,7 @@ fi
 PLAYBOOK_DIR="${PWD}/playbook"
 
 init() {
-  mount_nullfs "${PWD}/playbook" "${CBSD_WORKDIR}/jails/${SERVICE}/root/chef"
+  mount_nullfs "${PWD}/chef" "${CBSD_WORKDIR}/jails/${SERVICE}/root/chef"
 }
 
 cleanup() {
