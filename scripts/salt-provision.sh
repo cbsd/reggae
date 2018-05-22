@@ -12,7 +12,7 @@ fi
 PLAYBOOK_DIR="${PWD}/playbook"
 
 init() {
-  mount_nullfs "${PWD}/playbook" "${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/salt/states"
+  mount_nullfs "${PWD}/salt/states" "${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/salt/states"
   echo 'file_client: local' >"${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/salt/minion.d/reggae.conf"
 }
 

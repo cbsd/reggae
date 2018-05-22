@@ -9,15 +9,9 @@ SCRIPT_DIR=`dirname $0`
 
 
 PROJECT_ROOT=`readlink -f ${SCRIPT_DIR}/..`
-MAKEFILE="Makefile"
-PROVISIONER="${1}"
+MAKEFILE="Makefile.service"
+PROVISIONERS=$@
 SERVICE_NAME=`basename ${PWD}`
-
-if [ ! -z "${PROVISIONER}" ]; then
-  MAKEFILE="${MAKEFILE}.${PROVISIONER}"
-else
-  MAKEFILE="${MAKEFILE}.default"
-fi
 
 echo -n "Generating Makefile ... "
 sed -e "s;SERVICE_NAME;${SERVICE_NAME};g" "${PROJECT_ROOT}/templates/${MAKEFILE}" >Makefile
@@ -28,8 +22,12 @@ echo -n "Generating .gitignore ... "
 cp "${PROJECT_ROOT}/templates/gitignore" .gitignore
 echo "done"
 
-if [ -d "${PROJECT_ROOT}"/skel/${PROVISIONER} ]; then
-  echo -n "Populating from skel for ${PROVISIONER} ... "
-  cp -r "${PROJECT_ROOT}"/skel/${PROVISIONER}/* .
-  echo "done"
-fi
+rm -rf provisioners.mk
+for provisioner in ${PROVISIONERS}; do
+  echo ".include <\${REGGAE_PATH}/mk/${provisioner}.mk>" >>provisioners.mk
+  if [ -d "${PROJECT_ROOT}"/skel/${provisioner} ]; then
+    echo -n "Populating from skel for ${provisioner} ... "
+    cp -r "${PROJECT_ROOT}"/skel/${provisioner}/* .
+    echo "done"
+  fi
+done
