@@ -96,5 +96,4 @@ export: down
 	@sudo chown ${UID}:${GID} build/${SERVICE}.img
 
 devel: up
-	@sudo jexec -U devel ${SERVICE} /usr/src/bin/init.sh
 	@sudo jexec -U devel ${SERVICE} /usr/src/bin/devel.sh
