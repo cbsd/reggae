@@ -46,7 +46,7 @@ network() {
     BRIDGE_INTERFACE=`grep "^${VM_INTERFACE}$" /tmp/ifaces.txt`
     if [ -z "${BRIDGE_INTERFACE}" ]; then
         CLONED_INTERFACES="${CLONED_INTERFACES} ${VM_INTERFACE}"
-        sysrc ifconfig_${VM_INTERFACE}="inet ${VM_INTERFACE_IP} netmask 255.255.255.0 description ${EGRESS}"
+        sysrc ifconfig_${VM_INTERFACE}="inet ${VM_INTERFACE_IP} netmask 255.255.255.0"
     fi
 
     sysrc cloned_interfaces="${CLONED_INTERFACES}"
