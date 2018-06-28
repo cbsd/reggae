@@ -1,9 +1,9 @@
 build
 cbsd.conf
-playbook/group_vars/all
-playbook/inventory/inventory
-playbook/roles/*
-!playbook/roles/.keep
-playbook/site.yml
+ansible/group_vars/all
+ansible/inventory/inventory
+ansible/roles/*
+!ansible/roles/.keep
+ansible/site.yml
 vars.mk
 site.retry
