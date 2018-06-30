@@ -1,9 +1,10 @@
-build
-cbsd.conf
+.provisioned
 ansible/group_vars/all
 ansible/inventory/inventory
 ansible/roles/*
-!ansible/roles/.keep
 ansible/site.yml
-vars.mk
+!ansible/roles/.keep
+build
+cbsd.conf
 site.retry
+vars.mk
