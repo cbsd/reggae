@@ -2,16 +2,27 @@ PROVISIONERS += ansible
 ANSIBLE!=sh -c "which ansible-3.6 || true"
 
 provision-ansible:
+	@sudo rm -rf ansible/site.retry
+	@sudo chown -R ${UID}:${GID} ~/.ansible
 .if exists(requirements.yml)
 	@ansible-galaxy-3.6 install -p ansible/roles -r requirements.yml
 .endif
+.if defined(server)
+	@env ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook-3.6 -i ansible/inventory/inventory ansible/site.yml -b
+.else
 	@sudo cbsd jexec jname=${SERVICE} pkg install -y python36
 	@sudo ansible-playbook-3.6 -i ansible/inventory/inventory ansible/site.yml
+.endif
 
 setup-ansible:
+	@sed -e "s:SERVICE:${SERVICE}:g" ${REGGAE_PATH}/templates/ansible/group_vars/all.tpl >ansible/group_vars/all
+.if defined(server)
+	@sed -e "s:SERVICE:${SERVICE}.${server}:g" ${REGGAE_PATH}/templates/ansible/inventory.remote.tpl >ansible/inventory/inventory
+	@sed -e "s:SERVICE:${SERVICE}.${server}:g" templates/site.yml.tpl >ansible/site.yml
+.else
+	@sed -e "s:SERVICE:${SERVICE}:g" ${REGGAE_PATH}/templates/ansible/inventory.local.tpl >ansible/inventory/inventory
 	@sed -e "s:SERVICE:${SERVICE}:g" templates/site.yml.tpl >ansible/site.yml
-	@sed -e "s:SERVICE:${SERVICE}:g" ${REGGAE_PATH}/templates/ansible/inventory.tpl >ansible/inventory/inventory
-	@sed -e "s:SERVICE:${SERVICE}:g" -e "s:DOMAIN:${DOMAIN}:g" ${REGGAE_PATH}/templates/ansible/group_vars/all.tpl >ansible/group_vars/all
+.endif
 .if !exists(ansible/roles)
 	@mkdir ansible/roles
 .endif

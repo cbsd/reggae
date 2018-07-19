@@ -26,7 +26,7 @@ TEMPLATES = cbsd.conf.tpl \
 	    resolver.conf \
 	    Makefile.project \
 	    Makefile.service
-ANSIBLE_TEMPLATES = ansible/inventory.tpl
+ANSIBLE_TEMPLATES = ansible/inventory.local.tpl ansible/inventory.remote.tpl
 ANSIBLE_GROUP_TEMPLATES = ansible/group_vars/all.tpl
 MAKEFILES = ansible.mk \
 	    chef.mk \
