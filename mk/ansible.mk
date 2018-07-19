@@ -10,7 +10,6 @@ provision-ansible:
 .if defined(server)
 	@env ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook-3.6 -i ansible/inventory/inventory ansible/site.yml -b
 .else
-	@sudo cbsd jexec jname=${SERVICE} pkg install -y python36
 	@sudo ansible-playbook-3.6 -i ansible/inventory/inventory ansible/site.yml
 .endif
 

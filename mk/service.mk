@@ -9,6 +9,14 @@ UID ?= ${RUNNING_UID}
 GID ?= ${RUNNING_GID}
 DOMAIN = `reggae get-config DOMAIN`
 CBSD_WORKDIR != sysrc -n cbsd_workdir
+EXTRA_PACKAGES =
+
+
+.for provisioner in ${PROVISIONERS}
+.if ${provisioner} == "ansible"
+EXTRA_PACKAGES += python36
+.endif
+.endfor
 
 .MAIN: up
 
@@ -74,6 +82,7 @@ setup:
 		-e "s:SERVICE:${SERVICE}:g" \
 		-e "s:DOMAIN:${DOMAIN}:g" \
 		-e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
+		-e "s:EXTRA_PACKAGES:${EXTRA_PACKAGES}:g" \
 		${REGGAE_PATH}/templates/cbsd.conf.tpl >cbsd.conf
 .for provisioner in ${PROVISIONERS}
 	@${MAKE} ${MAKEFLAGS} setup-${provisioner}
