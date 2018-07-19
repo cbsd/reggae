@@ -4,7 +4,7 @@ ansible/inventory/inventory
 ansible/roles/*
 ansible/site.yml
 !ansible/roles/.keep
-build
+build/
 cbsd.conf
 site.retry
 vars.mk
