@@ -1,6 +1,6 @@
 # Commented are default values
 
-# CBSD_WORKDIR="/usr/jails"
+# CBSD_WORKDIR="/usr/cbsd"
 # DHCP_IP="172.16.0.253"
 # DOMAIN=`hostname`
 # JAIL_INTERFACE="lo1"
