@@ -72,7 +72,7 @@ compress_man:
 install: install_bin install_templates install_makefiles install_scripts install_man install_profile
 	install -d ${DESTDIR}${PREFIX}/etc
 	install -m 0644 reggae.conf.sample ${DESTDIR}${PREFIX}/etc
-	install -m 0644 reggae.conf.sample ${DESTDIR}${PREFIX}${SCRIPTS_DIR}/default.conf
+	install -m 0644 scripts/default.conf ${DESTDIR}${PREFIX}${SCRIPTS_DIR}/default.conf
 	cp -r skel ${DESTDIR}${PREFIX}${REGGAE_DIR}
 	cp -r master ${DESTDIR}${PREFIX}${REGGAE_DIR}
 
