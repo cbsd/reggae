@@ -8,7 +8,7 @@ provision-ansible:
 	@ansible-galaxy-3.6 install -p ansible/roles -r requirements.yml
 .endif
 .if defined(server)
-	@env ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook-3.6 -i ansible/inventory/inventory ansible/site.yml -b
+	@env ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook-3.6 -i ansible/inventory/inventory ansible/site.yml -b --ssh-extra-args='"-o ProxyCommand ssh -x -a -q ${server} nc %h 22"'
 .else
 	@sudo ansible-playbook-3.6 -i ansible/inventory/inventory ansible/site.yml
 .endif
