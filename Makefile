@@ -1,10 +1,10 @@
 BIN = /bin
 PREFIX ?= /usr/local
-REGGAE_DIR = /share/reggae
-TEMPLATE_DIR = ${REGGAE_DIR}/templates
-MAKE_DIR = ${REGGAE_DIR}/mk
-SCRIPTS_DIR = ${REGGAE_DIR}/scripts
-CBSD_PROFILE_DIR = ${REGGAE_DIR}/cbsd-profile
+REGGAE_DIR ?= share/reggae
+TEMPLATE_DIR = /${REGGAE_DIR}/templates
+MAKE_DIR = /${REGGAE_DIR}/mk
+SCRIPTS_DIR = /${REGGAE_DIR}/scripts
+CBSD_PROFILE_DIR = /${REGGAE_DIR}/cbsd-profile
 BIN_FILES = reggae
 TEMPLATES = cbsd.conf.tpl \
 	    dhclient-exit-hooks \
@@ -40,7 +40,6 @@ SCRIPTS = init.sh \
 	   chef-provision.sh \
 	   get-config.sh \
 	   import.sh \
-	   master.sh \
 	   master-init.sh \
 	   network-init.sh \
 	   puppet-provision.sh \
@@ -73,8 +72,7 @@ install: install_bin install_templates install_makefiles install_scripts install
 	install -d ${DESTDIR}${PREFIX}/etc
 	install -m 0644 reggae.conf.sample ${DESTDIR}${PREFIX}/etc
 	install -m 0644 scripts/default.conf ${DESTDIR}${PREFIX}${SCRIPTS_DIR}/default.conf
-	cp -r skel ${DESTDIR}${PREFIX}${REGGAE_DIR}
-	cp -r master ${DESTDIR}${PREFIX}${REGGAE_DIR}
+	cp -r skel ${DESTDIR}${PREFIX}/${REGGAE_DIR}
 
 install_bin:
 	install -d ${DESTDIR}${PREFIX}${BIN}
