@@ -30,7 +30,7 @@ resolver() {
       -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
       ${SCRIPT_DIR}/../templates/resolver.conf >"${TEMP_RESOLVER_CONF}"
 
-    ZONE_BASE=`hostname`
+    ZONE_BASE=${DOMAIN}
 
     cbsd jcreate inter=0 jconf="${TEMP_RESOLVER_CONF}"
     echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/resolver-data/etc/rc.conf.d/sendmail"
