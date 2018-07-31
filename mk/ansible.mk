@@ -3,7 +3,7 @@ ANSIBLE!=sh -c "which ansible-3.6 || true"
 
 provision-ansible:
 	@sudo rm -rf ansible/site.retry
-	@sudo chown -R ${UID}:${GID} ~/.ansible
+	@-sudo chown -R ${UID}:${GID} ~/.ansible
 .if exists(requirements.yml)
 	@ansible-galaxy-3.6 install -p ansible/roles -r requirements.yml
 .endif
