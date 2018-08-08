@@ -17,15 +17,15 @@ ZFSFEAT=1
 
 
 setup_file_system() {
-    if [ ! -d "${CBSD_WORKDIR}" ]; then
-        if [ "${USE_ZFS}" = "yes" ]; then
-            ZFSFEAT=1
-            zfs create -o "mountpoint=${CBSD_WORKDIR}" "${ZFS_POOL}${CBSD_WORKDIR}"
-        else
-            ZFSFEAT=0
-            mkdir "${CBSD_WORKDIR}"
-        fi
+  if [ ! -d "${CBSD_WORKDIR}" ]; then
+    if [ "${USE_ZFS}" = "yes" ]; then
+      ZFSFEAT=1
+      zfs create -o "mountpoint=${CBSD_WORKDIR}" "${ZFS_POOL}${CBSD_WORKDIR}"
+    else
+      ZFSFEAT=0
+      mkdir "${CBSD_WORKDIR}"
     fi
+  fi
 }
 
 
@@ -60,7 +60,10 @@ setup_cbsd() {
   env workdir="${CBSD_WORKDIR}" /usr/local/cbsd/sudoexec/initenv "${TEMP_INITENV_CONF}"
   service cbsdd start
   service cbsdrsyncd start
-  sed -e "s/DOMAIN/${DOMAIN}/g" "${SCRIPT_DIR}/../cbsd-profile/jail-freebsd-reggae.conf" >"${CBSD_WORKDIR}/etc/defaults/jail-freebsd-reggae.conf"
+  sed \
+    -e "s/DOMAIN/${DOMAIN}/g" \
+    -e "s/JAIL_INTERFACE/${JAIL_INTERFACE}/g" \
+    "${SCRIPT_DIR}/../cbsd-profile/jail-freebsd-reggae.conf" >"${CBSD_WORKDIR}/etc/defaults/jail-freebsd-reggae.conf"
   cp -r "${SCRIPT_DIR}/../cbsd-profile/skel" "${CBSD_WORKDIR}/share/FreeBSD-jail-reggae-skel"
   cp -r "${SCRIPT_DIR}/../cbsd-profile/system" "${CBSD_WORKDIR}/share/jail-system-reggae"
   chown -R root:wheel "${CBSD_WORKDIR}/share/FreeBSD-jail-reggae-skel"

@@ -3,65 +3,65 @@
 SCRIPT_ROOT="${SCRIPT_ROOT:=/usr/local/share/reggae/scripts}"
 
 help() {
-    echo "Usage: $0 <action>"
-    echo -n "  where action is 'init', 'network-init', 'cbsd-init'"
-    echo ", 'master-init', 'register' or 'deregister'"
+  echo "Usage: $0 <action>"
+  echo -n "  where action is 'init', 'network-init', 'cbsd-init'"
+  echo ", 'master-init', 'register' or 'deregister'"
 }
 
 case "${1}" in
-    init)
-        shift
-        "${SCRIPT_ROOT}/init.sh" ${@}
-        break
-        ;;
-    project-init)
-        shift
-        "${SCRIPT_ROOT}/project-init.sh" ${@}
-        break
-        ;;
-    network-init)
-        shift
-        "${SCRIPT_ROOT}/network-init.sh" ${@}
-        break
-        ;;
-    cbsd-init)
-        shift
-        "${SCRIPT_ROOT}/cbsd-init.sh" ${@}
-        break
-        ;;
-    master-init)
-        shift
-        "${SCRIPT_ROOT}/master-init.sh" ${@}
-        break
-        ;;
-    register)
-        shift
-        "${SCRIPT_ROOT}/register.sh" register
-        break
-        ;;
-    deregister)
-        shift
-        "${SCRIPT_ROOT}/register.sh" deregister
-        break
-        ;;
-    get-config)
-        shift
-        "${SCRIPT_ROOT}/get-config.sh" ${@}
-        break
-        ;;
-    master)
-        shift
-        "${SCRIPT_ROOT}/master.sh" ${@}
-        break
-        ;;
-    import)
-        shift
-        "${SCRIPT_ROOT}/import.sh" ${@}
-        break
-        ;;
-    *)
-        help
-        exit 1
-        ;;
+  init)
+    shift
+    "${SCRIPT_ROOT}/init.sh" ${@}
+    break
+    ;;
+  project-init)
+    shift
+    "${SCRIPT_ROOT}/project-init.sh" ${@}
+    break
+    ;;
+  network-init)
+    shift
+    "${SCRIPT_ROOT}/network-init.sh" ${@}
+    break
+    ;;
+  cbsd-init)
+    shift
+    "${SCRIPT_ROOT}/cbsd-init.sh" ${@}
+    break
+    ;;
+  master-init)
+    shift
+    "${SCRIPT_ROOT}/master-init.sh" ${@}
+    break
+    ;;
+  register)
+    shift
+    "${SCRIPT_ROOT}/register.sh" register
+    break
+    ;;
+  deregister)
+    shift
+    "${SCRIPT_ROOT}/register.sh" deregister
+    break
+    ;;
+  get-config)
+    shift
+    "${SCRIPT_ROOT}/get-config.sh" ${@}
+    break
+    ;;
+  master)
+    shift
+    "${SCRIPT_ROOT}/master.sh" ${@}
+    break
+    ;;
+  import)
+    shift
+    "${SCRIPT_ROOT}/import.sh" ${@}
+    break
+    ;;
+  *)
+    help
+    exit 1
+    ;;
 esac
 
