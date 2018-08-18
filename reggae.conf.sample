@@ -9,3 +9,4 @@
 # VM_INTERFACE="bridge1"
 # VM_INTERFACE_IP="172.16.0.254"
 # ZFS_POOL="zroot"
+# PROJECT_DIR="/home/reggae/repos"

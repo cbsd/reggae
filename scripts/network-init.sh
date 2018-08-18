@@ -23,6 +23,14 @@ if [ -z "${DHCP_CONFIG}" ]; then
 fi
 
 
+check_config() {
+  if [ -z "${PROJECTS_DIR}" ]; then
+    echo "PROJECTS_DIR must be set in /usr/local/etc/reggae.conf" >&2
+    exit 1
+  fi
+}
+
+
 network() {
     sysrc gateway_enable="YES"
     sysctl net.inet.ip.forwarding=1
@@ -68,10 +76,6 @@ pf() {
       sed \
         -e "s:EGRESS:${EGRESS}:g" \
         -e "s:VM_INTERFACE:${VM_INTERFACE}:g" \
-        -e "s:JAIL_INTERFACE:${JAIL_INTERFACE}:g" \
-        -e "s:JAIL_IP_POOL:${JAIL_IP_POOL}:g" \
-        -e "s:VM_IP_POOL:${VM_IP_POOL}:g" \
-        -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
         -e "s:RDR:${RDR}:g" \
         "${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
       sysrc pflog_enable="YES"
@@ -101,7 +105,30 @@ setup_ssh() {
 }
 
 
+setup_nfs() {
+  TMP_EXPORTS=`mktemp`
+  sysrc mountd_enable="YES"
+  sysrc mountd_flags="-r"
+  sysrc nfs_server_enable="YES"
+  sysrc nfsv4_server_enable="YES"
+  sysrc rpcbind_enable="YES"
+
+  if [ -e /etc/exports ]; then
+    cp /etc/exports "${TMP_EXPORTS}"
+  fi
+  echo "${PROJECTS_DIR} -alldirs -network ${VM_INTERFACE_IP} -mask 255.255.255.0" >>"${TMP_EXPORTS}"
+  sort "${TMP_EXPORTS}" | uniq > /etc/exports
+
+  service rpcbind start
+  service nfsd start
+  service mountd start
+  rm "${TMP_EXPORTS}"
+}
+
+
+check_config
 network
 pf
 setup_hostname
 setup_ssh
+setup_nfs
