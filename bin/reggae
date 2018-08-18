@@ -3,30 +3,30 @@
 SCRIPT_ROOT="${SCRIPT_ROOT:=/usr/local/share/reggae/scripts}"
 
 help() {
-    echo "Usage: $0 <action>"
-    echo -n "  where action is 'init', 'network-init', 'cbsd-init'"
-    echo ", 'master-init', 'register' or 'deregister'"
+  echo "Usage: $0 <action>"
+  echo -n "  where action is 'init', 'network-init', 'cbsd-init'"
+  echo ", 'master-init', 'register' or 'deregister'"
 }
 
 case "${1}" in
-    register)
-        shift
-        "${SCRIPT_ROOT}/register.sh" register
-        break
-        ;;
-    deregister)
-        shift
-        "${SCRIPT_ROOT}/register.sh" deregister
-        break
-        ;;
-    *)
-        SCRIPT="${SCRIPT_ROOT}/${1}.sh"
-        if [ ! -x "${SCRIPT}" ]; then
-          help >&2
-          exit 1
-        fi
-        shift
-        "${SCRIPT}" ${@}
-        ;;
+  register)
+    shift
+    "${SCRIPT_ROOT}/register.sh" register
+    break
+    ;;
+  deregister)
+    shift
+    "${SCRIPT_ROOT}/register.sh" deregister
+    break
+    ;;
+  *)
+    SCRIPT="${SCRIPT_ROOT}/${1}.sh"
+    if [ ! -x "${SCRIPT}" ]; then
+      help >&2
+      exit 1
+    fi
+    shift
+    "${SCRIPT}" ${@}
+    ;;
 esac
 

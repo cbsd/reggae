@@ -32,55 +32,55 @@ check_config() {
 
 
 network() {
-    sysrc gateway_enable="YES"
-    sysctl net.inet.ip.forwarding=1
+  sysrc gateway_enable="YES"
+  sysctl net.inet.ip.forwarding=1
 
-    rm -rf /tmp/ifaces.txt
-    touch /tmp/ifaces.txt
-    for iface in ${CLONED_INTERFACES}; do
-        echo "${iface}" >>/tmp/ifaces.txt
-    done
+  rm -rf /tmp/ifaces.txt
+  touch /tmp/ifaces.txt
+  for iface in ${CLONED_INTERFACES}; do
+    echo "${iface}" >>/tmp/ifaces.txt
+  done
 
-    LO_INTERFACE=`grep "^${JAIL_INTERFACE}$" /tmp/ifaces.txt`
-    if [ -z "${LO_INTERFACE}" ]; then
-        if [ -z "${CLONED_INTERFACES}" ]; then
-            CLONED_INTERFACES="${JAIL_INTERFACE}"
-        else
-            CLONED_INTERFACES="${CLONED_INTERFACES} ${JAIL_INTERFACE}"
-        fi
-        sysrc ifconfig_lo1="up"
+  LO_INTERFACE=`grep "^${JAIL_INTERFACE}$" /tmp/ifaces.txt`
+  if [ -z "${LO_INTERFACE}" ]; then
+    if [ -z "${CLONED_INTERFACES}" ]; then
+      CLONED_INTERFACES="${JAIL_INTERFACE}"
+    else
+      CLONED_INTERFACES="${CLONED_INTERFACES} ${JAIL_INTERFACE}"
     fi
+    sysrc ifconfig_lo1="up"
+  fi
 
-    BRIDGE_INTERFACE=`grep "^${VM_INTERFACE}$" /tmp/ifaces.txt`
-    if [ -z "${BRIDGE_INTERFACE}" ]; then
-        CLONED_INTERFACES="${CLONED_INTERFACES} ${VM_INTERFACE}"
-        sysrc ifconfig_${VM_INTERFACE}="inet ${VM_INTERFACE_IP} netmask 255.255.255.0 description ${EGRESS}"
-    fi
+  BRIDGE_INTERFACE=`grep "^${VM_INTERFACE}$" /tmp/ifaces.txt`
+  if [ -z "${BRIDGE_INTERFACE}" ]; then
+    CLONED_INTERFACES="${CLONED_INTERFACES} ${VM_INTERFACE}"
+    sysrc ifconfig_${VM_INTERFACE}="inet ${VM_INTERFACE_IP} netmask 255.255.255.0 description ${EGRESS}"
+  fi
 
-    sysrc cloned_interfaces="${CLONED_INTERFACES}"
-    service netif cloneup
-    rm -rf /tmp/ifaces.txt
+  sysrc cloned_interfaces="${CLONED_INTERFACES}"
+  service netif cloneup
+  rm -rf /tmp/ifaces.txt
 }
 
 
 pf() {
-    if [ ! -e /etc/pf.conf ]; then
-      RDR=""
-      if [ "${STATIC}" = "NO" ]; then
-        RDR="rdr pass on \$ext_if proto tcp from any to any port ssh -> 127.0.0.1"
-      fi
-      RESOLVER_BASE=`echo ${RESOLVER_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
-      JAIL_IP_POOL="${RESOLVER_BASE}.0/24"
-      DHCP_BASE=`echo ${DHCP_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
-      VM_IP_POOL="${DHCP_BASE}.0/24"
-      sed \
-        -e "s:EGRESS:${EGRESS}:g" \
-        -e "s:VM_INTERFACE:${VM_INTERFACE}:g" \
-        -e "s:RDR:${RDR}:g" \
-        "${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
-      sysrc pflog_enable="YES"
-      sysrc pf_enable="YES"
+  if [ ! -e /etc/pf.conf ]; then
+    RDR=""
+    if [ "${STATIC}" = "NO" ]; then
+      RDR="rdr pass on \$ext_if proto tcp from any to any port ssh -> 127.0.0.1"
     fi
+    RESOLVER_BASE=`echo ${RESOLVER_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
+    JAIL_IP_POOL="${RESOLVER_BASE}.0/24"
+    DHCP_BASE=`echo ${DHCP_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
+    VM_IP_POOL="${DHCP_BASE}.0/24"
+    sed \
+      -e "s:EGRESS:${EGRESS}:g" \
+      -e "s:VM_INTERFACE:${VM_INTERFACE}:g" \
+      -e "s:RDR:${RDR}:g" \
+      "${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
+    sysrc pflog_enable="YES"
+    sysrc pf_enable="YES"
+  fi
 }
 
 
