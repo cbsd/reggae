@@ -29,13 +29,16 @@ TEMPLATES = cbsd.conf.tpl \
 ANSIBLE_TEMPLATES = ansible/inventory.local.tpl ansible/inventory.remote.tpl
 ANSIBLE_GROUP_TEMPLATES = ansible/group_vars/all.tpl
 MAKEFILES = ansible.mk \
+	    bhyve-service.mk \
 	    chef.mk \
+	    jail-service.mk \
 	    project.mk \
 	    puppet.mk \
 	    salt.mk \
 	    shell.mk \
 	    service.mk
 SCRIPTS = init.sh \
+	  bhyve-set-hostname.sh \
 	  cbsd-init.sh \
 	  chef-provision.sh \
 	  get-config.sh \
