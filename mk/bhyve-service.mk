@@ -27,8 +27,9 @@ destroy:
 ${DATA_DIR}:
 	@sudo cbsd bclone old=basehardenedbsd11 new=${SERVICE}
 	@sudo cbsd bstart ${SERVICE}
-	@sleep 30
-	@reggae bhyve-set-hostname basehardenedbsd11 ${SERVICE} ${DOMAIN}
+	@echo "Waiting for VM to get up"
+	@sleep 15
+	@sudo reggae bhyve-set-hostname ${SERVICE} ${DOMAIN}
 	@sudo cbsd bstop ${SERVICE}
 
 login:
