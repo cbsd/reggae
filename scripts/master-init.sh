@@ -129,6 +129,10 @@ dhcp() {
     -e "s:DHCP_SUBNET_LAST:${DHCP_SUBNET_LAST}:g" \
     -e "s:DHCP_BASE:${DHCP_BASE}:g" \
     ${SCRIPT_DIR}/../templates/dhcpd.conf >"${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/etc/dhcpd.conf"
+  sed \
+    -e "s:DHCP_IP:${DHCP_IP}:g" \
+    ${SCRIPT_DIR}/../templates/ip-by-mac.sh >"${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/bin/ip-by-mac.sh"
+  chmod 755 "${CBSD_WORKDIR}/jails-data/dhcp-data/usr/local/bin/ip-by-mac.sh"
   echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/sendmail"
   echo 'dhcpd_enable="YES"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"
   echo 'dhcpd_flags="-q"' >>"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"
