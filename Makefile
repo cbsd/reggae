@@ -38,10 +38,10 @@ MAKEFILES = ansible.mk \
 	    shell.mk \
 	    service.mk
 SCRIPTS = init.sh \
-	  bhyve-set-hostname.sh \
 	  cbsd-init.sh \
 	  chef-provision.sh \
 	  get-config.sh \
+	  get-ip.sh \
 	  import.sh \
 	  master-init.sh \
 	  network-init.sh \
@@ -49,7 +49,9 @@ SCRIPTS = init.sh \
 	  project-init.sh \
 	  register.sh \
 	  salt-provision.sh \
-	  shell-provision.sh
+	  shell-provision.sh \
+	  ssh.sh \
+	  ssh-ping.sh
 MAN_FILES = reggae.1 \
 	    reggae-ansible.1 \
 	    reggae-chef.1 \

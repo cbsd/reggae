@@ -7,6 +7,8 @@ up: ${DATA_DIR}
 	@sudo cbsd bset jname=${SERVICE} astart=1
 .endif
 	@sudo cbsd bstart jname=${SERVICE} || true
+	@echo "Waiting for VM to boot"
+	@sudo reggae ssh-ping ${SERVICE}
 .if !exists(.provisioned)
 	@${MAKE} ${MAKEFLAGS} provision
 .endif
@@ -26,11 +28,6 @@ destroy:
 
 ${DATA_DIR}:
 	@sudo cbsd bclone old=basehardenedbsd11 new=${SERVICE}
-	@sudo cbsd bstart ${SERVICE}
-	@echo "Waiting for VM to get up"
-	@sleep 15
-	@sudo reggae bhyve-set-hostname ${SERVICE} ${DOMAIN}
-	@sudo cbsd bstop ${SERVICE}
 
 login:
 	@ssh provision@${SERVICE}.${DOMAIN}
@@ -49,4 +46,4 @@ export: down
 	@sudo chown ${UID}:${GID} build/${SERVICE}.img
 
 devel: up
-	@ssh devel@${SERVICE}.${DOMAIN} /usr/src/bin/devel.sh
+	@sudo reggae ssh devel ${SERVICE} /usr/src/bin/devel.sh
