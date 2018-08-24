@@ -18,7 +18,7 @@ wait_ssh() {
   EXIT_STATUS=1
   while [ "${EXIT_STATUS}" != "0" ]; do
     sleep 1
-    reggae ssh provision ${IP} true >/dev/null 2>&1
+    reggae ssh provision ${1} true >/dev/null 2>&1
     EXIT_STATUS=$?
   done
 }
@@ -30,5 +30,4 @@ if [ -z "${SERVICE}" ]; then
 fi
 
 
-IP=`reggae get-ip ${SERVICE}`
-wait_ssh "${IP}"
+wait_ssh "${SERVICE}"

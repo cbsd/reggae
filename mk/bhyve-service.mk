@@ -1,11 +1,6 @@
 DATA_DIR = ${CBSD_WORKDIR}/jails-data/${SERVICE}-data
 
 up: ${DATA_DIR}
-.if ${DEVEL_MODE} == "YES"
-	@sudo cbsd bset jname=${SERVICE} astart=0
-.else
-	@sudo cbsd bset jname=${SERVICE} astart=1
-.endif
 	@sudo cbsd bstart jname=${SERVICE} || true
 	@echo "Waiting for VM to boot"
 	@sudo reggae ssh-ping ${SERVICE}
@@ -28,12 +23,18 @@ destroy:
 
 ${DATA_DIR}:
 	@sudo cbsd bclone old=basehardenedbsd11 new=${SERVICE}
+	@sudo cbsd bset jname=${SERVICE} astart=0
+	@sudo cbsd bstart jname=${SERVICE}
+	@echo "Waiting for VM to boot"
+	@sudo reggae ssh-ping ${SERVICE}
+	@sudo reggae ssh provision ${SERVICE} sudo sysrc hostname=${SERVICE}.${DOMAIN}
+	@sudo reggae ssh provision ${SERVICE} sudo hostname ${SERVICE}.${DOMAIN}
 
 login:
-	@ssh provision@${SERVICE}.${DOMAIN}
+	@sudo reggae ssh provision ${SERVICE}
 
 exec:
-	@ssh provision@${SERVICE}.${DOMAIN} ${command}
+	@sudo reggae ssh provision ${SERVICE} ${command}
 
 export: down
 .if !exists(build)
