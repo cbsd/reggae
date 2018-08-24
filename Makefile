@@ -14,6 +14,7 @@ TEMPLATES = cbsd.conf.tpl \
 	    freebsd-update.conf \
 	    gitignore \
 	    initenv.conf \
+	    ip-by-mac.sh \
 	    empty.jconf \
 	    my.domain \
 	    my.domain.rev \
