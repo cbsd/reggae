@@ -38,12 +38,13 @@ MAKEFILES = ansible.mk \
 	    salt.mk \
 	    shell.mk \
 	    service.mk
-SCRIPTS = init.sh \
+SCRIPTS = bhyve-init.sh \
 	  cbsd-init.sh \
 	  chef-provision.sh \
 	  get-config.sh \
 	  get-ip.sh \
 	  import.sh \
+	  init.sh \
 	  master-init.sh \
 	  network-init.sh \
 	  puppet-provision.sh \
