@@ -1,4 +1,5 @@
 DATA_DIR = ${CBSD_WORKDIR}/jails-data/${SERVICE}-data
+BASE_DATA_DIR = ${CBSD_WORKDIR}/jails-data/${IMAGE}-data
 
 up: ${DATA_DIR}
 	@sudo cbsd bstart jname=${SERVICE} || true
@@ -21,14 +22,20 @@ destroy:
 	@${MAKE} ${MAKEFLAGS} clean-${provisioner}
 .endfor
 
-${DATA_DIR}:
-	@sudo cbsd bclone old=basehardenedbsd11 new=${SERVICE}
+${DATA_DIR}: ${BASE_DATA_DIR}
+	@sudo cbsd bclone old=${IMAGE} new=${SERVICE}
 	@sudo cbsd bset jname=${SERVICE} astart=0
 	@sudo cbsd bstart jname=${SERVICE}
 	@echo "Waiting for VM to boot"
 	@sudo reggae ssh-ping ${SERVICE}
 	@sudo reggae ssh provision ${SERVICE} sudo sysrc hostname=${SERVICE}.${DOMAIN}
 	@sudo reggae ssh provision ${SERVICE} sudo hostname ${SERVICE}.${DOMAIN}
+
+${BASE_DATA_DIR}:
+	@rm -rf /tmp/${IMAGE}.img
+	@fetch ${BASE_URL}/${IMAGE}.img -o /tmp/${IMAGE}.img
+	@sudo reggae import /tmp/${IMAGE}.img
+	@rm -rf /tmp/${IMAGE}.img
 
 login:
 	@sudo reggae ssh provision ${SERVICE}
