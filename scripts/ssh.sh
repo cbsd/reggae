@@ -20,4 +20,4 @@ fi
 
 
 IP=`reggae get-ip ${SERVICE}`
-ssh -i "${PROJECT_ROOT}/id_rsa" -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" ${USER}@${IP} ${@}
+ssh -t -i "${PROJECT_ROOT}/id_rsa" -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" ${USER}@${IP} ${@}

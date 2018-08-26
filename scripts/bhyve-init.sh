@@ -13,4 +13,5 @@ IMAGE=`basename ${URL} | sed 's;\.img$;;'`
 echo "BASE_URL = ${BASE_URL}" >Makefile
 echo "IMAGE = ${IMAGE}" >>Makefile
 echo "TYPE = bhyve" >>Makefile
-reggae init
+shift
+reggae init ${@}

@@ -14,8 +14,10 @@ TEMPLATES = cbsd.conf.tpl \
 	    freebsd-update.conf \
 	    gitignore \
 	    initenv.conf \
+	    install-packages.sh \
 	    ip-by-mac.sh \
 	    empty.jconf \
+	    mount-project.sh \
 	    my.domain \
 	    my.domain.rev \
 	    named.conf \
@@ -25,6 +27,7 @@ TEMPLATES = cbsd.conf.tpl \
 	    rndc.conf \
 	    resolvconf.conf \
 	    resolver.conf \
+	    setup-vm.sh \
 	    Makefile.project \
 	    Makefile.service
 ANSIBLE_TEMPLATES = ansible/inventory.local.tpl ansible/inventory.remote.tpl
@@ -51,6 +54,7 @@ SCRIPTS = bhyve-init.sh \
 	  project-init.sh \
 	  register.sh \
 	  salt-provision.sh \
+	  scp.sh \
 	  shell-provision.sh \
 	  ssh.sh \
 	  ssh-ping.sh

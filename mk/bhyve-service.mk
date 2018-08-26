@@ -1,10 +1,18 @@
 DATA_DIR = ${CBSD_WORKDIR}/jails-data/${SERVICE}-data
 BASE_DATA_DIR = ${CBSD_WORKDIR}/jails-data/${IMAGE}-data
+PWD != pwd
+VM_INTERFACE_IP != reggae get-config VM_INTERFACE_IP
 
 up: ${DATA_DIR}
 	@sudo cbsd bstart jname=${SERVICE} || true
 	@echo "Waiting for VM to boot"
 	@sudo reggae ssh-ping ${SERVICE}
+	@sudo reggae scp provision ${SERVICE} ${REGGAE_PATH}/templates/install-packages.sh ${UID} ${GID}
+	@sudo reggae ssh provision ${SERVICE} chmod +x ./install-packages.sh
+	@sudo reggae ssh provision ${SERVICE} ./install-packages.sh ${EXTRA_PACKAGES}
+	@sudo reggae scp provision ${SERVICE} ${REGGAE_PATH}/templates/mount-project.sh ${UID} ${GID}
+	@sudo reggae ssh provision ${SERVICE} chmod +x ./mount-project.sh
+	@sudo reggae ssh provision ${SERVICE} ./mount-project.sh ${PWD}
 .if !exists(.provisioned)
 	@${MAKE} ${MAKEFLAGS} provision
 .endif
@@ -28,8 +36,9 @@ ${DATA_DIR}: ${BASE_DATA_DIR}
 	@sudo cbsd bstart jname=${SERVICE}
 	@echo "Waiting for VM to boot"
 	@sudo reggae ssh-ping ${SERVICE}
-	@sudo reggae ssh provision ${SERVICE} sudo sysrc hostname=${SERVICE}.${DOMAIN}
-	@sudo reggae ssh provision ${SERVICE} sudo hostname ${SERVICE}.${DOMAIN}
+	@sudo reggae scp provision ${SERVICE} ${REGGAE_PATH}/templates/setup-vm.sh ${UID} ${GID}
+	@sudo reggae ssh provision ${SERVICE} chmod +x ./setup-vm.sh
+	@sudo reggae ssh provision ${SERVICE} ./setup-vm.sh
 
 ${BASE_DATA_DIR}:
 	@rm -rf /tmp/${IMAGE}.img
