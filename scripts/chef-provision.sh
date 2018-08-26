@@ -10,24 +10,24 @@ if [ -z "${SERVICE}" ]; then
 fi
 
 init() {
-if [ "${TYPE}" = "jail" ]; then
-	cbsd jexec jname=${SERVICE} pkg install -y rubygem-chef
-	mkdir ${CBSD_WORKDIR}/jails/${SERVICE}/etc/chef >/dev/null 2>&1 || true
-	mkdir ${CBSD_WORKDIR}/jails/${SERVICE}/root/chef >/dev/null 2>&1 || true
-  mount_nullfs "${PWD}/chef" "${CBSD_WORKDIR}/jails/${SERVICE}/root/chef"
-elif [ "${TYPE}" = "bhyve" ]; then
-  reggae ssh provision ${SERVICE} sudo mkdir /etc/chef >/dev/null 2>&1 || true
-  reggae ssh provision ${SERVICE} sudo pkg install -y rubygem-chef
-fi
+  if [ "${TYPE}" = "jail" ]; then
+    cbsd jexec jname=${SERVICE} pkg install -y rubygem-chef
+    mkdir ${CBSD_WORKDIR}/jails/${SERVICE}/etc/chef >/dev/null 2>&1 || true
+    mkdir ${CBSD_WORKDIR}/jails/${SERVICE}/root/chef >/dev/null 2>&1 || true
+    mount_nullfs "${PWD}/chef" "${CBSD_WORKDIR}/jails/${SERVICE}/root/chef"
+  elif [ "${TYPE}" = "bhyve" ]; then
+    reggae ssh provision ${SERVICE} sudo mkdir /etc/chef >/dev/null 2>&1 || true
+    reggae ssh provision ${SERVICE} sudo pkg install -y rubygem-chef
+  fi
 }
 
 cleanup() {
-if [ "${TYPE}" = "jail" ]; then
-  rm -rf "${CBSD_WORKDIR}/jails/${SERVICE}/root/chef/nodes"
-  umount "${CBSD_WORKDIR}/jails/${SERVICE}/root/chef"
-elif [ "${TYPE}" = "bhyve" ]; then
-  reggae ssh provision ${SERVICE} sudo rm -rf /usr/src/chef/nodes
-fi
+  if [ "${TYPE}" = "jail" ]; then
+    rm -rf "${CBSD_WORKDIR}/jails/${SERVICE}/root/chef/nodes"
+    umount "${CBSD_WORKDIR}/jails/${SERVICE}/root/chef"
+  elif [ "${TYPE}" = "bhyve" ]; then
+    reggae ssh provision ${SERVICE} sudo rm -rf /usr/src/chef/nodes
+  fi
 }
 
 trap "cleanup" HUP INT ABRT BUS TERM  EXIT

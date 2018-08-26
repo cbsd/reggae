@@ -5,21 +5,21 @@ SERVICE="${1}"
 TYPE="${2}"
 
 init() {
-if [ "${TYPE}" = "jail" ]; then
-  mount_nullfs "${PWD}/puppet/manifests" "${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/puppet/manifests"
-	cbsd jexec "jname=${SERVICE}" pkg install -y puppet5
-elif [ "${TYPE}" = "bhyve" ]; then
-  reggae ssh provision ${SERVICE} sudo mount_nullfs /usr/src/puppet/manifests /usr/local/etc/puppet/manifests
-	reggae ssh provision ${SERVICE} sudo pkg install -y puppet5
-fi
+  if [ "${TYPE}" = "jail" ]; then
+    mount_nullfs "${PWD}/puppet/manifests" "${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/puppet/manifests"
+    cbsd jexec "jname=${SERVICE}" pkg install -y puppet5
+  elif [ "${TYPE}" = "bhyve" ]; then
+    reggae ssh provision ${SERVICE} sudo mount_nullfs /usr/src/puppet/manifests /usr/local/etc/puppet/manifests
+    reggae ssh provision ${SERVICE} sudo pkg install -y puppet5
+  fi
 }
 
 cleanup() {
-if [ "${TYPE}" = "jail" ]; then
-  umount "${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/puppet/manifests"
-elif [ "${TYPE}" = "bhyve" ]; then
-  reggae ssh provision ${SERVICE} sudo umount /usr/local/etc/puppet/manifests
-fi
+  if [ "${TYPE}" = "jail" ]; then
+    umount "${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/puppet/manifests"
+  elif [ "${TYPE}" = "bhyve" ]; then
+    reggae ssh provision ${SERVICE} sudo umount /usr/local/etc/puppet/manifests
+  fi
 }
 
 if [ -z "${SERVICE}" ]; then
