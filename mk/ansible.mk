@@ -1,5 +1,5 @@
 PROVISIONERS += ansible
-ANSIBLE!=sh -c "which ansible-3.6 || true"
+ANSIBLE != sh -c "which ansible-3.6 || true"
 
 provision-ansible:
 	@sudo rm -rf ansible/site.retry
@@ -9,6 +9,8 @@ provision-ansible:
 .endif
 .if defined(server)
 	@env ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook-3.6 -i ansible/inventory/inventory ansible/site.yml -b --ssh-extra-args='"-o ProxyCommand ssh -x -a -q ${server} nc %h 22"'
+.elif ${TYPE} == bhyve
+	@env ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook-3.6 --become -i ansible/inventory/inventory ansible/site.yml
 .else
 	@sudo ansible-playbook-3.6 -i ansible/inventory/inventory ansible/site.yml
 .endif
@@ -18,6 +20,9 @@ setup-ansible:
 .if defined(server)
 	@sed -e "s:SERVICE:${SERVICE}.${server}:g" ${REGGAE_PATH}/templates/ansible/inventory.remote.tpl >ansible/inventory/inventory
 	@sed -e "s:SERVICE:${SERVICE}.${server}:g" templates/site.yml.tpl >ansible/site.yml
+.elif ${TYPE} == bhyve
+	@sed -e "s:SERVICE:`sudo reggae get-ip ${SERVICE}`:g" ${REGGAE_PATH}/templates/ansible/inventory.remote.tpl >ansible/inventory/inventory
+	@sed -e "s:SERVICE:`sudo reggae get-ip ${SERVICE}`:g" templates/site.yml.tpl >ansible/site.yml
 .else
 	@sed -e "s:SERVICE:${SERVICE}:g" ${REGGAE_PATH}/templates/ansible/inventory.local.tpl >ansible/inventory/inventory
 	@sed -e "s:SERVICE:${SERVICE}:g" templates/site.yml.tpl >ansible/site.yml

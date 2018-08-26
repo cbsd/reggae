@@ -19,6 +19,9 @@ up: ${DATA_DIR}
 
 provision: ${DATA_DIR}
 	@touch .provisioned
+.for provisioner in ${PROVISIONERS}
+	@${MAKE} ${MAKEFLAGS} provision-${provisioner}
+.endfor
 
 down: ${DATA_DIR}
 	@sudo cbsd bstop ${SERVICE} || true
@@ -39,6 +42,9 @@ ${DATA_DIR}: ${BASE_DATA_DIR}
 	@sudo reggae scp provision ${SERVICE} ${REGGAE_PATH}/templates/setup-vm.sh ${UID} ${GID}
 	@sudo reggae ssh provision ${SERVICE} chmod +x ./setup-vm.sh
 	@sudo reggae ssh provision ${SERVICE} ./setup-vm.sh
+.for provisioner in ${PROVISIONERS}
+	@${MAKE} ${MAKEFLAGS} setup-${provisioner}
+.endfor
 
 ${BASE_DATA_DIR}:
 	@rm -rf /tmp/${IMAGE}.img
