@@ -1,3 +1,5 @@
+.include <${REGGAE_PATH}/mk/common.mk>
+
 .if exists(vars.mk)
 .include <vars.mk>
 .endif
@@ -9,7 +11,6 @@ UID ?= ${RUNNING_UID}
 GID ?= ${RUNNING_GID}
 DOMAIN != reggae get-config DOMAIN
 CBSD_WORKDIR != sysrc -n cbsd_workdir
-TYPE ?= jail
 EXTRA_PACKAGES =
 
 .for provisioner in ${PROVISIONERS}

@@ -1,3 +1,5 @@
+.include <${REGGAE_PATH}/mk/common.mk>
+
 PROVISIONERS += puppet
 
 provision-puppet:

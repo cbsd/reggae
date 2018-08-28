@@ -1,3 +1,5 @@
+.include <${REGGAE_PATH}/mk/common.mk>
+
 PROVISIONERS += ansible
 ANSIBLE != sh -c "which ansible-3.6 || true"
 
