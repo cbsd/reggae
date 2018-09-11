@@ -3,7 +3,6 @@
 .endif
 
 DEVEL_MODE ?= "NO"
-DOMAIN ?= my.domain
 RUNNING_UID := `id -u`
 RUNNING_GID := `id -g`
 UID ?= ${RUNNING_UID}
@@ -58,7 +57,6 @@ setup:
 .for service url in ${SERVICES}
 	@rm -f services/${service}/vars.mk
 	@echo "DEVEL_MODE ?= ${DEVEL_MODE}" >>services/${service}/vars.mk
-	@echo "DOMAIN ?= ${DOMAIN}" >>services/${service}/vars.mk
 	@echo "GID ?= ${GID}" >>services/${service}/vars.mk
 	@echo "UID ?= ${UID}" >>services/${service}/vars.mk
 .endfor
@@ -68,6 +66,15 @@ devel: up
 	@${MAKE} ${MAKEFLAGS} -C services/${service} devel
 .else
 	@bin/devel.sh
+.endif
+
+test: up
+.if defined(service)
+	@${MAKE} ${MAKEFLAGS} -C services/${service} test
+.else
+.for service url in ${SERVICES}
+	@${MAKE} ${MAKEFLAGS} -C services/${service} test
+.endfor
 .endif
 
 destroy:

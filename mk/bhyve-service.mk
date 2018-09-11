@@ -70,3 +70,6 @@ export: down
 
 devel: up
 	@sudo reggae ssh devel ${SERVICE} /usr/src/bin/devel.sh
+
+test: up
+	@sudo reggae ssh devel ${SERVICE} /usr/src/bin/test.sh

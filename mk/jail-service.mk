@@ -67,7 +67,11 @@ setup:
 .endfor
 
 login:
+.if defined(user)
+	@sudo cbsd jlogin user=${user} ${SERVICE}
+.else
 	@sudo cbsd jlogin ${SERVICE}
+.endif
 
 exec:
 	@sudo cbsd jexec jname=${SERVICE} ${command}
@@ -84,3 +88,6 @@ export: down
 
 devel: up
 	@sudo jexec -U devel ${SERVICE} /usr/src/bin/devel.sh
+
+test: up
+	@sudo jexec -U devel ${SERVICE} /usr/src/bin/test.sh
