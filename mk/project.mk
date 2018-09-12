@@ -68,7 +68,7 @@ devel: up
 	@bin/devel.sh
 .endif
 
-test: up
+test:
 .if defined(service)
 	@${MAKE} ${MAKEFLAGS} -C services/${service} test
 .else
