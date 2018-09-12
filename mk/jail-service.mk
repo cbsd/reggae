@@ -87,7 +87,7 @@ export: down
 	@sudo chown ${UID}:${GID} build/${SERVICE}.img
 
 devel: up
-	@sudo jexec -U devel ${SERVICE} /usr/src/bin/devel.sh
+	@sudo cbsd jexec jname=${SERVICE} user=devel cmd=/usr/src/bin/devel.sh
 
 test: up
 	@sudo jexec -U devel ${SERVICE} /usr/src/bin/test.sh
