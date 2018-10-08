@@ -21,6 +21,12 @@ echo -n "Generating .gitignore ... "
 cp "${PROJECT_ROOT}/templates/gitignore" .gitignore
 echo "done"
 
+echo -n "Generating tests ..."
+mkdir bin
+echo "#!/bin/sh" >bin/test.sh
+chmod +x bin/test.sh
+echo "done"
+
 rm -rf provisioners.mk
 for provisioner in ${PROVISIONERS}; do
   echo ".include <\${REGGAE_PATH}/mk/${provisioner}.mk>" >>provisioners.mk
