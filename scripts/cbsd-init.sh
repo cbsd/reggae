@@ -44,14 +44,12 @@ EOF
 
 
 setup_cbsd() {
-  RESOLVERS="8.8.8.8"
-
   RESOLVER_BASE=`echo ${RESOLVER_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
   JAIL_IP_POOL="${RESOLVER_BASE}.0/24"
   sed \
     -e "s:HOSTNAME:${HOSTNAME}:g" \
     -e "s:NODEIP:${NODEIP}:g" \
-    -e "s:RESOLVERS:${RESOLVERS}:g" \
+    -e "s:JAIL_INTERFACE_IP:${JAIL_INTERFACE_IP}:g" \
     -e "s:NATIP:${NATIP}:g" \
     -e "s:JAIL_IP_POOL:${JAIL_IP_POOL}:g" \
     -e "s:ZFSFEAT:${ZFSFEAT}:g" \

@@ -12,15 +12,8 @@ EGRESS=`netstat -rn | awk '/^default/{print $4}'`
 EGRESS_CONFIG=`sysrc -n ifconfig_${EGRESS}`
 DHCP_CONFIG=`echo ${EGRESS_CONFIG} | grep -io dhcp`
 NODEIP=`ifconfig ${EGRESS} | awk '/inet /{print $2}'`
-TEMP_INITENV_CONF=`mktemp`
 TEMP_RESOLVER_CONF=`mktemp`
 TEMP_DHCP_CONF=`mktemp`
-STATIC=NO
-
-
-if [ -z "${DHCP_CONFIG}" ]; then
-  STATIC=YES
-fi
 
 
 resolver() {
@@ -40,8 +33,6 @@ resolver() {
     "${SCRIPT_DIR}/../templates/rndc.conf" \
     >"${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/rndc.conf"
   cbsd jstart resolver
-  cp "${SCRIPT_DIR}/../templates/dhclient-exit-hooks" /etc
-  chmod 700 /etc/dhclient-exit-hooks
   if [ ! -f "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/cbsd.key" ]; then
       cbsd jexec jname=resolver rndc-confgen -a -c /usr/local/etc/namedb/cbsd.key -k cbsd
       chown bind:bind "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/cbsd.key"
@@ -83,23 +74,7 @@ resolver() {
     "${CBSD_WORKDIR}/jails-data/resolver-data/usr/local/etc/namedb/dynamic/${ZONE_BASE}.rev"
   echo "Permissions changed"
 
-  if [ "${STATIC}" = "NO" ]; then
-    sed \
-      -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
-      "${SCRIPT_DIR}/../templates/resolvconf.conf" >/etc/resolvconf.conf
-  fi
-
-  /etc/dhclient-exit-hooks nohup
   cbsd jexec jname=resolver service named restart
-  sed \
-    -e "s:HOSTNAME:${HOSTNAME}:g" \
-    -e "s:NODEIP:${NODEIP}:g" \
-    -e "s:RESOLVERS:${RESOLVER_IP}:g" \
-    -e "s:NATIP:${NATIP}:g" \
-    -e "s:JAIL_IP_POOL:${JAIL_IP_POOL}:g" \
-    -e "s:ZFSFEAT:${ZFSFEAT}:g" \
-    ${SCRIPT_DIR}/../templates/initenv.conf >"${TEMP_INITENV_CONF}"
-  cbsd initenv inter=0 "${TEMP_INITENV_CONF}"
 }
 
 

@@ -7,7 +7,6 @@ SCRIPTS_DIR = /${REGGAE_DIR}/scripts
 CBSD_PROFILE_DIR = /${REGGAE_DIR}/cbsd-profile
 BIN_FILES = reggae
 TEMPLATES = cbsd.conf.tpl \
-	    dhclient-exit-hooks \
 	    dhcp.conf \
 	    dhcpd.conf \
 	    dhcpd-hook.sh \
@@ -29,7 +28,9 @@ TEMPLATES = cbsd.conf.tpl \
 	    resolver.conf \
 	    setup-vm.sh \
 	    Makefile.project \
-	    Makefile.service
+	    Makefile.service \
+	    unbound.conf \
+	    unbound_cbsd.conf
 ANSIBLE_TEMPLATES = ansible/inventory.local.tpl ansible/inventory.remote.tpl
 ANSIBLE_GROUP_TEMPLATES = ansible/group_vars/all.tpl
 MAKEFILES = ansible.mk \
