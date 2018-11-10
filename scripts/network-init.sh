@@ -48,6 +48,7 @@ network() {
     else
       CLONED_INTERFACES="${CLONED_INTERFACES} ${JAIL_INTERFACE}"
     fi
+    echo sysrc ifconfig_${JAIL_INTERFACE}="inet ${JAIL_INTERFACE_IP} netmask 255.255.255.0"
     sysrc ifconfig_${JAIL_INTERFACE}="inet ${JAIL_INTERFACE_IP} netmask 255.255.255.0"
   fi
 
@@ -130,6 +131,8 @@ setup_nfs() {
 
 setup_unbound() {
   sysrc local_unbound_enable="YES"
+  sysrc local_unbound_tls="NO"
+  fetch -o /var/unbound/root.hints https://www.internic.net/domain/named.cache
   service local_unbound restart
   sed \
     -e "s:JAIL_INTERFACE_IP:${JAIL_INTERFACE_IP}:g" \
@@ -139,8 +142,6 @@ setup_unbound() {
     -e "s:DOMAIN:${DOMAIN}:g" \
     -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
     "${SCRIPT_DIR}/../templates/unbound_cbsd.conf" >/var/unbound/conf.d/cbsd.conf
-  fetch -o /var/unbound/root.hints https://www.internic.net/domain/named.cache
-  unbound-anchor
   cp "${SCRIPT_DIR}/../templates/resolvconf.conf" /etc/resolvconf.conf
   chown -R unbound:unbound /var/unbound
   service local_unbound restart
