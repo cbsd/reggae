@@ -81,9 +81,9 @@ pf() {
       -e "s:VM_INTERFACE:${VM_INTERFACE}:g" \
       -e "s:RDR:${RDR}:g" \
       "${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
-    sysrc pflog_enable="YES"
-    sysrc pf_enable="YES"
   fi
+  sysrc pflog_enable="YES"
+  sysrc pf_enable="YES"
 }
 
 
