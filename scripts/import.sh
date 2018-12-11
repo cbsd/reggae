@@ -2,6 +2,7 @@
 
 CBSD_WORKDIR=`sysrc -n cbsd_workdir`
 IMAGE_PATH="${1}"
+HYPERVISOR="${2:-jail}"
 DOMAIN=`reggae get-config DOMAIN`
 
 if [ -z "${IMAGE_PATH}" ]; then
@@ -18,5 +19,11 @@ IMAGE=`basename ${IMAGE_PATH}`
 JAIL=`echo ${IMAGE} | sed 's;\.img$;;'`
 trap "rm -rf ${CBSD_WORKDIR}/import/${IMAGE}" HUP INT ABRT BUS TERM  EXIT
 cp "${IMAGE_PATH}" "${CBSD_WORKDIR}/import/${IMAGE}"
-cbsd jimport "${IMAGE}"
-cbsd jset jname=${JAIL} host_hostname=${JAIL}.${DOMAIN}
+if [ "${HYPERVISOR}" = "jail" ]; then
+  echo cbsd jimport "${IMAGE}"
+  cbsd jimport "${IMAGE}"
+  cbsd jset jname=${JAIL} host_hostname=${JAIL}.${DOMAIN}
+else
+  echo cbsd bimport "${IMAGE}"
+  cbsd bimport "${JAIL}"
+fi
