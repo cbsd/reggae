@@ -49,7 +49,7 @@ ${DATA_DIR}: ${BASE_DATA_DIR}
 ${BASE_DATA_DIR}:
 	@rm -rf /tmp/${IMAGE}.img
 	@fetch ${BASE_URL}/${IMAGE}.img -o /tmp/${IMAGE}.img
-	@sudo reggae import /tmp/${IMAGE}.img
+	@sudo reggae import /tmp/${IMAGE}.img bhyve
 	@rm -rf /tmp/${IMAGE}.img
 
 login:
