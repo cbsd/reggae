@@ -8,18 +8,13 @@ RUNNING_GID := `id -g`
 UID ?= ${RUNNING_UID}
 GID ?= ${RUNNING_GID}
 
-all: fetch setup
-.if defined(service)
-	@echo "=== ${service} ==="
-	@${MAKE} ${MAKEFLAGS} -C services/${service}
-.else
-.for service url in ${SERVICES}
-	@echo "=== ${service} ==="
-	@${MAKE} ${MAKEFLAGS} -C services/${service}
-.endfor
-.endif
+.MAIN: up
 
+.if target(pre_up)
+up: fetch setup pre_up
+.else
 up: fetch setup
+.endif
 .if defined(service)
 	@echo "=== ${service} ==="
 	@${MAKE} ${MAKEFLAGS} -C services/${service} up
