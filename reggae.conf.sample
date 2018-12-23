@@ -5,9 +5,8 @@
 # DOMAIN=`hostname`
 # RESOLVER_IP="10.0.0.253"
 # USE_ZFS="yes"
-# VM_INTERFACE="bridge1"
-# VM_INTERFACE_IP="172.16.0.254"
-# JAIL_INTERFACE="lo1"
+# INTERFACE="cbsd0"
+# INTERFACE_IP="172.16.0.254"
 # JAIL_INTERFACE_IP="10.0.0.254"
 # ZFS_POOL="zroot"
 # PROJECT_DIR="/home/user/reggae/repos"

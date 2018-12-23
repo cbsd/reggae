@@ -32,35 +32,13 @@ check_config() {
 
 
 network() {
-  sysrc gateway_enable="YES"
   sysctl net.inet.ip.forwarding=1
-
-  rm -rf /tmp/ifaces.txt
-  touch /tmp/ifaces.txt
-  for iface in ${CLONED_INTERFACES}; do
-    echo "${iface}" >>/tmp/ifaces.txt
-  done
-
-  LO_INTERFACE=`grep "^${JAIL_INTERFACE}$" /tmp/ifaces.txt`
-  if [ -z "${LO_INTERFACE}" ]; then
-    if [ -z "${CLONED_INTERFACES}" ]; then
-      CLONED_INTERFACES="${JAIL_INTERFACE}"
-    else
-      CLONED_INTERFACES="${CLONED_INTERFACES} ${JAIL_INTERFACE}"
-    fi
-    echo sysrc ifconfig_${JAIL_INTERFACE}="inet ${JAIL_INTERFACE_IP} netmask 255.255.255.0"
-    sysrc ifconfig_${JAIL_INTERFACE}="inet ${JAIL_INTERFACE_IP} netmask 255.255.255.0"
-  fi
-
-  BRIDGE_INTERFACE=`grep "^${VM_INTERFACE}$" /tmp/ifaces.txt`
-  if [ -z "${BRIDGE_INTERFACE}" ]; then
-    CLONED_INTERFACES="${CLONED_INTERFACES} ${VM_INTERFACE}"
-    sysrc ifconfig_${VM_INTERFACE}="inet ${VM_INTERFACE_IP} netmask 255.255.255.0 description ${EGRESS}"
-  fi
-
-  sysrc cloned_interfaces="${CLONED_INTERFACES}"
+  sysrc gateway_enable="YES"
+  sysrc cloned_interfaces+="bridge0"
+  sysrc ifconfig_bridge0_name="${INTERFACE}"
+  sysrc ifconfig_${INTERFACE}="inet ${INTERFACE_IP} netmask 255.255.255.0 description ${EGRESS}"
+  sysrc ifconfig_${INTERFACE}_alias0="inet ${JAIL_INTERFACE_IP} netmask 255.255.255.0"
   service netif cloneup
-  rm -rf /tmp/ifaces.txt
 }
 
 
@@ -77,8 +55,8 @@ pf() {
     sed \
       -e "s:EGRESS:${EGRESS}:g" \
       -e "s:JAIL_INTERFACE_IP:${JAIL_INTERFACE_IP}:g" \
-      -e "s:VM_INTERFACE_IP:${VM_INTERFACE_IP}:g" \
-      -e "s:VM_INTERFACE:${VM_INTERFACE}:g" \
+      -e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
+      -e "s:INTERFACE:${INTERFACE}:g" \
       -e "s:RDR:${RDR}:g" \
       "${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
   fi
@@ -119,7 +97,7 @@ setup_nfs() {
   if [ -e /etc/exports ]; then
     cp /etc/exports "${TMP_EXPORTS}"
   fi
-  echo "${PROJECTS_DIR} -alldirs -network ${VM_INTERFACE_IP} -mask 255.255.255.0" >>"${TMP_EXPORTS}"
+  echo "${PROJECTS_DIR} -alldirs -network ${INTERFACE_IP} -mask 255.255.255.0" >>"${TMP_EXPORTS}"
   sort "${TMP_EXPORTS}" | uniq > /etc/exports
 
   service rpcbind start
@@ -136,7 +114,7 @@ setup_unbound() {
   service local_unbound restart
   sed \
     -e "s:JAIL_INTERFACE_IP:${JAIL_INTERFACE_IP}:g" \
-    -e "s:VM_INTERFACE_IP:${VM_INTERFACE_IP}:g" \
+    -e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
     "${SCRIPT_DIR}/../templates/unbound.conf" >/var/unbound/unbound.conf
   sed \
     -e "s:DOMAIN:${DOMAIN}:g" \
