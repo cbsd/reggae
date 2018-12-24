@@ -9,8 +9,8 @@ SCRIPT_DIR=`dirname $0`
 
 SHORT_HOSTNAME=`hostname -s`
 HOSTNAME=`hostname`
-NATIP=`netstat -rn | awk '/^default/{print $2}'`
-EGRESS=`netstat -rn | awk '/^default/{print $4}'`
+NATIP=`netstat -rn | awk '/^default/{print $2}' | grep '\.'`
+EGRESS=`netstat -rn | awk '/^default/{print $4}' | sort | uniq`
 NODEIP=`ifconfig ${EGRESS} | awk '/inet /{print $2}'`
 TEMP_INITENV_CONF=`mktemp`
 ZFSFEAT=1
