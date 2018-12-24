@@ -32,13 +32,18 @@ check_config() {
 
 
 network() {
+  interface_config="inet ${INTERFACE_IP} netmask 255.255.255.0 description ${EGRESS}"
+  interface_alias_config="inet ${JAIL_INTERFACE_IP} netmask 255.255.255.0"
   sysctl net.inet.ip.forwarding=1
   sysrc gateway_enable="YES"
   sysrc cloned_interfaces+="bridge0"
   sysrc ifconfig_bridge0_name="${INTERFACE}"
-  sysrc ifconfig_${INTERFACE}="inet ${INTERFACE_IP} netmask 255.255.255.0 description ${EGRESS}"
-  sysrc ifconfig_${INTERFACE}_alias0="inet ${JAIL_INTERFACE_IP} netmask 255.255.255.0"
+  sysrc ifconfig_${INTERFACE}="${interface_config}"
+  sysrc ifconfig_${INTERFACE}_alias0="${interface_alias_config}"
   service netif cloneup
+  sleep 1
+  ifconfig ${INTERFACE} ${interface_config}
+  ifconfig ${INTERFACE} ${interface_alias_config} alias
 }
 
 
@@ -76,12 +81,12 @@ setup_hostname() {
 
 setup_ssh() {
   if [ -z "${SSHD_FLAGS}" ]; then
-    SSHD_FLAGS="${SSHD_FLAGS} -o ListenAddress=127.0.0.1"
-    if [ "${STATIC}" = "YES" ]; then
-      EGRESS_IP=`echo ${EGRESS_CONFIG} | grep -E 'inet ([0-9]{1,3}\.){3}[0-9]{1,3}' | awk '{print $2}'`
-      SSHD_FLAGS="${SSHD_FLAGS} -o ListenAddress=${EGRESS_IP}"
-    fi
-    sysrc sshd_flags="${SSHD_FLAGS}"
+    sysrc sshd_flags+="-o ListenAddress=127.0.0.1"
+  else
+    sysrc sshd_flags+=" -o ListenAddress=127.0.0.1"
+  if [ "${STATIC}" = "YES" ]; then
+    EGRESS_IP=`echo ${EGRESS_CONFIG} | grep -E 'inet ([0-9]{1,3}\.){3}[0-9]{1,3}' | awk '{print $2}'`
+    sysrc sshd_flags+=" -o ListenAddress=${EGRESS_IP}"
   fi
 }
 
