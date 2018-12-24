@@ -6,16 +6,18 @@ MAKE_DIR = /${REGGAE_DIR}/mk
 SCRIPTS_DIR = /${REGGAE_DIR}/scripts
 CBSD_PROFILE_DIR = /${REGGAE_DIR}/cbsd-profile
 BIN_FILES = reggae
-TEMPLATES = cbsd.conf.tpl \
-	    dhcp.conf \
-	    dhcpd.conf \
+TEMPLATES = Makefile.project \
+	    Makefile.service \
+	    cbsd.conf.tpl \
 	    dhcpd-hook.sh \
+	    dhcpd.conf \
+	    empty.jconf \
 	    freebsd-update.conf \
 	    gitignore \
 	    initenv.conf \
 	    install-packages.sh \
 	    ip-by-mac.sh \
-	    empty.jconf \
+	    master.conf \
 	    mount-project.sh \
 	    my.domain \
 	    my.domain.rev \
@@ -23,26 +25,23 @@ TEMPLATES = cbsd.conf.tpl \
 	    nsupdate-add.txt \
 	    nsupdate-delete.txt \
 	    pf.conf \
-	    rndc.conf \
 	    resolvconf.conf \
-	    resolver.conf \
+	    rndc.conf \
 	    setup-vm.sh \
-	    Makefile.project \
-	    Makefile.service \
 	    unbound.conf \
 	    unbound_cbsd.conf
 ANSIBLE_TEMPLATES = ansible/inventory.local.tpl ansible/inventory.remote.tpl
 ANSIBLE_GROUP_TEMPLATES = ansible/group_vars/all.tpl
 MAKEFILES = ansible.mk \
-	    common.mk \
 	    bhyve-service.mk \
 	    chef.mk \
+	    common.mk \
 	    jail-service.mk \
 	    project.mk \
 	    puppet.mk \
 	    salt.mk \
-	    shell.mk \
-	    service.mk
+	    service.mk \
+	    shell.mk
 SCRIPTS = bhyve-init.sh \
 	  cbsd-init.sh \
 	  chef-provision.sh \
@@ -52,8 +51,8 @@ SCRIPTS = bhyve-init.sh \
 	  init.sh \
 	  master-init.sh \
 	  network-init.sh \
-	  puppet-provision.sh \
 	  project-init.sh \
+	  puppet-provision.sh \
 	  register.sh \
 	  salt-provision.sh \
 	  scp.sh \

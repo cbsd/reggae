@@ -1,4 +1,4 @@
-server RESOLVER_IP
+server MASTER_IP
 
 zone DOMAIN
 update add JAIL_NAME.DOMAIN 60 IN A JAIL_IP

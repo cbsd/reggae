@@ -21,8 +21,8 @@ if [ "${ACTION}" = "deregister" ]; then
   PF_ACTION="delete"
 fi
 
-if [ "${JAIL_NAME}" != "resolver" ]; then
-  TEMP_FILE=`mktemp ${CBSD_WORKDIR}/jails-data/resolver-data/tmp/tmp.XXXXXX`
+if [ "${JAIL_NAME}" != "cbsd" ]; then
+  TEMP_FILE=`mktemp ${CBSD_WORKDIR}/jails-data/cbsd-data/tmp/tmp.XXXXXX`
   JAIL_IP_LAST=`echo ${JAIL_IP} | awk -F '.' '{print $4}'`
   REVERSE_ZONE=`echo ${JAIL_IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
   sed \
@@ -30,12 +30,12 @@ if [ "${JAIL_NAME}" != "resolver" ]; then
     -e "s/JAIL_IP_LAST/${JAIL_IP_LAST}/g" \
     -e "s/JAIL_IP/${JAIL_IP}/g" \
     -e "s/REVERSE_ZONE/${REVERSE_ZONE}/g" \
-    -e "s/RESOLVER_IP/${RESOLVER_IP}/g" \
+    -e "s/MASTER_IP/${MASTER_IP}/g" \
     -e "s/DOMAIN/${DOMAIN}/g" \
     ${TEMPLATE} \
     >${TEMP_FILE}
 
-  cbsd jexec jname=resolver nsupdate -k /usr/local/etc/namedb/cbsd.key ${TEMP_FILE#${CBSD_WORKDIR}/jails-data/resolver-data}
+  cbsd jexec jname=cbsd nsupdate -k /usr/local/etc/namedb/cbsd.key ${TEMP_FILE#${CBSD_WORKDIR}/jails-data/cbsd-data}
   rm -rf ${TEMP_FILE}
 fi
 pfctl -t cbsd -T ${PF_ACTION} ${JAIL_IP}
