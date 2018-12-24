@@ -81,7 +81,7 @@ setup_hostname() {
 
 setup_ssh() {
   if [ -z "${SSHD_FLAGS}" ]; then
-    sysrc sshd_flags+="-o ListenAddress=127.0.0.1"
+    sysrc sshd_flags="-o ListenAddress=127.0.0.1"
   else
     sysrc sshd_flags+=" -o ListenAddress=127.0.0.1"
   fi

@@ -20,6 +20,7 @@ resolver() {
   sed \
     -e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
     -e "s:DOMAIN:${DOMAIN}:g" \
+    -e "s:INTERFACE:${INTERFACE}:g" \
     -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
     ${SCRIPT_DIR}/../templates/resolver.conf >"${TEMP_RESOLVER_CONF}"
 
@@ -82,6 +83,7 @@ dhcp() {
   sed \
     -e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
     -e "s:DOMAIN:${DOMAIN}:g" \
+    -e "s:INTERFACE:${INTERFACE}:g" \
     -e "s:DHCP_IP:${DHCP_IP}:g" \
     ${SCRIPT_DIR}/../templates/dhcp.conf >"${TEMP_DHCP_CONF}"
 
@@ -97,7 +99,7 @@ dhcp() {
   DHCP_SUBNET_LAST="${DHCP_BASE}.200"
   sed \
     -e "s:DOMAIN:${DOMAIN}:g" \
-    -e "s:VM_INTERFACE_IP:${VM_INTERFACE_IP}:g" \
+    -e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
     -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
     -e "s:REVERSE_ZONE:${REVERSE_ZONE}:g" \
     -e "s:DHCP_SUBNET_FIRST:${DHCP_SUBNET_FIRST}:g" \
@@ -111,7 +113,7 @@ dhcp() {
   echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/sendmail"
   echo 'dhcpd_enable="YES"' >"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"
   echo 'dhcpd_flags="-q"' >>"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"
-  echo "dhcpd_ifaces=\"${VM_INTERFACE}\"" >>"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"
+  echo "dhcpd_ifaces=\"${INTERFACE}\"" >>"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"
   echo 'dhcpd_conf="/usr/local/etc/dhcpd.conf"' >>"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"
   echo 'dhcpd_withumask="022"' >>"${CBSD_WORKDIR}/jails-data/dhcp-data/etc/rc.conf.d/dhcpd"
 
