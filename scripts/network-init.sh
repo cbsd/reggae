@@ -84,6 +84,7 @@ setup_ssh() {
     sysrc sshd_flags+="-o ListenAddress=127.0.0.1"
   else
     sysrc sshd_flags+=" -o ListenAddress=127.0.0.1"
+  fi
   if [ "${STATIC}" = "YES" ]; then
     EGRESS_IP=`echo ${EGRESS_CONFIG} | grep -E 'inet ([0-9]{1,3}\.){3}[0-9]{1,3}' | awk '{print $2}'`
     sysrc sshd_flags+=" -o ListenAddress=${EGRESS_IP}"

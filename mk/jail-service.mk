@@ -1,3 +1,5 @@
+INTERFACE != reggae get-config INTERFACE
+
 up: setup
 	@sudo cbsd jcreate jconf=${PWD}/cbsd.conf || true
 .if exists(EXTRA_FSTAB)
@@ -61,6 +63,7 @@ setup:
 		-e "s:DOMAIN:${DOMAIN}:g" \
 		-e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
 		-e "s:EXTRA_PACKAGES:${EXTRA_PACKAGES}:g" \
+		-e "s:INTERFACE:${INTERFACE}:g" \
 		${REGGAE_PATH}/templates/cbsd.conf.tpl >cbsd.conf
 .for provisioner in ${PROVISIONERS}
 	@${MAKE} ${MAKEFLAGS} setup-${provisioner}
