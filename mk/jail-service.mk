@@ -37,12 +37,12 @@ up: setup
 	@echo 'User "devel" deleted'
 .endif
 	@sudo cbsd jexec jname=${SERVICE} pwd_mkdb /etc/master.passwd
-.if !exists(.provisioned)
+.if !exists(${CBSD_WORKDIR}/jails-system/${SERVICE}/.provisioned)
 	@${MAKE} ${MAKEFLAGS} provision
 .endif
 
 provision: setup
-	@touch .provisioned
+	@sudo touch ${CBSD_WORKDIR}/jails-system/${SERVICE}/.provisioned
 .for provisioner in ${PROVISIONERS}
 	@${MAKE} ${MAKEFLAGS} provision-${provisioner}
 .endfor
