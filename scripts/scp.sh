@@ -33,8 +33,7 @@ fi
 sed \
   -e "s:DOMAIN:${DOMAIN}:g" \
   -e "s:VM_INTERFACE_IP:${VM_INTERFACE_IP}:g" \
-  -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
-  -e "s:DHCP_IP:${DHCP_IP}:g" \
+  -e "s:MASTER_IP:${MASTER_IP}:g" \
   -e "s:SERVICE:${SERVICE}:g" \
   -e "s:UID:${UID}:g" \
   -e "s:GID:${GID}:g" \

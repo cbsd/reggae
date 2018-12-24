@@ -1,9 +1,8 @@
 # Commented are default values
 
 # CBSD_WORKDIR="/usr/cbsd"
-# DHCP_IP="172.16.0.253"
+# MASTER_IP="172.16.0.253"
 # DOMAIN=`hostname`
-# RESOLVER_IP="10.0.0.253"
 # USE_ZFS="yes"
 # INTERFACE="cbsd0"
 # INTERFACE_IP="172.16.0.254"

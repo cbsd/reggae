@@ -6,7 +6,7 @@ if [ -z "$1" ]; then
 fi
 
 (
-  echo server DHCP_IP
+  echo server MASTER_IP
   echo connect
   echo new lease
   echo set hardware-address = $1

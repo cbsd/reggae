@@ -1,7 +1,7 @@
 $TTL 60
-ZONE_BASE. SOA ZONE_BASE. resolver.ZONE_BASE. 42 1d 12h 1w 3h
+ZONE_BASE. SOA ZONE_BASE. cbsd.ZONE_BASE. 42 1d 12h 1w 3h
 	; Serial, Refresh, Retry, Expire, Neg. cache TTL
-            NS	resolver.ZONE_BASE.
+            NS	cbsd.ZONE_BASE.
 
-            A	RESOLVER_IP
-resolver    A   RESOLVER_IP
+            A	MASTER_IP
+cbsd        A   MASTER_IP

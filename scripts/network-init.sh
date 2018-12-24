@@ -53,10 +53,6 @@ pf() {
     if [ "${STATIC}" = "NO" ]; then
       RDR="rdr pass on \$ext_if proto tcp from any to any port ssh -> 127.0.0.1"
     fi
-    RESOLVER_BASE=`echo ${RESOLVER_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
-    JAIL_IP_POOL="${RESOLVER_BASE}.0/24"
-    DHCP_BASE=`echo ${DHCP_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
-    VM_IP_POOL="${DHCP_BASE}.0/24"
     sed \
       -e "s:EGRESS:${EGRESS}:g" \
       -e "s:JAIL_INTERFACE_IP:${JAIL_INTERFACE_IP}:g" \
@@ -124,7 +120,7 @@ setup_unbound() {
     "${SCRIPT_DIR}/../templates/unbound.conf" >/var/unbound/unbound.conf
   sed \
     -e "s:DOMAIN:${DOMAIN}:g" \
-    -e "s:RESOLVER_IP:${RESOLVER_IP}:g" \
+    -e "s:MASTER_IP:${MASTER_IP}:g" \
     "${SCRIPT_DIR}/../templates/unbound_cbsd.conf" >/var/unbound/conf.d/cbsd.conf
   cp "${SCRIPT_DIR}/../templates/resolvconf.conf" /etc/resolvconf.conf
   chown -R unbound:unbound /var/unbound

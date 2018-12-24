@@ -1,4 +1,4 @@
-server RESOLVER_IP
+server MASTER_IP
 
 zone DOMAIN
 update delete JAIL_NAME.DOMAIN
