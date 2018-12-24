@@ -2,7 +2,7 @@ INTERFACE != reggae get-config INTERFACE
 
 up: setup
 	@sudo cbsd jcreate jconf=${PWD}/cbsd.conf || true
-.if exists(EXTRA_FSTAB)
+.if exists(${EXTRA_FSTAB})
 	@sudo cp ${EXTRA_FSTAB} ${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local
 .else
 	@sudo rm -rf ${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local
