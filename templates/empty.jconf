@@ -48,7 +48,7 @@ persist="1";
 childrenmax="0";
 enforce_statfs="1";
 
-interface="lo1";
+interface="INTERFACE";
 jailskeldir="/cbsd/share/FreeBSD-jail-skel";
 jail_profile="default";
 # root password
