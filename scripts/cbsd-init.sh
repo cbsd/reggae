@@ -44,7 +44,7 @@ EOF
 
 
 setup_cbsd() {
-  RESOLVER_BASE=`echo ${MASTER_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
+  RESOLVER_BASE=`echo ${JAIL_INTERFACE_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
   JAIL_IP_POOL="${RESOLVER_BASE}.0/24"
   sed \
     -e "s:HOSTNAME:${HOSTNAME}:g" \

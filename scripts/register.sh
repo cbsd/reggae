@@ -35,7 +35,7 @@ if [ "${JAIL_NAME}" != "cbsd" ]; then
     ${TEMPLATE} \
     >${TEMP_FILE}
 
-  cbsd jexec jname=cbsd nsupdate -k /usr/local/etc/namedb/cbsd.key ${TEMP_FILE#${CBSD_WORKDIR}/jails-data/cbsd-data}
+  cbsd jexec jname=cbsd nsupdate -4 -k /usr/local/etc/namedb/cbsd.key ${TEMP_FILE#${CBSD_WORKDIR}/jails-data/cbsd-data}
   rm -rf ${TEMP_FILE}
 fi
 pfctl -t cbsd -T ${PF_ACTION} ${JAIL_IP}
