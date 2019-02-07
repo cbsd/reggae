@@ -49,6 +49,7 @@ fetch:
 .endfor
 
 setup:
+	@sudo rm -f services/*/cbsd.conf
 .for service url in ${SERVICES}
 	@rm -f services/${service}/vars.mk
 	@echo "DEVEL_MODE ?= ${DEVEL_MODE}" >>services/${service}/vars.mk
@@ -63,7 +64,7 @@ devel: up
 	@bin/devel.sh
 .endif
 
-test:
+test: up
 .if defined(service)
 	@${MAKE} ${MAKEFLAGS} -C services/${service} test
 .else
