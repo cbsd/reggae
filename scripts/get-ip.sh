@@ -1,7 +1,6 @@
 #!/bin/sh
 
 SERVICE="${1}"
-MAC_FILE="/tmp/${SERVICE}"
 
 
 help() {
@@ -10,10 +9,10 @@ help() {
 
 
 get_ip() {
-  MAC=`cat ${MAC_FILE}`
+  . "/usr/cbsd/jails-system/${SERVICE}/rc.conf_${SERVICE}"
   IP=""
   while [ -z ${IP} ]; do
-    IP=`cbsd jexec jname=dhcp ip-by-mac.sh ${MAC}`
+    IP=`cbsd jexec jname=cbsd ip-by-mac.sh ${nic_hwaddr1}`
   done
   echo ${IP}
 }
@@ -21,12 +20,6 @@ get_ip() {
 
 if [ -z "${SERVICE}" ]; then
   help >&2
-  exit 1
-fi
-
-
-if [ ! -e "${MAC_FILE}" ]; then
-  echo "${MAC_FILE} does not exist" >&2
   exit 1
 fi
 
