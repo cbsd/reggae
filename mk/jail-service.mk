@@ -90,7 +90,11 @@ export: down
 	@sudo chown ${UID}:${GID} build/${SERVICE}.img
 
 devel: up
+.if defined(offline)
+	@sudo cbsd jexec jname=${SERVICE} user=devel cmd="/usr/src/bin/devel.sh ${offline}"
+.else
 	@sudo cbsd jexec jname=${SERVICE} user=devel cmd=/usr/src/bin/devel.sh
+.endif
 
 test: up
 	@sudo jexec -U devel ${SERVICE} /usr/src/bin/test.sh

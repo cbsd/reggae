@@ -59,9 +59,17 @@ setup:
 
 devel: up
 .if defined(service)
+.if defined(offline)
+	@${MAKE} ${MAKEFLAGS} -C services/${service} devel offline=${offline}
+.else
 	@${MAKE} ${MAKEFLAGS} -C services/${service} devel
+.endif
+.else
+.if defined(offline)
+	@env OFFLINE=${offline} bin/devel.sh
 .else
 	@bin/devel.sh
+.endif
 .endif
 
 test: up
