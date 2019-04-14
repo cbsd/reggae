@@ -9,10 +9,11 @@ help() {
 
 
 get_ip() {
-  . "/usr/cbsd/jails-system/${SERVICE}/rc.conf_${SERVICE}"
+  . "/usr/cbsd/jails-system/${SERVICE}/bhyve.conf"
+  HWADDR=`echo $nic_args | grep --color=auto -o 'mac=..:..:..:..:..:..' | cut -f 2 -d '='`
   IP=""
   while [ -z ${IP} ]; do
-    IP=`cbsd jexec jname=cbsd ip-by-mac.sh ${nic_hwaddr1}`
+    IP=`cbsd jexec jname=cbsd ip-by-mac.sh ${HWADDR}`
   done
   echo ${IP}
 }
