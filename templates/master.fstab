@@ -1,2 +1,1 @@
-/var/run/unbound /var/run/unbound nullfs rw 0 0
 /var/unbound /var/unbound nullfs rw 0 0
