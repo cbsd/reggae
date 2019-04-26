@@ -33,6 +33,8 @@ dhcp() {
 
   cp ${SCRIPT_DIR}/../templates/dhcpd-hook.sh "${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/bin/"
   chmod 755 "${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/bin/dhcpd-hook.sh"
+  cp ${SCRIPT_DIR}/../templates/reggae-register.sh "${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/bin/"
+  chmod 755 "${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/bin/reggae-register.sh"
   DHCP_BASE=`echo ${MASTER_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
   DHCP_SUBNET_FIRST="${DHCP_BASE}.1"
   DHCP_SUBNET_LAST="${DHCP_BASE}.200"

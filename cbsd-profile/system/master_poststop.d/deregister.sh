@@ -1,3 +1,3 @@
 #!/bin/sh
 
-reggae deregister
+lockf /var/unbound/conf.d/cbsd.zone.lock reggae deregister
