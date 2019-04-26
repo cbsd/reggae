@@ -18,18 +18,16 @@ TEMPLATES = Makefile.project \
 	    install-packages.sh \
 	    ip-by-mac.sh \
 	    master.conf \
+	    master.fstab \
 	    mount-project.sh \
-	    my.domain \
-	    my.domain.rev \
 	    named.conf \
-	    nsupdate-add.txt \
-	    nsupdate-delete.txt \
 	    pf.conf \
 	    resolvconf.conf \
-	    rndc.conf \
 	    setup-vm.sh \
 	    unbound.conf \
-	    unbound_cbsd.conf
+	    unbound_cbsd.conf \
+	    unbound_cbsd.zone \
+	    unbound_control.conf
 ANSIBLE_TEMPLATES = ansible/inventory.local.tpl ansible/inventory.remote.tpl
 ANSIBLE_GROUP_TEMPLATES = ansible/group_vars/all.tpl
 MAKEFILES = ansible.mk \

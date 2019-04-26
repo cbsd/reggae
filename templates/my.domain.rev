@@ -1,3 +1,0 @@
-$TTL 60
-REVERSE_ZONE. SOA ZONE_BASE. cbsd.ZONE_BASE. 42 1d 12h 1w 3h
-           NS  cbsd.ZONE_BASE.
