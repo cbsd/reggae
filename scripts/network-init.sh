@@ -110,6 +110,8 @@ setup_nfs() {
 
 
 setup_unbound() {
+  mkdir /var/run/unbound
+  chown unbound:unboud /var/run/unbound
   sysrc local_unbound_enable="YES"
   sysrc local_unbound_tls="NO"
   fetch -o /var/unbound/root.hints https://www.internic.net/domain/named.cache
@@ -120,8 +122,12 @@ setup_unbound() {
     "${SCRIPT_DIR}/../templates/unbound.conf" >/var/unbound/unbound.conf
   sed \
     -e "s:DOMAIN:${DOMAIN}:g" \
-    -e "s:MASTER_IP:${MASTER_IP}:g" \
     "${SCRIPT_DIR}/../templates/unbound_cbsd.conf" >/var/unbound/conf.d/cbsd.conf
+  sed \
+    -e "s:DOMAIN:${DOMAIN}:g" \
+    -e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
+    "${SCRIPT_DIR}/../templates/unbound_cbsd.zone" >/var/unbound/conf.d/cbsd.zone
+  cp "${SCRIPT_DIR}/../templates/unbound_control.conf" /var/unbound/control.conf
   cp "${SCRIPT_DIR}/../templates/resolvconf.conf" /etc/resolvconf.conf
   chown -R unbound:unbound /var/unbound
   service local_unbound restart

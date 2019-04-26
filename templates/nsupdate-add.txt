@@ -1,9 +1,0 @@
-server MASTER_IP
-
-zone DOMAIN
-update add JAIL_NAME.DOMAIN 60 IN A JAIL_IP
-send
-
-zone REVERSE_ZONE
-update add JAIL_IP_LAST.REVERSE_ZONE. 60 IN PTR JAIL_NAME.DOMAIN
-send

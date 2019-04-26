@@ -13,29 +13,26 @@ CBSD_WORKDIR=`sysrc -n cbsd_workdir`
 JAIL_NAME=${jname}
 JAIL_IP=${ipv4_first}
 ACTION="${1}"
-TEMPLATE=""${PROJECT_ROOT}"/templates/nsupdate-add.txt"
 PF_ACTION="add"
+ZONE_FILE="/var/unbound/conf.d/cbsd.zone"
 
 if [ "${ACTION}" = "deregister" ]; then
-  TEMPLATE=""${PROJECT_ROOT}"/templates/nsupdate-delete.txt"
   PF_ACTION="delete"
 fi
 
-if [ "${JAIL_NAME}" != "cbsd" ]; then
-  TEMP_FILE=`mktemp ${CBSD_WORKDIR}/jails-data/cbsd-data/tmp/tmp.XXXXXX`
-  JAIL_IP_LAST=`echo ${JAIL_IP} | awk -F '.' '{print $4}'`
-  REVERSE_ZONE=`echo ${JAIL_IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
-  sed \
-    -e "s/JAIL_NAME/${JAIL_NAME}/g" \
-    -e "s/JAIL_IP_LAST/${JAIL_IP_LAST}/g" \
-    -e "s/JAIL_IP/${JAIL_IP}/g" \
-    -e "s/REVERSE_ZONE/${REVERSE_ZONE}/g" \
-    -e "s/MASTER_IP/${MASTER_IP}/g" \
-    -e "s/DOMAIN/${DOMAIN}/g" \
-    ${TEMPLATE} \
-    >${TEMP_FILE}
+IGNORE_LINES=`/usr/bin/grep -n ORIGIN "${ZONE_FILE}" | /usr/bin/cut -f 1 -d ':'`
+EXISTING_DNS_ENTRY=`/usr/bin/sed -e "1,${IGNORE_LINES}d" "${ZONE_FILE}" | /usr/bin/grep "^${JAIL_NAME}"`
 
-  cbsd jexec jname=cbsd nsupdate -4 -k /usr/local/etc/namedb/cbsd.key ${TEMP_FILE#${CBSD_WORKDIR}/jails-data/cbsd-data}
-  rm -rf ${TEMP_FILE}
+if [ -z "${EXISTING_DNS_ENTRY}" ]; then
+  if [ "${ACTION}" = "register" ]; then
+    echo "${JAIL_NAME}    A   ${JAIL_IP}" >>"${ZONE_FILE}"
+  fi
+else
+  if [ "${ACTION}" = "deregister" ]; then
+    /usr/bin/sed -i "" "s/^${JAIL_NAME} *A .*\n//" "${ZONE_FILE}"
+  else
+    /usr/bin/sed -i "" "s/^${JAIL_NAME} *A .*/${JAIL_NAME}    A   ${JAIL_IP}/" "${ZONE_FILE}"
+  fi
 fi
+local-unbound-control reload
 pfctl -t cbsd -T ${PF_ACTION} ${JAIL_IP}

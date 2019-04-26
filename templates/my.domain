@@ -1,7 +1,0 @@
-$TTL 60
-ZONE_BASE. SOA ZONE_BASE. cbsd.ZONE_BASE. 42 1d 12h 1w 3h
-	; Serial, Refresh, Retry, Expire, Neg. cache TTL
-            NS	cbsd.ZONE_BASE.
-
-            A	MASTER_IP
-cbsd        A   MASTER_IP
