@@ -19,7 +19,7 @@ if [ "${ACTION}" = "add" ]; then
   fi
 elif [ "${ACTION}" = "delete" ]; then
   /sbin/pfctl -t cbsd -T delete $IP || true
-  /usr/bin/sed -i "" "s/^${JAIL_NAME} *A .*\n//" "${ZONE_FILE}" >"${TEMP_FILE}"
+  /usr/bin/sed -i "" "/^${JAIL_NAME} *A *.*/d" "${ZONE_FILE}"
 fi
 
 local-unbound-control reload

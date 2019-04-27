@@ -29,7 +29,7 @@ if [ -z "${EXISTING_DNS_ENTRY}" ]; then
   fi
 else
   if [ "${ACTION}" = "deregister" ]; then
-    /usr/bin/sed -i "" "s/^${JAIL_NAME} *A .*\n//" "${ZONE_FILE}"
+    /usr/bin/sed -i "" "/^${JAIL_NAME} *A *.*/d" "${ZONE_FILE}"
   else
     /usr/bin/sed -i "" "s/^${JAIL_NAME} *A .*/${JAIL_NAME}    A   ${JAIL_IP}/" "${ZONE_FILE}"
   fi
