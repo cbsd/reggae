@@ -1,20 +1,20 @@
 .include <${REGGAE_PATH}/mk/common.mk>
 
 PROVISIONERS += ansible
-ANSIBLE != sh -c "which ansible-3.6 || true"
+ANSIBLE != sh -c "which ansible || true"
 
 provision-ansible:
 	@sudo rm -rf ansible/site.retry
 	@-sudo chown -R ${UID}:${GID} ~/.ansible
 .if exists(requirements.yml)
-	@ansible-galaxy-3.6 install -p ansible/roles -r requirements.yml
+	@ansible-galaxy install -p ansible/roles -r requirements.yml
 .endif
 .if defined(server)
-	@env ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook-3.6 -i ansible/inventory/inventory ansible/site.yml -b --ssh-extra-args='"-o ProxyCommand ssh -x -a -q ${server} nc %h 22"'
+	@env ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible/inventory/inventory ansible/site.yml -b --ssh-extra-args='"-o ProxyCommand ssh -x -a -q ${server} nc %h 22"'
 .elif ${TYPE} == bhyve
-	@env ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook-3.6 --become -i ansible/inventory/inventory ansible/site.yml
+	@env ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --become -i ansible/inventory/inventory ansible/site.yml
 .else
-	@sudo ansible-playbook-3.6 -i ansible/inventory/inventory ansible/site.yml
+	@sudo ansible-playbook -i ansible/inventory/inventory ansible/site.yml
 .endif
 
 setup-ansible:
