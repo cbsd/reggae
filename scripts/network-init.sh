@@ -153,6 +153,7 @@ setup_unbound() {
     "${SCRIPT_DIR}/../templates/unbound_cbsd_reverse.conf" >>/var/unbound/conf.d/cbsd-reverse.conf
 
   chown -R unbound:unbound /var/unbound
+  cmod g+w /var/unbound/conf.d/*.zone
   service local_unbound restart
   resolvconf -u
 }
