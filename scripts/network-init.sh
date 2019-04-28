@@ -110,8 +110,6 @@ setup_nfs() {
 
 
 setup_unbound() {
-  mkdir /var/run/unbound
-  chown unbound:unboud /var/run/unbound
   sysrc local_unbound_enable="YES"
   sysrc local_unbound_tls="NO"
   fetch -o /var/unbound/root.hints https://www.internic.net/domain/named.cache
@@ -129,6 +127,31 @@ setup_unbound() {
     "${SCRIPT_DIR}/../templates/unbound_cbsd.zone" >/var/unbound/conf.d/cbsd.zone
   cp "${SCRIPT_DIR}/../templates/unbound_control.conf" /var/unbound/control.conf
   cp "${SCRIPT_DIR}/../templates/resolvconf.conf" /etc/resolvconf.conf
+
+  rm -f /var/unbound/conf.d/cbsd-reverse.conf
+  ZONE=`echo ${INTERFACE_IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
+  LAST_OCTET=`echo ${INTERFACE_IP} | awk -F '.' '{print $4}'`
+  sed \
+    -e "s:DOMAIN:${DOMAIN}:g" \
+    -e "s:ZONE:${ZONE}:g" \
+    -e "s:LAST_OCTET:${LAST_OCTET}:g" \
+    "${SCRIPT_DIR}/../templates/unbound_cbsd_reverse.zone" >"/var/unbound/conf.d/${ZONE}.zone"
+  sed \
+    -e "s:ZONE:${ZONE}:g" \
+    "${SCRIPT_DIR}/../templates/unbound_cbsd_reverse.conf" >>/var/unbound/conf.d/cbsd-reverse.conf
+
+  ZONE=`echo ${JAIL_INTERFACE_IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
+  LAST_OCTET=`echo ${JAIL_INTERFACE_IP} | awk -F '.' '{print $4}'`
+  sed \
+    -e "s:DOMAIN:${DOMAIN}:g" \
+    -e "s:ZONE:${ZONE}:g" \
+    -e "s:LAST_OCTET:${LAST_OCTET}:g" \
+    "${SCRIPT_DIR}/../templates/unbound_cbsd_reverse.zone" >"/var/unbound/conf.d/${ZONE}.zone"
+  echo >>/var/unbound/conf.d/cbsd-reverse.conf
+  sed \
+    -e "s:ZONE:${ZONE}:g" \
+    "${SCRIPT_DIR}/../templates/unbound_cbsd_reverse.conf" >>/var/unbound/conf.d/cbsd-reverse.conf
+
   chown -R unbound:unbound /var/unbound
   service local_unbound restart
   resolvconf -u
