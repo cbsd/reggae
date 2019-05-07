@@ -3,16 +3,16 @@
 PROVISIONERS += ansible
 ANSIBLE != sh -c "which ansible || true"
 
-provision-ansible:
+provision-ansible: setup-ansible
 	@sudo rm -rf ansible/site.retry
 	@-sudo chown -R ${UID}:${GID} ~/.ansible
 .if exists(requirements.yml)
 	@ansible-galaxy install -p ansible/roles -r requirements.yml
 .endif
 .if defined(server)
-	@env ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible/inventory/inventory ansible/site.yml -b --ssh-extra-args='"-o ProxyCommand ssh -x -a -q ${server} nc %h 22"'
+	@sudo env ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible/inventory/inventory ansible/site.yml -b --ssh-extra-args='"-o ProxyCommand ssh -x -a -q ${server} nc %h 22"'
 .elif ${TYPE} == bhyve
-	@env ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --become -i ansible/inventory/inventory ansible/site.yml
+	@sudo env ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --become -i ansible/inventory/inventory ansible/site.yml
 .else
 	@sudo ansible-playbook -i ansible/inventory/inventory ansible/site.yml
 .endif

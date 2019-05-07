@@ -15,7 +15,7 @@ EXTRA_PACKAGES =
 
 .for provisioner in ${PROVISIONERS}
 .if ${provisioner} == "ansible"
-EXTRA_PACKAGES += python36
+EXTRA_PACKAGES += python
 .endif
 .endfor
 
