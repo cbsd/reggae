@@ -53,7 +53,11 @@ ${BASE_DATA_DIR}:
 	@rm -rf /tmp/${IMAGE}.img
 
 login:
+.if defined(user)
+	@sudo reggae ssh ${user} ${SERVICE}
+.else
 	@sudo reggae ssh provision ${SERVICE}
+.endif
 
 exec:
 	@sudo reggae ssh provision ${SERVICE} ${command}
