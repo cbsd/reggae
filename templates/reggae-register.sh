@@ -12,8 +12,8 @@ EXISTING_DNS_ENTRY=`/usr/bin/sed -e "1,${IGNORE_LINES}d" "${ZONE_FILE}" | /usr/b
 REVERSE_ZONE=`echo ${IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
 REVERSE_ZONE_FILE="/var/unbound/conf.d/${REVERSE_ZONE}.zone"
 REVERSE_IGNORE_LINES=`/usr/bin/grep -n ORIGIN "${REVERSE_ZONE_FILE}" | /usr/bin/head -n 1 | /usr/bin/cut -f 1 -d ':'`
-REVERSE_EXISTING_DNS_ENTRY=`/usr/bin/sed -e "1,${REVERSE_IGNORE_LINES}d" "${REVERSE_ZONE_FILE}" | /usr/bin/grep "^${IP}"`
 LAST_OCTET=`echo "${IP}" | awk -F '.' '{print $4}'`
+REVERSE_EXISTING_DNS_ENTRY=`/usr/bin/sed -e "1,${REVERSE_IGNORE_LINES}d" "${REVERSE_ZONE_FILE}" | /usr/bin/grep "^${LAST_OCTET} "`
 
 
 if [ "${ACTION}" = "add" ]; then
