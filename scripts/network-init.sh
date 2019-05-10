@@ -124,7 +124,7 @@ setup_unbound() {
   sed \
     -e "s:DOMAIN:${DOMAIN}:g" \
     -e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
-    "${SCRIPT_DIR}/../templates/unbound_cbsd.zone" >/var/unbound/conf.d/cbsd.zone
+    "${SCRIPT_DIR}/../templates/unbound_cbsd.zone" >/var/unbound/conf.d/${DOMAIN}.zone
   cp "${SCRIPT_DIR}/../templates/unbound_control.conf" /var/unbound/control.conf
   cp "${SCRIPT_DIR}/../templates/resolvconf.conf" /etc/resolvconf.conf
 
