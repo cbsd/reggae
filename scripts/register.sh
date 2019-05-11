@@ -16,7 +16,7 @@ ACTION="${1}"
 PF_ACTION="add"
 DOMAIN=`reggae get-config DOMAIN`
 
-ZONE_FILE="/var/unbound/conf.d/cbsd.zone"
+ZONE_FILE="/var/unbound/conf.d/${DOMAIN}.zone"
 IGNORE_LINES=`/usr/bin/grep -n ORIGIN "${ZONE_FILE}" | /usr/bin/cut -f 1 -d ':'`
 EXISTING_DNS_ENTRY=`/usr/bin/sed -e "1,${IGNORE_LINES}d" "${ZONE_FILE}" | /usr/bin/grep "^${NAME}"`
 
