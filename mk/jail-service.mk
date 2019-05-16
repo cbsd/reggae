@@ -1,6 +1,10 @@
 INTERFACE != reggae get-config INTERFACE
 
+.if target(pre_up)
+up: setup pre_up
+.else
 up: setup
+.endif
 	@sudo cbsd jcreate jconf=${PWD}/cbsd.conf || true
 .if exists(${EXTRA_FSTAB})
 	@sudo cp ${EXTRA_FSTAB} ${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local
@@ -39,6 +43,9 @@ up: setup
 	@sudo cbsd jexec jname=${SERVICE} pwd_mkdb /etc/master.passwd
 .if !exists(${CBSD_WORKDIR}/jails-system/${SERVICE}/.provisioned)
 	@${MAKE} ${MAKEFLAGS} provision
+.endif
+.if target(post_up)
+	@${MAKE} ${MAKEFLAGS} post_up
 .endif
 
 provision: setup
