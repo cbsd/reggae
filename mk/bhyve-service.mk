@@ -3,7 +3,11 @@ BASE_DATA_DIR = ${CBSD_WORKDIR}/jails-data/${IMAGE}-data
 PWD != pwd
 VM_INTERFACE_IP != reggae get-config VM_INTERFACE_IP
 
+.if target(pre_up)
+up: ${DATA_DIR} pre_up
+.else
 up: ${DATA_DIR}
+.endif
 	@sudo cbsd bstart jname=${SERVICE} || true
 	@echo "Waiting for VM to boot"
 	@sudo reggae ssh-ping ${SERVICE}
@@ -15,6 +19,9 @@ up: ${DATA_DIR}
 	@sudo reggae ssh provision ${SERVICE} ./mount-project.sh ${PWD}
 .if !exists(.provisioned)
 	@${MAKE} ${MAKEFLAGS} provision
+.endif
+.if target(post_up)
+	@${MAKE} ${MAKEFLAGS} post_up
 .endif
 
 provision: ${DATA_DIR}
