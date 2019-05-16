@@ -99,7 +99,7 @@ setup_nfs() {
   if [ -e /etc/exports ]; then
     cp /etc/exports "${TMP_EXPORTS}"
   fi
-  echo "${PROJECTS_DIR} -alldirs -network ${INTERFACE_IP} -mask 255.255.255.0" >>"${TMP_EXPORTS}"
+  echo "${PROJECTS_DIR} -alldirs -network ${INTERFACE_IP} -mask 255.255.255.0" -maproot=root >>"${TMP_EXPORTS}"
   sort "${TMP_EXPORTS}" | uniq > /etc/exports
 
   service rpcbind start
