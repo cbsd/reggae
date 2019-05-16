@@ -2,8 +2,8 @@ DATA_DIR = ${CBSD_WORKDIR}/jails-data/${SERVICE}-data
 BASE_DATA_DIR = ${CBSD_WORKDIR}/jails-data/${IMAGE}-data
 PWD != pwd
 VM_INTERFACE_IP != reggae get-config VM_INTERFACE_IP
-CPU := 1
-MEM = "1G"
+CPU ?= 1
+MEM ?= "1G"
 
 .if target(pre_up)
 up: ${DATA_DIR} pre_up
