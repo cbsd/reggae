@@ -2,12 +2,15 @@ DATA_DIR = ${CBSD_WORKDIR}/jails-data/${SERVICE}-data
 BASE_DATA_DIR = ${CBSD_WORKDIR}/jails-data/${IMAGE}-data
 PWD != pwd
 VM_INTERFACE_IP != reggae get-config VM_INTERFACE_IP
+CPU := 1
+MEM = "1G"
 
 .if target(pre_up)
 up: ${DATA_DIR} pre_up
 .else
 up: ${DATA_DIR}
 .endif
+	@sudo cbsd bset jname=${SERVICE} vm_cpus=${CPU} vm_ram=${MEM}
 	@sudo cbsd bstart jname=${SERVICE} || true
 	@echo "Waiting for VM to boot"
 	@sudo reggae ssh-ping ${SERVICE}
