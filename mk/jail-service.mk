@@ -71,6 +71,7 @@ setup:
 		-e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
 		-e "s:EXTRA_PACKAGES:${EXTRA_PACKAGES}:g" \
 		-e "s:INTERFACE:${INTERFACE}:g" \
+		-e "s:DEVFS_RULESET:${DEVFS_RULESET}:g" \
 		${REGGAE_PATH}/templates/cbsd.conf.tpl >cbsd.conf
 .for provisioner in ${PROVISIONERS}
 	@${MAKE} ${MAKEFLAGS} setup-${provisioner}
