@@ -116,3 +116,9 @@ export:
 	@${MAKE} ${MAKEFLAGS} -C services/${service} export
 .endfor
 .endif
+
+update:
+.for service url in ${SERVICES}
+	@echo "=== ${service} ==="
+	@cd services/${service} && git pull
+.endfor
