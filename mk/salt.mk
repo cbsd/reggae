@@ -8,3 +8,6 @@ provision-salt:
 clean-salt:
 
 setup-salt:
+.if target(post_setup_salt)
+	@${MAKE} ${MAKEFLAGS} post_setup_salt
+.endif

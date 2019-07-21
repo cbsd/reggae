@@ -8,3 +8,6 @@ provision-puppet:
 clean-puppet:
 
 setup-puppet:
+.if target(post_setup_puppet)
+	@${MAKE} ${MAKEFLAGS} post_setup_puppet
+.endif

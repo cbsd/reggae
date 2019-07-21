@@ -8,3 +8,6 @@ provision-chef:
 clean-chef:
 
 setup-chef:
+.if target(post_setup_chef)
+	@${MAKE} ${MAKEFLAGS} post_setup_chef
+.endif
