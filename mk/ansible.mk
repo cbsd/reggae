@@ -41,6 +41,9 @@ setup-ansible:
 	@echo
 	@sudo pkg install py36-ansible
 .endif
+.if target(post_setup_ansible)
+	@${MAKE} ${MAKEFLAGS} post_setup_ansible
+.endif
 
 clean-ansible:
 	@rm -rf ansible/inventory/inventory ansible/site.yml ansible/group_vars/all

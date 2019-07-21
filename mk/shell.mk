@@ -11,3 +11,6 @@ provision-shell:
 clean-shell:
 
 setup-shell:
+.if target(post_setup_shell)
+	@${MAKE} ${MAKEFLAGS} post_setup_shell
+.endif
