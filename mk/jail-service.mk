@@ -106,3 +106,6 @@ devel: up
 
 test: up
 	@sudo jexec -U devel ${SERVICE} /usr/src/bin/test.sh
+
+upgrade:
+	@sudo cbsd jexec jname=${SERVICE} pkg upgrade -y

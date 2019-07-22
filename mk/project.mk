@@ -118,7 +118,14 @@ export:
 .endif
 
 update:
+	@git pull
 .for service url in ${SERVICES}
 	@echo "=== ${service} ==="
-	@cd services/${service} && git pull
+	@${MAKE} ${MAKEFLAGS} -C services/${service} update
+.endfor
+
+upgrade:
+.for service url in ${SERVICES}
+	@echo "=== ${service} ==="
+	@${MAKE} ${MAKEFLAGS} -C services/${service} upgrade
 .endfor
