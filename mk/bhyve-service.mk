@@ -87,3 +87,6 @@ devel: up
 
 test: up
 	@sudo reggae ssh devel ${SERVICE} /usr/src/bin/test.sh
+
+upgrade:
+	@sudo reggae ssh provision ${SERVICE} pkg upgrade -y

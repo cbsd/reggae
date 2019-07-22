@@ -21,4 +21,7 @@ EXTRA_PACKAGES += python
 
 .MAIN: up
 
+update:
+	@git pull
+
 .include <${REGGAE_PATH}/mk/${TYPE}-service.mk>
