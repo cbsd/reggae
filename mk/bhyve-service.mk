@@ -55,6 +55,9 @@ ${DATA_DIR}: ${BASE_DATA_DIR}
 .for provisioner in ${PROVISIONERS}
 	@${MAKE} ${MAKEFLAGS} setup-${provisioner}
 .endfor
+.if target(post_setup)
+	@${MAKE} ${MAKEFLAGS} post_setup
+.endif
 
 ${BASE_DATA_DIR}:
 	@rm -rf /tmp/${IMAGE}.img
