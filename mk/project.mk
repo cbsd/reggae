@@ -56,6 +56,9 @@ setup:
 	@echo "GID ?= ${GID}" >>services/${service}/vars.mk
 	@echo "UID ?= ${UID}" >>services/${service}/vars.mk
 .endfor
+.if target(post_setup)
+	@${MAKE} ${MAKEFLAGS} post_setup
+.endif
 
 devel: up
 .if defined(service)

@@ -76,6 +76,9 @@ setup:
 .for provisioner in ${PROVISIONERS}
 	@${MAKE} ${MAKEFLAGS} setup-${provisioner}
 .endfor
+.if target(post_setup)
+	@${MAKE} ${MAKEFLAGS} post_setup
+.endif
 
 login:
 .if defined(user)
