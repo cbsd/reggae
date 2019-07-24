@@ -9,3 +9,6 @@
 # JAIL_INTERFACE_IP="10.0.0.254"
 # ZFS_POOL="zroot"
 # PROJECTS_DIR="/home/user/reggae/repos"
+# PKG_MIRROR="pkg.FreeBSD.org"
+# PKG_REPO="latest"
+# PKG_ABI='$${ABI}'
