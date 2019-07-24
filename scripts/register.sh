@@ -24,6 +24,7 @@ LAST_OCTET=`echo "${IP}" | awk -F '.' '{print $4}'`
 
 if [ "${ACTION}" = "deregister" ]; then
   PF_ACTION="delete"
+  pfctl -a "cbsd/${NAME}" -F all
 fi
 
 /usr/bin/sed -i "" "/^.* *A *${IP}$/d" "${ZONE_FILE}"
