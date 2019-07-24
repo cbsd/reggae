@@ -31,7 +31,8 @@ TEMPLATES = Makefile.project \
 	    unbound_cbsd.zone \
 	    unbound_cbsd_reverse.conf \
 	    unbound_cbsd_reverse.zone \
-	    unbound_control.conf
+	    unbound_control.conf \
+	    xorg.sh
 ANSIBLE_TEMPLATES = ansible/inventory.local.tpl ansible/inventory.remote.tpl
 ANSIBLE_GROUP_TEMPLATES = ansible/group_vars/all.tpl
 MAKEFILES = ansible.mk \
