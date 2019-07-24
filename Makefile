@@ -59,7 +59,8 @@ SCRIPTS = bhyve-init.sh \
 	  scp.sh \
 	  shell-provision.sh \
 	  ssh.sh \
-	  ssh-ping.sh
+	  ssh-ping.sh \
+	  version.sh
 MAN_FILES = reggae.1 \
 	    reggae-ansible.1 \
 	    reggae-chef.1 \
