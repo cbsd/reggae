@@ -27,11 +27,16 @@ up: setup
 	@sudo chown -R 666:666 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh
 .endif
 	@sudo sed -i "" -e 's:quarterly:latest:g' ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/pkg/FreeBSD.conf >/dev/null 2>&1 || true
-	@sudo cp ${REGGAE_PATH}/templates/export-ports.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/export-ports.sh
+	@sudo cp ${REGGAE_PATH}/templates/export-ports.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d
 	@sudo sed -i "" \
 		-e "s:PRTS:${PORTS}:g" \
 		${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/export-ports.sh
 	@sudo chmod 700 ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/export-ports.sh
+	@sudo cp ${REGGAE_PATH}/templates/xorg.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d
+	@sudo sed -i "" \
+		-e "s:XORG:${XORG}:g" \
+		${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/xorg.sh
+	@sudo chmod 700 ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/xorg.sh
 	@sudo cbsd jstart ${SERVICE} || true
 	@sudo chown ${UID}:${GID} cbsd.conf
 .if ${DEVEL_MODE} == "YES"
