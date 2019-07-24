@@ -19,6 +19,11 @@ case "${1}" in
     "${SCRIPT_ROOT}/register.sh" deregister
     break
     ;;
+  --version)
+    shift
+    "${SCRIPT_ROOT}/version.sh"
+    break
+    ;;
   *)
     SCRIPT="${SCRIPT_ROOT}/${1}.sh"
     if [ ! -x "${SCRIPT}" ]; then
