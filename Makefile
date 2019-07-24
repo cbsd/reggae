@@ -12,6 +12,7 @@ TEMPLATES = Makefile.project \
 	    dhcpd-hook.sh \
 	    dhcpd.conf \
 	    empty.jconf \
+	    export-ports.sh \
 	    freebsd-update.conf \
 	    gitignore \
 	    initenv.conf \
