@@ -1,4 +1,10 @@
 INTERFACE != reggae get-config INTERFACE
+PKG_MIRROR_CONFIG != reggae get-config PKG_MIRROR
+PKG_REPO_CONFIG != reggae get-config PKG_REPO
+PKG_MIRROR ?= ${PKG_MIRROR_CONFIG}
+PKG_REPO ?= ${PKG_REPO_CONFIG}
+PKG_ABI_CONFIG != reggae get-config PKG_ABI
+PKG_ABI ?= ${PKG_ABI_CONFIG}
 
 .if target(pre_up)
 up: setup pre_up
@@ -26,7 +32,7 @@ up: setup
 	@sudo chmod 600 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys
 	@sudo chown -R 666:666 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh
 .endif
-	@sudo sed -i "" -e 's:quarterly:latest:g' ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/pkg/FreeBSD.conf >/dev/null 2>&1 || true
+	@sudo sed -i "" -e 's;url: "pkg+http://.*";url: "pkg+http://${PKG_MIRROR}/${PKG_ABI}/${PKG_REPO}";' ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/pkg/FreeBSD.conf >/dev/null 2>&1 || true
 	@sudo cp ${REGGAE_PATH}/templates/export-ports.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d
 	@sudo sed -i "" \
 		-e "s:PRTS:${PORTS}:g" \
