@@ -54,14 +54,15 @@ SCRIPTS = bhyve-init.sh \
 	  init.sh \
 	  master-init.sh \
 	  network-init.sh \
+	  pkg-upgrade.sh \
 	  project-init.sh \
 	  puppet-provision.sh \
 	  register.sh \
 	  salt-provision.sh \
 	  scp.sh \
 	  shell-provision.sh \
-	  ssh.sh \
 	  ssh-ping.sh \
+	  ssh.sh \
 	  version.sh \
 	  update-profiles.sh
 MAN_FILES = reggae.1 \
