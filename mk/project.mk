@@ -44,7 +44,7 @@ init:
 fetch:
 .for service url in ${SERVICES}
 .if !exists(services/${service})
-	git clone ${url} services/${service}
+	@git clone ${url} services/${service}
 .endif
 .endfor
 
@@ -120,7 +120,7 @@ export:
 .endfor
 .endif
 
-update:
+update: fetch
 	@git pull
 .for service url in ${SERVICES}
 	@echo "=== ${service} ==="
