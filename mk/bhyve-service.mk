@@ -1,5 +1,5 @@
-DATA_DIR = ${CBSD_WORKDIR}/jails-data/${SERVICE}-data
-BASE_DATA_DIR = ${CBSD_WORKDIR}/jails-data/${IMAGE}-data
+DATA_DIR = ${CBSD_WORKDIR}/vm/${SERVICE}
+BASE_DATA_DIR = ${CBSD_WORKDIR}/vm/${IMAGE}
 PWD != pwd
 VM_INTERFACE_IP != reggae get-config VM_INTERFACE_IP
 CPU ?= 1
