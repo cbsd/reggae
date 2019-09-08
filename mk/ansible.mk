@@ -10,7 +10,7 @@ provision-ansible: setup-ansible
 	@ansible-galaxy install -p ansible/roles -r requirements.yml
 .endif
 .if defined(server)
-	@sudo env ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible/inventory/inventory ansible/site.yml -b --ssh-extra-args='"-o ProxyCommand ssh -x -a -q ${server} nc %h 22"'
+	@env ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible/inventory/inventory ansible/site.yml -b --ssh-extra-args='"-o ProxyCommand ssh -x -a -q ${server} nc %h 22"'
 .elif ${TYPE} == bhyve
 	@sudo env ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --become -i ansible/inventory/inventory ansible/site.yml
 .else
