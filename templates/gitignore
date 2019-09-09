@@ -7,4 +7,5 @@ ansible/site.yml
 build/
 cbsd.conf
 site.retry
+project.mk
 vars.mk
