@@ -1,23 +1,16 @@
-.include <${REGGAE_PATH}/mk/common.mk>
-
 .if exists(vars.mk)
 .include <vars.mk>
 .endif
 
-DEVEL_MODE ?= NO
-RUNNING_UID != id -u
-RUNNING_GID != id -g
-UID ?= ${RUNNING_UID}
-GID ?= ${RUNNING_GID}
-DOMAIN != reggae get-config DOMAIN
-CBSD_WORKDIR != sysrc -n cbsd_workdir
-EXTRA_PACKAGES =
-
-.for provisioner in ${PROVISIONERS}
-.if ${provisioner} == "ansible"
-EXTRA_PACKAGES += python
+.if exists(project.mk)
+.include <project.mk>
 .endif
-.endfor
+
+.if exists(provisioners.mk)
+.include <provisioners.mk>
+.endif
+
+.include <${REGGAE_PATH}/mk/common.mk>
 
 .MAIN: up
 

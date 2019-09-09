@@ -11,7 +11,6 @@ TEMPLATES = Makefile.project \
 	    cbsd.conf.tpl \
 	    dhcpd-hook.sh \
 	    dhcpd.conf \
-	    empty.jconf \
 	    export-ports.sh \
 	    freebsd-update.conf \
 	    gitignore \
