@@ -28,7 +28,7 @@ up: ${DATA_DIR}
 .endif
 
 provision: ${DATA_DIR}
-	@touch .provisioned
+	-@touch .provisioned
 .for provisioner in ${PROVISIONERS}
 	@${MAKE} ${MAKEFLAGS} provision-${provisioner}
 .endfor

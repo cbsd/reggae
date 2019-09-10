@@ -65,7 +65,7 @@ up: setup
 .endif
 
 provision: setup
-	@sudo touch ${CBSD_WORKDIR}/jails-system/${SERVICE}/.provisioned
+	-@sudo touch ${CBSD_WORKDIR}/jails-system/${SERVICE}/.provisioned
 .for provisioner in ${PROVISIONERS}
 	@${MAKE} ${MAKEFLAGS} provision-${provisioner}
 .endfor
