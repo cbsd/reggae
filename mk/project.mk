@@ -47,6 +47,11 @@ fetch:
 	@git clone ${url} services/${service}
 .endif
 .endfor
+.for repo url in ${EXTRA_REPOS}
+.if !exists(repos/${service})
+	@git clone ${url} repos/${repo}
+.endif
+.endfor
 
 setup:
 	@sudo rm -f services/*/cbsd.conf
