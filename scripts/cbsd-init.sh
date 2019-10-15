@@ -32,7 +32,7 @@ setup_file_system() {
 setup_devfs() {
   if [ ! -e "/etc/devfs.rules" -o -z `grep -o 'devfsrules_jail_bpf=7' /etc/devfs.rules` ]; then
     cat << EOF >>/etc/devfs.rules
-[devfsrules_jail_bpf=7]
+[jail_bpf=7]
 add include \$devfsrules_hide_all
 add include \$devfsrules_unhide_basic
 add include \$devfsrules_unhide_login
