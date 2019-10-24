@@ -74,9 +74,9 @@ devel: up
 .endif
 .else
 .if defined(offline)
-	@env OFFLINE=${offline} bin/devel.sh
+	@env OFFLINE=${offline} bin/devel.sh reggae
 .else
-	@bin/devel.sh
+	@bin/devel.sh reggae
 .endif
 .endif
 
