@@ -80,7 +80,11 @@ destroy:
 	@${MAKE} ${MAKEFLAGS} clean-${provisioner}
 .endfor
 
+.if target(pre_setup)
+setup: pre_setup
+.else
 setup:
+.endif
 	@sed \
 		-e "s:SERVICE:${SERVICE}:g" \
 		-e "s:DOMAIN:${DOMAIN}:g" \
@@ -88,6 +92,7 @@ setup:
 		-e "s:EXTRA_PACKAGES:${EXTRA_PACKAGES}:g" \
 		-e "s:INTERFACE:${INTERFACE}:g" \
 		-e "s:DEVFS_RULESET:${DEVFS_RULESET}:g" \
+		-e "s:VERSION:${VERSION}:g" \
 		${REGGAE_PATH}/templates/cbsd.conf.tpl >cbsd.conf
 .for provisioner in ${PROVISIONERS}
 	@${MAKE} ${MAKEFLAGS} setup-${provisioner}
