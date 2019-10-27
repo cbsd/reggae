@@ -53,7 +53,11 @@ fetch:
 .endif
 .endfor
 
+.if target(pre_setup)
+setup: pre_setup
+.else
 setup:
+.endif
 	@sudo rm -f services/*/cbsd.conf
 .for service url in ${SERVICES}
 	@rm -f services/${service}/project.mk

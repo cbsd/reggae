@@ -1,4 +1,5 @@
 TYPE ?= jail
+VERSION ?= native
 EXTRA_FSTAB ?= templates/fstab
 XORG ?= NO
 DEVEL_MODE ?= NO
