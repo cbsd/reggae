@@ -121,10 +121,13 @@ setup_unbound() {
   sed \
     -e "s:DOMAIN:${DOMAIN}:g" \
     "${SCRIPT_DIR}/../templates/unbound_cbsd.conf" >/var/unbound/conf.d/cbsd.conf
+  if [ ! -d /var/unbound/zones ]; then
+    mkdir /var/unbound/zones
+  fi
   sed \
     -e "s:DOMAIN:${DOMAIN}:g" \
     -e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
-    "${SCRIPT_DIR}/../templates/unbound_cbsd.zone" >/var/unbound/conf.d/${DOMAIN}.zone
+    "${SCRIPT_DIR}/../templates/unbound_cbsd.zone" >/var/unbound/zones/${DOMAIN}.zone
   cp "${SCRIPT_DIR}/../templates/unbound_control.conf" /var/unbound/control.conf
   cp "${SCRIPT_DIR}/../templates/resolvconf.conf" /etc/resolvconf.conf
 
@@ -135,7 +138,7 @@ setup_unbound() {
     -e "s:DOMAIN:${DOMAIN}:g" \
     -e "s:ZONE:${ZONE}:g" \
     -e "s:LAST_OCTET:${LAST_OCTET}:g" \
-    "${SCRIPT_DIR}/../templates/unbound_cbsd_reverse.zone" >"/var/unbound/conf.d/${ZONE}.zone"
+    "${SCRIPT_DIR}/../templates/unbound_cbsd_reverse.zone" >"/var/unbound/zones/${ZONE}.zone"
   sed \
     -e "s:ZONE:${ZONE}:g" \
     "${SCRIPT_DIR}/../templates/unbound_cbsd_reverse.conf" >>/var/unbound/conf.d/cbsd-reverse.conf
@@ -146,14 +149,14 @@ setup_unbound() {
     -e "s:DOMAIN:${DOMAIN}:g" \
     -e "s:ZONE:${ZONE}:g" \
     -e "s:LAST_OCTET:${LAST_OCTET}:g" \
-    "${SCRIPT_DIR}/../templates/unbound_cbsd_reverse.zone" >"/var/unbound/conf.d/${ZONE}.zone"
+    "${SCRIPT_DIR}/../templates/unbound_cbsd_reverse.zone" >"/var/unbound/zones/${ZONE}.zone"
   echo >>/var/unbound/conf.d/cbsd-reverse.conf
   sed \
     -e "s:ZONE:${ZONE}:g" \
     "${SCRIPT_DIR}/../templates/unbound_cbsd_reverse.conf" >>/var/unbound/conf.d/cbsd-reverse.conf
 
   chown -R unbound:unbound /var/unbound
-  chmod g+w /var/unbound/conf.d /var/unbound/conf.d/*.zone
+  chmod g+w /var/unbound/conf.d /var/unbound/zones/*.zone
   service local_unbound restart
   resolvconf -u
 }

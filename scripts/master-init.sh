@@ -24,8 +24,6 @@ dhcp() {
     -e "s:MASTER_IP:${MASTER_IP}:g" \
     ${SCRIPT_DIR}/../templates/master.conf >"${TEMP_MASTER_CONF}"
 
-  ZONE_BASE=${DOMAIN}
-
   cbsd jcreate inter=0 jconf="${TEMP_MASTER_CONF}"
   echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/cbsd-data/etc/rc.conf.d/sendmail"
 	cp ${SCRIPT_DIR}/../templates/master.fstab "${CBSD_WORKDIR}/jails-fstab/fstab.cbsd.local"

@@ -16,9 +16,9 @@ ACTION="${1}"
 PF_ACTION="add"
 DOMAIN=`reggae get-config DOMAIN`
 
-ZONE_FILE="/var/unbound/conf.d/${DOMAIN}.zone"
+ZONE_FILE="/var/unbound/zones/${DOMAIN}.zone"
 REVERSE_ZONE=`echo ${IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
-REVERSE_ZONE_FILE="/var/unbound/conf.d/${REVERSE_ZONE}.zone"
+REVERSE_ZONE_FILE="/var/unbound/zones/${REVERSE_ZONE}.zone"
 LAST_OCTET=`echo "${IP}" | awk -F '.' '{print $4}'`
 
 
