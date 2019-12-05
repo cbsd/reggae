@@ -9,6 +9,8 @@ BIN_FILES = reggae
 TEMPLATES = Makefile.project \
 	    Makefile.service \
 	    cbsd.conf.tpl \
+	    cbsd-vnet.conf.tpl \
+	    devfs.rules \
 	    dhcpd-hook.sh \
 	    dhcpd.conf \
 	    export-ports.sh \
