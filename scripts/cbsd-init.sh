@@ -30,16 +30,9 @@ setup_file_system() {
 
 
 setup_devfs() {
-  if [ ! -e "/etc/devfs.rules" -o -z `grep -o 'devfsrules_jail_bpf=7' /etc/devfs.rules` ]; then
-    cat << EOF >>/etc/devfs.rules
-[jail_bpf=7]
-add include \$devfsrules_hide_all
-add include \$devfsrules_unhide_basic
-add include \$devfsrules_unhide_login
-add path 'bpf*' unhide
-add path 'pf*' unhide mode 0660 group unbound
-EOF
-    fi
+  if [ ! -e "/etc/devfs.rules" -o -z `grep -o 'cbsd=7' /etc/devfs.rules` ]; then
+    cat ${SCRIPT_DIR}/../templates/devfs.rules >>/etc/devfs.rules
+  fi
 }
 
 

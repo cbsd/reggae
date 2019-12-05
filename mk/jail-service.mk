@@ -1,3 +1,4 @@
+SUBTYPE ?= vnet
 INTERFACE != reggae get-config INTERFACE
 PKG_MIRROR_CONFIG != reggae get-config PKG_MIRROR
 PKG_REPO_CONFIG != reggae get-config PKG_REPO
@@ -85,6 +86,16 @@ setup: pre_setup
 .else
 setup:
 .endif
+.if $(SUBTYPE) == "vnet"
+	@sed \
+		-e "s:SERVICE:${SERVICE}:g" \
+		-e "s:DOMAIN:${DOMAIN}:g" \
+		-e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
+		-e "s:EXTRA_PACKAGES:${EXTRA_PACKAGES}:g" \
+		-e "s:INTERFACE:${INTERFACE}:g" \
+		-e "s:VERSION:${VERSION}:g" \
+		${REGGAE_PATH}/templates/cbsd-vnet.conf.tpl >cbsd.conf
+.else
 	@sed \
 		-e "s:SERVICE:${SERVICE}:g" \
 		-e "s:DOMAIN:${DOMAIN}:g" \
@@ -94,6 +105,7 @@ setup:
 		-e "s:DEVFS_RULESET:${DEVFS_RULESET}:g" \
 		-e "s:VERSION:${VERSION}:g" \
 		${REGGAE_PATH}/templates/cbsd.conf.tpl >cbsd.conf
+.endif
 .for provisioner in ${PROVISIONERS}
 	@${MAKE} ${MAKEFLAGS} setup-${provisioner}
 .endfor
