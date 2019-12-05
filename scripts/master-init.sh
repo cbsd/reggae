@@ -26,7 +26,8 @@ dhcp() {
 
   cbsd jcreate inter=0 jconf="${TEMP_MASTER_CONF}"
   echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/cbsd-data/etc/rc.conf.d/sendmail"
-	cp ${SCRIPT_DIR}/../templates/master.fstab "${CBSD_WORKDIR}/jails-fstab/fstab.cbsd.local"
+  cp ${SCRIPT_DIR}/../templates/master.fstab "${CBSD_WORKDIR}/jails-fstab/fstab.cbsd.local"
+  cbsd jset jname=cbsd b_order=0
   cbsd jstart cbsd
 
   cp ${SCRIPT_DIR}/../templates/dhcpd-hook.sh "${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/bin/"
