@@ -1,0 +1,26 @@
+#cloud-config
+package_upgrade: false
+resize_rootfs: True
+manage_etc_hosts: localhost
+
+cloud_final_modules:
+  - [users-groups, always]
+
+users:
+  - name: cbsd
+    groups: [sudo]
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+    shell:
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD1rC034OUhsG+EzB9U7hEGOFVGqDMLZuXCNcT/I+Q2IUWPZzLjTTv8DjQ7DsUNdKBysNOdHK0WW/H25xcugxqFMNagUuJKiJm3tHof94+Y2xhwtDrTRtKgKGWOjxFggF6CyX2x6FfOaTF7bnYzjW1aDs5waTPLZBBmhJstS1+AArXA3yJUWeHntxpYK8eFj0lk/wOQJ5KCyihcjAfV+1Vm8IiFKMIsT/KjCw/9jS8H6rz1Yg89XBQljj67mPMRwVxAYAhHqGJpZY7+UuX3udELI1+pNup9R7EtF9WKYCVJMxpdcMU67SNuZWw5O548CUxzzM17sM7MRZdXlQIAspE7 reggae
+    lock-passwd: False
+    passwd: $6$61V0w0dRFFiEcnm2$o8CLPIdRBVHP13LQizdp12NEGD91RfHSB.c6uKnr9m2m3ZCg7ASeGENMaDt0tffmo5RalKGjWiHCtScCtjYfs/
+  - name: root
+    lock-passwd: False
+    passwd: $6$h9pydrjL8JVn6vCO$9kkZInu99CT67.lnESajG4lVB.vGP6uF8otMFI.x9sYWeliDlSn7XS6GT0yTblGbO1Kb4av0ynipvXGIOCAOg1
+
+chpasswd:
+  list: |
+     cbsd:$6$61V0w0dRFFiEcnm2$o8CLPIdRBVHP13LQizdp12NEGD91RfHSB.c6uKnr9m2m3ZCg7ASeGENMaDt0tffmo5RalKGjWiHCtScCtjYfs/
+     root:$6$h9pydrjL8JVn6vCO$9kkZInu99CT67.lnESajG4lVB.vGP6uF8otMFI.x9sYWeliDlSn7XS6GT0yTblGbO1Kb4av0ynipvXGIOCAOg1
+  expire: False
