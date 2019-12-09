@@ -14,7 +14,7 @@ PROVISIONERS=$@
 SERVICE_NAME=`basename ${PWD}`
 
 echo -n "Generating Makefile ... "
-sed -e "s;SERVICE_NAME;${SERVICE_NAME};g" "${PROJECT_ROOT}/templates/${MAKEFILE}" >>Makefile
+sed -e "s;SERVICE_NAME;${SERVICE_NAME};g" "${PROJECT_ROOT}/templates/${MAKEFILE}" >Makefile
 echo "done"
 
 echo -n "Generating .gitignore ... "

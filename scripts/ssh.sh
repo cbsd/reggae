@@ -18,6 +18,5 @@ if [ -z "${USER}" -o -z "${SERVICE}" ]; then
   exit 1
 fi
 
-
-IP=`reggae get-ip ${SERVICE}`
+IP=${IP:=`reggae get-ip ${SERVICE}`}
 ssh -t -i "${PROJECT_ROOT}/id_rsa" -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" ${USER}@${IP} ${@}

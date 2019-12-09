@@ -1,7 +1,7 @@
-DATA_DIR = ${CBSD_WORKDIR}/vm/${SERVICE}
-BASE_DATA_DIR = ${CBSD_WORKDIR}/vm/${IMAGE}
-PWD != pwd
-VM_INTERFACE_IP != reggae get-config VM_INTERFACE_IP
+DATA_DIR = ${CBSD_WORKDIR}/jails-data/${SERVICE}-data
+INTERFACE != reggae get-config INTERFACE
+INTERFACE_IP != reggae get-config INTERFACE_IP
+MASTER_IP != reggae get-config MASTER_IP
 CPU ?= 1
 MEM ?= "1G"
 
@@ -12,23 +12,19 @@ up: ${DATA_DIR}
 .endif
 	@sudo cbsd bset jname=${SERVICE} vm_cpus=${CPU} vm_ram=${MEM}
 	@sudo cbsd bstart jname=${SERVICE} || true
+.if !exists(${CBSD_WORKDIR}/jails-system/${SERVICE}/.provisioned)
 	@echo "Waiting for VM to boot"
 	@sudo reggae ssh-ping ${SERVICE}
-	@sudo reggae scp provision ${SERVICE} ${REGGAE_PATH}/templates/install-packages.sh ${UID} ${GID}
-	@sudo reggae ssh provision ${SERVICE} chmod +x ./install-packages.sh
-	@sudo reggae ssh provision ${SERVICE} ./install-packages.sh ${EXTRA_PACKAGES}
-	@sudo reggae scp provision ${SERVICE} ${REGGAE_PATH}/templates/mount-project.sh ${UID} ${GID}
-	@sudo reggae ssh provision ${SERVICE} chmod +x ./mount-project.sh
-	@sudo reggae ssh provision ${SERVICE} ./mount-project.sh ${PWD}
-.if !exists(.provisioned)
 	@${MAKE} ${MAKEFLAGS} provision
 .endif
 .if target(post_up)
+	@echo "Waiting for VM to boot"
+	@sudo reggae ssh-ping ${SERVICE}
 	@${MAKE} ${MAKEFLAGS} post_up
 .endif
 
 provision: ${DATA_DIR}
-	-@touch .provisioned
+	-@sudo touch ${CBSD_WORKDIR}/jails-system/${SERVICE}/.provisioned
 .for provisioner in ${PROVISIONERS}
 	@${MAKE} ${MAKEFLAGS} provision-${provisioner}
 .endfor
@@ -43,27 +39,44 @@ destroy:
 	@${MAKE} ${MAKEFLAGS} clean-${provisioner}
 .endfor
 
-${DATA_DIR}: ${BASE_DATA_DIR}
-	@sudo cbsd bclone old=${IMAGE} new=${SERVICE}
-	@sudo cbsd bset jname=${SERVICE} astart=0
-	@sudo cbsd bstart jname=${SERVICE}
-	@echo "Waiting for VM to boot"
-	@sudo reggae ssh-ping ${SERVICE}
-	@sudo reggae scp provision ${SERVICE} ${REGGAE_PATH}/templates/setup-vm.sh ${UID} ${GID}
-	@sudo reggae ssh provision ${SERVICE} chmod +x ./setup-vm.sh
-	@sudo reggae ssh provision ${SERVICE} ./setup-vm.sh
+${DATA_DIR}:
+	@sed \
+		-e "s:SERVICE:${SERVICE}:g" \
+		-e "s:DOMAIN:${DOMAIN}:g" \
+		-e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
+		-e "s:MASTER_IP:${MASTER_IP}:g" \
+		-e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
+		-e "s:INTERFACE:${INTERFACE}:g" \
+		${REGGAE_PATH}/templates/cbsd-bhyve.conf.tpl >cbsd.conf
+	@sudo cbsd bcreate jconf=${PWD}/cbsd.conf
+	@sudo cp ${REGGAE_PATH}/templates/cloud-init/user-data ${CBSD_WORKDIR}/jails-system/${SERVICE}/cloud-init
+	@sed \
+		-e "s:SERVICE:${SERVICE}:g" \
+		-e "s:DOMAIN:${DOMAIN}:g" \
+		${REGGAE_PATH}/templates/cloud-init/meta-data >/tmp/${SERVICE}-meta-data
+	@sudo mv /tmp/${SERVICE}-meta-data ${CBSD_WORKDIR}/jails-system/${SERVICE}/cloud-init/meta-data
 .for provisioner in ${PROVISIONERS}
 	@${MAKE} ${MAKEFLAGS} setup-${provisioner}
 .endfor
 .if target(post_setup)
 	@${MAKE} ${MAKEFLAGS} post_setup
 .endif
-
-${BASE_DATA_DIR}:
-	@rm -rf /tmp/${IMAGE}.img
-	@fetch ${BASE_URL}/${IMAGE}.img -o /tmp/${IMAGE}.img
-	@sudo reggae import /tmp/${IMAGE}.img bhyve
-	@rm -rf /tmp/${IMAGE}.img
+	@sudo cbsd bstart jname=${SERVICE}
+	@echo "Waiting for VM to boot for the first time"
+	@sudo env IP=10.0.0.222 SSH_USER=cbsd reggae ssh-ping ${SERVICE}
+	@sudo env IP=10.0.0.222 reggae scp cbsd ${SERVICE} ${REGGAE_PATH}/templates/cloud-initial.sh
+	@sudo env IP=10.0.0.222 reggae ssh cbsd ${SERVICE} chmod +x cloud-initial.sh
+	@sudo env IP=10.0.0.222 reggae ssh cbsd ${SERVICE} sudo ./cloud-initial.sh
+	@sudo env IP=10.0.0.222 reggae scp cbsd ${SERVICE} ${REGGAE_PATH}/id_rsa.pub
+	@sudo env IP=10.0.0.222 reggae ssh cbsd ${SERVICE} sudo mv /home/cbsd/id_rsa.pub /home/provision/.ssh/authorized_keys
+	@sudo env IP=10.0.0.222 reggae ssh cbsd ${SERVICE} sudo chmod 600 /home/provision/.ssh/authorized_keys
+	@sudo env IP=10.0.0.222 reggae ssh cbsd ${SERVICE} sudo chown -R provision:provision /home/provision
+	@sudo env IP=10.0.0.222 reggae scp cbsd ${SERVICE} ${REGGAE_PATH}/templates/sudoers
+	@sudo env IP=10.0.0.222 reggae ssh cbsd ${SERVICE} sudo chown root:wheel sudoers
+	@sudo env IP=10.0.0.222 reggae ssh cbsd ${SERVICE} sudo mv sudoers /usr/local/etc/
+	@sudo env IP=10.0.0.222 reggae ssh provision ${SERVICE} sudo pw user del cbsd -r
+	-@sudo env IP=10.0.0.222 reggae ssh provision ${SERVICE} sudo halt -p
+	@sleep 20
 
 login:
 .if defined(user)

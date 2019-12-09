@@ -9,7 +9,8 @@ help() {
 
 
 get_ip() {
-  . "/usr/cbsd/jails-system/${SERVICE}/bhyve.conf"
+  bhyve_conf="/usr/cbsd/jails-system/${SERVICE}/bhyve.conf"
+  . "${bhyve_conf}"
   HWADDR=`echo $nic_args | grep --color=auto -o 'mac=..:..:..:..:..:..' | cut -f 2 -d '='`
   IP=""
   while [ -z ${IP} ]; do

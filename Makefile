@@ -9,7 +9,9 @@ BIN_FILES = reggae
 TEMPLATES = Makefile.project \
 	    Makefile.service \
 	    cbsd.conf.tpl \
+	    cbsd-bhyve.conf.tpl \
 	    cbsd-vnet.conf.tpl \
+	    cloud-initial.sh \
 	    devfs.rules \
 	    dhcpd-hook.sh \
 	    dhcpd.conf \
@@ -27,6 +29,7 @@ TEMPLATES = Makefile.project \
 	    reggae-register.sh \
 	    resolvconf.conf \
 	    setup-vm.sh \
+	    sudoers \
 	    unbound.conf \
 	    unbound_cbsd.conf \
 	    unbound_cbsd.zone \
@@ -36,6 +39,8 @@ TEMPLATES = Makefile.project \
 	    xorg.sh
 ANSIBLE_TEMPLATES = ansible/inventory.local.tpl ansible/inventory.remote.tpl
 ANSIBLE_GROUP_TEMPLATES = ansible/group_vars/all.tpl
+CLOUDINIT_TEMPLATES = cloud-init/meta-data \
+		      cloud-init/user-data
 MAKEFILES = ansible.mk \
 	    bhyve-service.mk \
 	    chef.mk \
@@ -104,6 +109,7 @@ install_templates:
 	install -d ${DESTDIR}${PREFIX}${TEMPLATE_DIR}
 	install -d ${DESTDIR}${PREFIX}${TEMPLATE_DIR}/ansible
 	install -d ${DESTDIR}${PREFIX}${TEMPLATE_DIR}/ansible/group_vars
+	install -d ${DESTDIR}${PREFIX}${TEMPLATE_DIR}/cloud-init
 .for template_file in ${TEMPLATES}
 	install -m 0644 templates/${template_file} ${DESTDIR}${PREFIX}${TEMPLATE_DIR}
 .endfor
@@ -112,6 +118,9 @@ install_templates:
 .endfor
 .for template_file in ${ANSIBLE_GROUP_TEMPLATES}
 	install -m 0644 templates/${template_file} ${DESTDIR}${PREFIX}${TEMPLATE_DIR}/ansible/group_vars
+.endfor
+.for template_file in ${CLOUDINIT_TEMPLATES}
+	install -m 0644 templates/${template_file} ${DESTDIR}${PREFIX}${TEMPLATE_DIR}/cloud-init
 .endfor
 
 install_makefiles:
