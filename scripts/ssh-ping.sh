@@ -20,9 +20,11 @@ wait_ssh() {
   fi
   EXIT_STATUS=1
   while [ "${EXIT_STATUS}" != "0" ]; do
-    sleep 1
-    reggae ssh ${SSH_USER} ${1} "${COMMAND}" >/dev/null 2>&1
+    reggae ssh ${SSH_USER} ${1} "${COMMAND}"
     EXIT_STATUS=$?
+    if [ "${EXIT_STATUS}" != "0" ]; then
+      sleep 1
+    fi
   done
 }
 

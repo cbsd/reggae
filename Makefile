@@ -11,6 +11,7 @@ TEMPLATES = Makefile.project \
 	    cbsd.conf.tpl \
 	    cbsd-bhyve.conf.tpl \
 	    cbsd-vnet.conf.tpl \
+	    cloud-devops.sh \
 	    cloud-initial.sh \
 	    devfs.rules \
 	    dhcpd-hook.sh \
