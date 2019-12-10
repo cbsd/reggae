@@ -22,7 +22,7 @@ if [ -z "${USER}" -o -z "${SERVICE}" -o -z "${FILE}" ]; then
   exit 1
 fi
 
-scp_cmd="scp -i ${PROJECT_ROOT}/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${FILE} ${USER}@${IP}:"
+scp_cmd="scp -r -i ${PROJECT_ROOT}/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${FILE} ${USER}@${IP}:"
 if [ "${VERBOSE}" = "yes" ]; then
   ${scp_cmd}
 else
