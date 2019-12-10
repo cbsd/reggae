@@ -2,6 +2,7 @@ DATA_DIR = ${CBSD_WORKDIR}/jails-data/${SERVICE}-data
 INTERFACE != reggae get-config INTERFACE
 INTERFACE_IP != reggae get-config INTERFACE_IP
 MASTER_IP != reggae get-config MASTER_IP
+PROJECTS_DIR != reggae get-config PROJECTS_DIR
 CPU ?= 1
 MEM ?= "1G"
 
@@ -12,18 +13,20 @@ up: ${DATA_DIR}
 .endif
 	@sudo cbsd bset jname=${SERVICE} vm_cpus=${CPU} vm_ram=${MEM}
 	@sudo cbsd bstart jname=${SERVICE} || true
-.if !exists(${CBSD_WORKDIR}/jails-system/${SERVICE}/.provisioned)
 	@echo "Waiting for VM to boot"
 	@sudo reggae ssh-ping ${SERVICE}
+.if !exists(${CBSD_WORKDIR}/jails-system/${SERVICE}/.provisioned)
 	@${MAKE} ${MAKEFLAGS} provision
 .endif
+.if ${DEVEL_MODE} != "YES"
+	@sudo reggae ssh provision ${SERVICE} sudo umount /usr/src || true
+	@sudo reggae ssh provision ${SERVICE} sudo pw user del devel -r || true
+.endif
 .if target(post_up)
-	@echo "Waiting for VM to boot"
-	@sudo reggae ssh-ping ${SERVICE}
 	@${MAKE} ${MAKEFLAGS} post_up
 .endif
 
-provision: ${DATA_DIR}
+provision:
 	-@sudo touch ${CBSD_WORKDIR}/jails-system/${SERVICE}/.provisioned
 .for provisioner in ${PROVISIONERS}
 	@${MAKE} ${MAKEFLAGS} provision-${provisioner}
@@ -62,7 +65,6 @@ ${DATA_DIR}:
 	@${MAKE} ${MAKEFLAGS} post_setup
 .endif
 	@sudo cbsd bstart jname=${SERVICE}
-	sudo cbsd bget jname=${SERVICE} ip4_addr | cut -f 2 -d ':'
 	@${MAKE} ${MAKEFLAGS} init ip=`sudo cbsd bget jname=${SERVICE} ip4_addr | cut -f 2 -d ':' | cut -b 2-`
 	@sudo cbsd bstop ${SERVICE}
 
@@ -83,13 +85,13 @@ init:
 
 login:
 .if defined(user)
-	@sudo reggae ssh ${user} ${SERVICE}
+	@sudo env VERBOSE="yes" reggae ssh ${user} ${SERVICE}
 .else
-	@sudo reggae ssh provision ${SERVICE}
+	@sudo env VERBOSE="yes" reggae ssh provision ${SERVICE}
 .endif
 
 exec:
-	@sudo reggae ssh provision ${SERVICE} ${command}
+	@sudo env VERBOSE="yes" reggae ssh provision ${SERVICE} ${command}
 
 export: down
 .if !exists(build)
@@ -102,10 +104,22 @@ export: down
 	@sudo chown ${UID}:${GID} build/${SERVICE}.img
 
 devel: up
-	@sudo reggae ssh devel ${SERVICE} /usr/src/bin/devel.sh
+.if ${DEVEL_MODE} == "YES"
+	@sudo reggae scp provision ${SERVICE} ${REGGAE_PATH}/templates/cloud-devops.sh
+	@sudo reggae ssh provision ${SERVICE} sudo env UID=${UID} GID=${GID} sh cloud-devops.sh
+	@sudo reggae scp provision ${SERVICE} ${REGGAE_PATH}/id_rsa.pub
+	@sudo reggae ssh provision ${SERVICE} sudo mv /home/provision/id_rsa.pub /home/devel/.ssh/authorized_keys
+	@sudo reggae ssh provision ${SERVICE} sudo chmod 600 /home/devel/.ssh/authorized_keys
+	@sudo reggae ssh provision ${SERVICE} sudo chown -R devel:devel /home/devel
+	@sudo reggae ssh devel ${SERVICE} "test ! -f /usr/src/bin/devel.sh && sudo mount ${INTERFACE_IP}:${PWD} /usr/src || true"
+	@sudo env VERBOSE="yes" reggae ssh devel ${SERVICE} /usr/src/bin/devel.sh
+.else
+	@echo "DEVEL_MODE is not enabled" >&2
+	@false
+.endif
 
 test: up
-	@sudo reggae ssh devel ${SERVICE} /usr/src/bin/test.sh
+	@sudo env VERBOSE="yes" reggae ssh devel ${SERVICE} /usr/src/bin/test.sh
 
 upgrade: up
-	@sudo reggae ssh provision ${SERVICE} pkg upgrade -y
+	@sudo env VERBOSE="yes" reggae ssh provision ${SERVICE} pkg upgrade -y

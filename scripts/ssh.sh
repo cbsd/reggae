@@ -6,6 +6,7 @@ USER="${1}"
 SERVICE="${2}"
 shift
 shift
+IP=${IP:=`reggae get-ip ${SERVICE}`}
 
 
 help() {
@@ -18,5 +19,10 @@ if [ -z "${USER}" -o -z "${SERVICE}" ]; then
   exit 1
 fi
 
-IP=${IP:=`reggae get-ip ${SERVICE}`}
-ssh -t -i "${PROJECT_ROOT}/id_rsa" -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" ${USER}@${IP} ${@}
+ssh_cmd="ssh -t -i ${PROJECT_ROOT}/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${USER}@${IP} ${@}"
+
+if [ "${VERBOSE}" = "yes" ]; then
+  ${ssh_cmd}
+else
+  ${ssh_cmd} >/dev/null 2>&1
+fi
