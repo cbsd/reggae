@@ -62,21 +62,24 @@ ${DATA_DIR}:
 	@${MAKE} ${MAKEFLAGS} post_setup
 .endif
 	@sudo cbsd bstart jname=${SERVICE}
+	sudo cbsd bget jname=${SERVICE} ip4_addr | cut -f 2 -d ':'
+	@${MAKE} ${MAKEFLAGS} init ip=`sudo cbsd bget jname=${SERVICE} ip4_addr | cut -f 2 -d ':' | cut -b 2-`
+	@sudo cbsd bstop ${SERVICE}
+
+init:
 	@echo "Waiting for VM to boot for the first time"
-	@sudo env IP=10.0.0.222 SSH_USER=cbsd reggae ssh-ping ${SERVICE}
-	@sudo env IP=10.0.0.222 reggae scp cbsd ${SERVICE} ${REGGAE_PATH}/templates/cloud-initial.sh
-	@sudo env IP=10.0.0.222 reggae ssh cbsd ${SERVICE} chmod +x cloud-initial.sh
-	@sudo env IP=10.0.0.222 reggae ssh cbsd ${SERVICE} sudo ./cloud-initial.sh
-	@sudo env IP=10.0.0.222 reggae scp cbsd ${SERVICE} ${REGGAE_PATH}/id_rsa.pub
-	@sudo env IP=10.0.0.222 reggae ssh cbsd ${SERVICE} sudo mv /home/cbsd/id_rsa.pub /home/provision/.ssh/authorized_keys
-	@sudo env IP=10.0.0.222 reggae ssh cbsd ${SERVICE} sudo chmod 600 /home/provision/.ssh/authorized_keys
-	@sudo env IP=10.0.0.222 reggae ssh cbsd ${SERVICE} sudo chown -R provision:provision /home/provision
-	@sudo env IP=10.0.0.222 reggae scp cbsd ${SERVICE} ${REGGAE_PATH}/templates/sudoers
-	@sudo env IP=10.0.0.222 reggae ssh cbsd ${SERVICE} sudo chown root:wheel sudoers
-	@sudo env IP=10.0.0.222 reggae ssh cbsd ${SERVICE} sudo mv sudoers /usr/local/etc/
-	@sudo env IP=10.0.0.222 reggae ssh provision ${SERVICE} sudo pw user del cbsd -r
-	-@sudo env IP=10.0.0.222 reggae ssh provision ${SERVICE} sudo halt -p
-	@sleep 20
+	@sudo env IP=${ip} SSH_USER=cbsd reggae ssh-ping ${SERVICE}
+	@sudo env IP=${ip} reggae scp cbsd ${SERVICE} ${REGGAE_PATH}/templates/cloud-initial.sh
+	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} chmod +x cloud-initial.sh
+	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo ./cloud-initial.sh
+	@sudo env IP=${ip} reggae scp cbsd ${SERVICE} ${REGGAE_PATH}/id_rsa.pub
+	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo mv /home/cbsd/id_rsa.pub /home/provision/.ssh/authorized_keys
+	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo chmod 600 /home/provision/.ssh/authorized_keys
+	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo chown -R provision:provision /home/provision
+	@sudo env IP=${ip} reggae scp cbsd ${SERVICE} ${REGGAE_PATH}/templates/sudoers
+	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo chown root:wheel sudoers
+	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo mv sudoers /usr/local/etc/
+	@sudo env IP=${ip} reggae ssh provision ${SERVICE} sudo pw user del cbsd -r
 
 login:
 .if defined(user)
