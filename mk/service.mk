@@ -15,6 +15,6 @@
 .MAIN: up
 
 update:
-	@git pull
+	@git pull --recurse-submodules
 
 .include <${REGGAE_PATH}/mk/${TYPE}-service.mk>
