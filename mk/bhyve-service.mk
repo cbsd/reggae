@@ -18,10 +18,6 @@ up: ${DATA_DIR}
 .if !exists(${CBSD_WORKDIR}/jails-system/${SERVICE}/.provisioned)
 	@${MAKE} ${MAKEFLAGS} provision
 .endif
-.if ${DEVEL_MODE} != "YES"
-	@sudo reggae ssh provision ${SERVICE} sudo umount /usr/src || true
-	@sudo reggae ssh provision ${SERVICE} sudo pw user del devel -r || true
-.endif
 .if target(post_up)
 	@${MAKE} ${MAKEFLAGS} post_up
 .endif
@@ -81,16 +77,14 @@ init:
 	@sudo env IP=${ip} reggae scp cbsd ${SERVICE} ${REGGAE_PATH}/templates/sudoers
 	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo chown root:wheel sudoers
 	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo mv sudoers /usr/local/etc/
-	@sudo env IP=${ip} reggae scp cbsd ${SERVICE} ${REGGAE_PATH}/templates/reggae-prepare.sh
-	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo chown root:wheel reggae-prepare.sh
-	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo chmod +x reggae-prepare.sh
-	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo mv /home/cbsd/reggae-prepare.sh /usr/local/bin/
 .if defined(EXTRA_SCRIPT)
 	@sudo env IP=${ip} reggae scp cbsd ${SERVICE} ${EXTRA_SCRIPT}
 	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo chown root:wheel `basename ${EXTRA_SCRIPT}`
 	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo chmod +x `basename ${EXTRA_SCRIPT}`
 	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo mv /home/cbsd/`basename ${EXTRA_SCRIPT}` /usr/local/bin/
 .endif
+	@sudo env IP=${ip} reggae scp provision ${SERVICE} ${REGGAE_PATH}/templates/cloud-devops.sh
+	@sudo env IP=${ip} reggae scp provision ${SERVICE} ${REGGAE_PATH}/id_rsa.pub
 	@sudo env IP=${ip} reggae ssh provision ${SERVICE} sudo pw user del cbsd -r
 
 login:
@@ -115,13 +109,7 @@ export: down
 
 devel: up
 .if ${DEVEL_MODE} == "YES"
-	@sudo reggae scp provision ${SERVICE} ${REGGAE_PATH}/templates/cloud-devops.sh
-	@sudo reggae ssh provision ${SERVICE} sudo env UID=${UID} GID=${GID} sh cloud-devops.sh
-	@sudo reggae scp provision ${SERVICE} ${REGGAE_PATH}/id_rsa.pub
-	@sudo reggae ssh provision ${SERVICE} sudo mv /home/provision/id_rsa.pub /home/devel/.ssh/authorized_keys
-	@sudo reggae ssh provision ${SERVICE} sudo chmod 600 /home/devel/.ssh/authorized_keys
-	@sudo reggae ssh provision ${SERVICE} sudo chown -R devel:devel /home/devel
-	@sudo reggae ssh provision ${SERVICE} sudo /usr/local/bin/reggae-prepare.sh ${INTERFACE_IP} ${PWD} /usr/src ${EXTRA_SCRIPT}
+	@sudo reggae ssh provision ${SERVICE} sudo env UID=${UID} GID=${GID} sh cloud-devops.sh ${INTERFACE_IP} ${PWD} /usr/src ${EXTRA_SCRIPT}
 	@sudo env VERBOSE="yes" reggae ssh devel ${SERVICE} /usr/src/bin/devel.sh
 .else
 	@echo "DEVEL_MODE is not enabled" >&2

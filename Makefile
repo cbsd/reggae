@@ -27,7 +27,6 @@ TEMPLATES = Makefile.project \
 	    mount-project.sh \
 	    named.conf \
 	    pf.conf \
-	    reggae-prepare.sh \
 	    reggae-register.sh \
 	    resolvconf.conf \
 	    setup-vm.sh \
