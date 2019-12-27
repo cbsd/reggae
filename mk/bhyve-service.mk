@@ -58,7 +58,7 @@ ${DATA_DIR}:
 	@${MAKE} ${MAKEFLAGS} setup-${provisioner}
 .endfor
 .if target(post_setup)
-	@${MAKE} ${MAKEFLAGS} post_setup
+	@${MAKE} ${MAKEFLAGS} post_setup ip=`sudo cbsd bget jname=${SERVICE} ip4_addr | cut -f 2 -d ':' | cut -b 2-`
 .endif
 	@sudo cbsd bstart jname=${SERVICE}
 	@${MAKE} ${MAKEFLAGS} init ip=`sudo cbsd bget jname=${SERVICE} ip4_addr | cut -f 2 -d ':' | cut -b 2-`
