@@ -57,9 +57,6 @@ ${DATA_DIR}:
 .for provisioner in ${PROVISIONERS}
 	@${MAKE} ${MAKEFLAGS} setup-${provisioner}
 .endfor
-.if target(post_setup)
-	@${MAKE} ${MAKEFLAGS} post_setup ip=`sudo cbsd bget jname=${SERVICE} ip4_addr | cut -f 2 -d ':' | cut -b 2-`
-.endif
 	@sudo cbsd bstart jname=${SERVICE}
 	@${MAKE} ${MAKEFLAGS} init ip=`sudo cbsd bget jname=${SERVICE} ip4_addr | cut -f 2 -d ':' | cut -b 2-`
 	@sudo cbsd bstop ${SERVICE}
@@ -85,6 +82,9 @@ init:
 .endif
 	@sudo env IP=${ip} reggae scp provision ${SERVICE} ${REGGAE_PATH}/templates/cloud-devops.sh
 	@sudo env IP=${ip} reggae scp provision ${SERVICE} ${REGGAE_PATH}/id_rsa.pub
+.if target(post_setup)
+	@@${MAKE} ${MAKEFLAGS} post_setup ip=${ip}
+.endif
 	@sudo env IP=${ip} reggae ssh provision ${SERVICE} sudo pw user del cbsd -r
 
 login:
