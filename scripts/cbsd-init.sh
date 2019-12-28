@@ -56,6 +56,7 @@ setup_cbsd() {
     -e "s/DOMAIN/${DOMAIN}/g" \
     -e "s/JAIL_INTERFACE/${JAIL_INTERFACE}/g" \
     "${SCRIPT_DIR}/../cbsd-profile/jail-freebsd-reggae.conf" >"${CBSD_WORKDIR}/etc/defaults/jail-freebsd-reggae.conf"
+  rm -rf "${CBSD_WORKDIR}/share/FreeBSD-jail-reggae-skel" "${CBSD_WORKDIR}/share/jail-system-reggae"
   cp -r "${SCRIPT_DIR}/../cbsd-profile/skel" "${CBSD_WORKDIR}/share/FreeBSD-jail-reggae-skel"
   cp -r "${SCRIPT_DIR}/../cbsd-profile/system" "${CBSD_WORKDIR}/share/jail-system-reggae"
   chown -R root:wheel "${CBSD_WORKDIR}/share/FreeBSD-jail-reggae-skel"
