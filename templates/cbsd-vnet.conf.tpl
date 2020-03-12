@@ -59,8 +59,7 @@ exec_master_poststop="0";
 exec_master_prestart="0";
 exec_master_prestop="0";
 
-pkg_bootstrap="1";
-pkglist="sudoEXTRA_PACKAGES";
+pkg_bootstrap="0";
 with_img_helpers="";
 
 allow_reserved_ports="1";

@@ -4,48 +4,19 @@ PKG_MIRROR_CONFIG != reggae get-config PKG_MIRROR
 PKG_REPO_CONFIG != reggae get-config PKG_REPO
 PKG_MIRROR ?= ${PKG_MIRROR_CONFIG}
 PKG_REPO ?= ${PKG_REPO_CONFIG}
-PKG_ABI_CONFIG != reggae get-config PKG_ABI
-PKG_ABI ?= ${PKG_ABI_CONFIG}
+
 
 .if target(pre_up)
 up: setup pre_up
 .else
 up: setup
 .endif
-	@sudo cbsd jcreate jconf=${PWD}/cbsd.conf || true
-.if exists(${EXTRA_FSTAB})
-	@sudo cp ${EXTRA_FSTAB} ${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local
-.else
-	@sudo rm -rf ${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local
-.endif
-.if ${DEVEL_MODE} == "YES"
-	@sudo sh -c "echo ${PWD} /usr/src nullfs rw 0 0 >>${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local"
-	@sudo cbsd jset jname=${SERVICE} astart=0
-.else
-	@sudo cbsd jset jname=${SERVICE} astart=1
-.endif
-.if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys)
-.if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh)
-	-@sudo mkdir ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh
-.endif
-	@sudo chmod 700 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh
-	@sudo cp ~/.ssh/id_rsa.pub ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys
-	@sudo chmod 600 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys
-	@sudo chown -R 666:666 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh
-.endif
-	@sudo sed -i "" -e 's;url: "pkg+http://.*";url: "pkg+http://${PKG_MIRROR}/${PKG_ABI}/${PKG_REPO}";' ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/pkg/FreeBSD.conf >/dev/null 2>&1 || true
-	@sudo cp ${REGGAE_PATH}/templates/export-ports.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d
-	@sudo sed -i "" \
-		-e "s:PRTS:${PORTS}:g" \
-		${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/export-ports.sh
-	@sudo chmod 700 ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/export-ports.sh
-	@sudo cp ${REGGAE_PATH}/templates/xorg.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d
-	@sudo sed -i "" \
-		-e "s:XORG:${XORG}:g" \
-		${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/xorg.sh
-	@sudo chmod 700 ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/xorg.sh
 	@sudo cbsd jstart ${SERVICE} || true
 	@sudo chown ${UID}:${GID} cbsd.conf
+.if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/sbin/pkg)
+	@sudo cbsd jexec jname=${SERVICE} env ASSUME_ALWAYS_YES=YES pkg bootstrap
+	@sudo cbsd jexec jname=${SERVICE} pkg install -y sudo ${EXTRA_PACKAGES}
+.endif
 .if ${DEVEL_MODE} == "YES"
 .if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/devel)
 	@sudo cbsd jexec jname=${SERVICE} pw groupadd devel -g ${GID}
@@ -112,6 +83,43 @@ setup:
 .if target(post_setup)
 	@${MAKE} ${MAKEFLAGS} post_setup
 .endif
+	@sudo cbsd jcreate jconf=${PWD}/cbsd.conf || true
+.if exists(${EXTRA_FSTAB})
+	@sudo cp ${EXTRA_FSTAB} ${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local
+.else
+	@sudo rm -rf ${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local
+.endif
+.if ${DEVEL_MODE} == "YES"
+	@sudo sh -c "echo ${PWD} /usr/src nullfs rw 0 0 >>${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local"
+	@sudo cbsd jset jname=${SERVICE} astart=0
+.else
+	@sudo cbsd jset jname=${SERVICE} astart=1
+.endif
+.if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys)
+.if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh)
+	-@sudo mkdir ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh
+.endif
+	@sudo chmod 700 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh
+	@sudo cp ~/.ssh/id_rsa.pub ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys
+	@sudo chmod 600 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys
+	@sudo chown -R 666:666 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh
+.endif
+	@sudo cp ${REGGAE_PATH}/templates/export-ports.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d
+	@sudo sed -i "" \
+		-e "s:PRTS:${PORTS}:g" \
+		${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/export-ports.sh
+	@sudo chmod 700 ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/export-ports.sh
+	@sudo cp ${REGGAE_PATH}/templates/xorg.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d
+	@sudo sed -i "" \
+		-e "s:XORG:${XORG}:g" \
+		${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/xorg.sh
+	@sudo chmod 700 ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/xorg.sh
+.if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/pkg/repos)
+	@sudo mkdir -p ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/pkg/repos
+	@sudo sh -c 'echo -e FreeBSD: { url: \"pkg+http://${PKG_MIRROR}/\$${ABI}/${PKG_REPO}\"\; } >${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/pkg/repos/FreeBSD.conf'
+.endif
+
+pkg:
 
 login:
 .if defined(user)

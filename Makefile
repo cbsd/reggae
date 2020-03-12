@@ -75,6 +75,7 @@ SCRIPTS = bhyve-init.sh \
 MAN_FILES = reggae.1 \
 	    reggae-ansible.1 \
 	    reggae-chef.1 \
+	    reggae-init.1 \
 	    reggae-project.1 \
 	    reggae-provision.1 \
 	    reggae-puppet.1 \
