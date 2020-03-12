@@ -49,16 +49,11 @@ network() {
 
 pf() {
   if [ ! -e /etc/pf.conf ]; then
-    RDR=""
-    if [ "${STATIC}" = "NO" ]; then
-      RDR="rdr pass on \$ext_if proto tcp from any to any port ssh -> 127.0.0.1"
-    fi
     sed \
       -e "s:EGRESS:${EGRESS}:g" \
       -e "s:JAIL_INTERFACE_IP:${JAIL_INTERFACE_IP}:g" \
       -e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
       -e "s:INTERFACE:${INTERFACE}:g" \
-      -e "s:RDR:${RDR}:g" \
       "${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
   fi
   sysrc pflog_enable="YES"
@@ -72,19 +67,6 @@ setup_hostname() {
         hostname ${HOSTNAME}
         sysrc hostname="${HOSTNAME}"
     fi
-}
-
-
-setup_ssh() {
-  if [ -z "${SSHD_FLAGS}" ]; then
-    sysrc sshd_flags="-oListenAddress=127.0.0.1"
-  else
-    sysrc sshd_flags+=" -oListenAddress=127.0.0.1"
-  fi
-  if [ "${STATIC}" = "YES" ]; then
-    EGRESS_IP=`echo ${EGRESS_CONFIG} | grep -E 'inet ([0-9]{1,3}\.){3}[0-9]{1,3}' | awk '{print $2}'`
-    sysrc sshd_flags+=" -oListenAddress=${EGRESS_IP}"
-  fi
 }
 
 
@@ -167,5 +149,4 @@ network
 pf
 setup_hostname
 setup_ssh
-setup_nfs
 setup_unbound

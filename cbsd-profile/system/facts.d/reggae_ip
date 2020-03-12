@@ -1,0 +1,4 @@
+#!/bin/sh
+
+MAC=`sqlite3 "${workdir}/jails-system/${jname}/local.sqlite" 'select nic_hwaddr from jailnic;'`
+cbsd jexec jname=cbsd "ip-by-mac.sh ${MAC}"
