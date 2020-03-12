@@ -1,0 +1,32 @@
+.Dd $Mdocdate: March 11 2020 $
+.Dt REGGAE_INIT 1
+.Os
+.Sh NAME
+.Nm reggae-init
+.Nd init provisioner for CBSD jails
+.Sh SYNOPSIS
+.Nm reggae-init [provisioner]
+.Sh DESCRIPTION
+.Pp
+Service can be initialized with no, one or many provisioners. It will take
+current directory name and use it as service name.
+.El
+.Pp
+Provisioners will be called in the order which they are put as arguments to the
+reggae-init command.
+.Sh EXAMPLES
+.Pp
+To have shell and ansible provisioners ran in that order:
+.Pp
+.Dl mkdir myservice
+.Dl cd myservice
+.Dl reggae init shell ansible
+.Sh SEE ALSO
+.Xr reggae-ansible 1
+.Xr reggae-chef 1
+.Xr reggae-puppet 1
+.Xr reggae-salt 1
+.Xr reggae-shell 1
+.Sh AUTHORS
+Goran Mekić <meka@tilda.center>
+
