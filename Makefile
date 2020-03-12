@@ -81,6 +81,7 @@ MAN_FILES = reggae.1 \
 	    reggae-puppet.1 \
 	    reggae-register.1 \
 	    reggae-salt.1 \
+	    reggae-shell.1 \
 	    reggae-service.1
 CBSD_PROFILE_ITEMS = skel \
 		     system \
