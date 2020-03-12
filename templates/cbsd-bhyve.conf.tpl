@@ -23,7 +23,7 @@ zfs_snapsrc="";
 runasap="0";
 # bind to interface
 interface="INTERFACE";
-rctl_nice="1"
+rctl_nice="0"
 # Bhyve minimal configuration:
 #jname="SERVICE";
 # first disk size
