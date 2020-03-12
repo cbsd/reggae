@@ -23,7 +23,7 @@ zfs_snapsrc="";
 runasap="0";
 # bind to interface
 interface="auto";
-rctl_nice="1"
+rctl_nice="0"
 jailskeldir="CBSD_WORKDIR/share/FreeBSD-jail-reggae-skel";
 systemskeldir="CBSD_WORKDIR/share/jail-system-reggae";
 jail_profile="reggae";
@@ -59,8 +59,7 @@ exec_master_poststop="0";
 exec_master_prestart="0";
 exec_master_prestop="0";
 
-pkg_bootstrap="1";
-pkglist="sudoEXTRA_PACKAGES";
+pkg_bootstrap="0";
 with_img_helpers="";
 
 allow_reserved_ports="1";
