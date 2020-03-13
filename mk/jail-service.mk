@@ -141,7 +141,11 @@ export: down
 	@echo "Chowning ${SERVICE}.img to ${UID}:${GID} ..."
 	@sudo chown ${UID}:${GID} build/${SERVICE}.img
 
+.if target(do_devel)
+devel: up do_devel
+.else
 devel: up
+.endif
 .if defined(offline)
 	@sudo cbsd jexec jname=${SERVICE} user=devel cmd="/usr/src/bin/devel.sh ${offline}"
 .else

@@ -107,7 +107,11 @@ export: down
 	@echo "Chowning ${SERVICE}.img to ${UID}:${GID} ..."
 	@sudo chown ${UID}:${GID} build/${SERVICE}.img
 
+.if target(do_devel)
+devel: up do_devel
+.else
 devel: up
+.endif
 .if ${DEVEL_MODE} == "YES"
 	@sudo reggae ssh provision ${SERVICE} sudo env UID=${UID} GID=${GID} sh cloud-devops.sh ${INTERFACE_IP} ${PWD} /usr/src ${EXTRA_SCRIPT}
 	@sudo env VERBOSE="yes" reggae ssh devel ${SERVICE} /usr/src/bin/devel.sh
