@@ -111,13 +111,13 @@ export: down
 devel: up do_devel
 .else
 devel: up
-.endif
 .if ${DEVEL_MODE} == "YES"
 	@sudo reggae ssh provision ${SERVICE} sudo env UID=${UID} GID=${GID} sh cloud-devops.sh ${INTERFACE_IP} ${PWD} /usr/src ${EXTRA_SCRIPT}
 	@sudo env VERBOSE="yes" reggae ssh devel ${SERVICE} /usr/src/bin/devel.sh
 .else
 	@echo "DEVEL_MODE is not enabled" >&2
 	@false
+.endif
 .endif
 
 test: up

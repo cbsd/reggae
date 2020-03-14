@@ -145,11 +145,11 @@ export: down
 devel: up do_devel
 .else
 devel: up
-.endif
 .if defined(offline)
 	@sudo cbsd jexec jname=${SERVICE} user=devel cmd="/usr/src/bin/devel.sh ${offline}"
 .else
 	@sudo cbsd jexec jname=${SERVICE} user=devel cmd=/usr/src/bin/devel.sh
+.endif
 .endif
 
 test: up
