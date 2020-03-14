@@ -69,7 +69,11 @@ setup:
 	@${MAKE} ${MAKEFLAGS} post_setup
 .endif
 
+.if target(do_devel)
+devel: up do_devel
+.else
 devel: up
+.endif
 .if defined(service)
 .if defined(offline)
 	@${MAKE} ${MAKEFLAGS} -C services/${service} devel offline=${offline}
