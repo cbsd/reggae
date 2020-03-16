@@ -42,11 +42,11 @@ setup_cbsd() {
   sed \
     -e "s:HOSTNAME:${HOSTNAME}:g" \
     -e "s:NODEIP:${NODEIP}:g" \
-    -e "s:JAIL_INTERFACE_IP:${JAIL_INTERFACE_IP}:g" \
     -e "s:NATIP:${NATIP}:g" \
     -e "s:JAIL_IP_POOL:${JAIL_IP_POOL}:g" \
     -e "s:ZFSFEAT:${ZFSFEAT}:g" \
     -e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
+    -e "s:MASTER_IP:${MASTER_IP}:g" \
     ${SCRIPT_DIR}/../templates/initenv.conf >"${TEMP_INITENV_CONF}"
 
   env workdir="${CBSD_WORKDIR}" /usr/local/cbsd/sudoexec/initenv "${TEMP_INITENV_CONF}"
