@@ -118,8 +118,9 @@ setup:
 	@sudo mkdir -p ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/pkg/repos
 	@sudo sh -c 'echo -e FreeBSD: { url: \"pkg+http://${PKG_MIRROR}/\$${ABI}/${PKG_REPO}\"\; } >${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/pkg/repos/FreeBSD.conf'
 .endif
-
-pkg:
+.if target(post_create)
+	@${MAKE} ${MAKEFLAGS} post_create
+.endif
 
 login:
 .if defined(user)
