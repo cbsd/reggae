@@ -46,7 +46,7 @@ setup_cbsd() {
     -e "s:JAIL_IP_POOL:${JAIL_IP_POOL}:g" \
     -e "s:ZFSFEAT:${ZFSFEAT}:g" \
     -e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
-    -e "s:MASTER_IP:${MASTER_IP}:g" \
+    -e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
     ${SCRIPT_DIR}/../templates/initenv.conf >"${TEMP_INITENV_CONF}"
 
   env workdir="${CBSD_WORKDIR}" /usr/local/cbsd/sudoexec/initenv "${TEMP_INITENV_CONF}"
