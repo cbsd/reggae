@@ -12,6 +12,16 @@ PROJECT_ROOT=`readlink -f ${SCRIPT_DIR}/..`
 MAKEFILE="Makefile.service"
 PROVISIONERS=$@
 SERVICE_NAME=`basename ${PWD}`
+case ${SERVICE_NAME} in
+  jail*)
+    SERVICE_NAME=`echo ${SERVICE_NAME} | cut -b 5-`
+    ;;
+esac
+case ${SERVICE_NAME} in
+  -*)
+    SERVICE_NAME=`echo ${SERVICE_NAME} | cut -b 2-`
+    ;;
+esac
 
 echo -n "Generating Makefile ... "
 sed -e "s;SERVICE_NAME;${SERVICE_NAME};g" "${PROJECT_ROOT}/templates/${MAKEFILE}" >Makefile
