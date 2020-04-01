@@ -14,6 +14,7 @@ DHCP_CONFIG=`echo ${EGRESS_CONFIG} | grep -io dhcp`
 NODEIP=`ifconfig ${EGRESS} | awk '/inet /{print $2}'`
 TEMP_MASTER_CONF=`mktemp`
 TEMP_DHCP_CONF=`mktemp`
+PKG_PROXY=`reggae get-config PKG_PROXY`
 
 
 dhcp() {
@@ -27,6 +28,12 @@ dhcp() {
   cbsd jcreate inter=0 jconf="${TEMP_MASTER_CONF}"
   mkdir -p "${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/pkg/repos"
   echo -e "FreeBSD: {\n    url: \"pkg+http://${PKG_MIRROR}/\${ABI}/${PKG_REPO}\",\n}">"${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/pkg/repos/FreeBSD.conf"
+  if [ "${PKG_PROXY}" != "no" ]; then
+    cp ${SCRIPT_DIR}/../templates/pkg.conf ${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/
+    sed -i "" \
+      -e "s;PKG_PROXY;pkg_env : { http_proxy: \"http://${PKG_PROXY}\" };g" \
+      ${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/pkg.conf
+  fi
   echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/cbsd-data/etc/rc.conf.d/sendmail"
   cp ${SCRIPT_DIR}/../templates/master.fstab "${CBSD_WORKDIR}/jails-fstab/fstab.cbsd.local"
   cbsd jset jname=cbsd b_order=0
