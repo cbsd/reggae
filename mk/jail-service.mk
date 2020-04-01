@@ -4,6 +4,8 @@ PKG_MIRROR_CONFIG != reggae get-config PKG_MIRROR
 PKG_REPO_CONFIG != reggae get-config PKG_REPO
 PKG_MIRROR ?= ${PKG_MIRROR_CONFIG}
 PKG_REPO ?= ${PKG_REPO_CONFIG}
+PKG_PROXY_CONFIG != reggae get-config PKG_PROXY
+PKG_PROXY ?= ${PKG_PROXY_CONFIG}
 
 
 .if target(pre_up)
@@ -117,6 +119,14 @@ setup:
 .if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/pkg/repos)
 	@sudo mkdir -p ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/pkg/repos
 	@sudo sh -c 'echo -e FreeBSD: { url: \"pkg+http://${PKG_MIRROR}/\$${ABI}/${PKG_REPO}\"\; } >${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/pkg/repos/FreeBSD.conf'
+.endif
+.if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/pkg.conf)
+.if ${PKG_PROXY} != no
+	@sudo cp ${REGGAE_PATH}/templates/pkg.conf ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/
+	@sudo sed -i "" \
+		-e 's;PKG_PROXY;pkg_env : { http_proxy: "http://${PKG_PROXY}" };g' \
+		${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/pkg.conf
+.endif
 .endif
 .if target(post_create)
 	@${MAKE} ${MAKEFLAGS} post_create

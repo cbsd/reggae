@@ -11,3 +11,4 @@
 # PROJECTS_DIR="/home/user/reggae/repos"
 # PKG_MIRROR="pkg.FreeBSD.org"
 # PKG_REPO="latest"
+# PKG_PROXY="no"
