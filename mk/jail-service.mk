@@ -6,6 +6,7 @@ PKG_MIRROR ?= ${PKG_MIRROR_CONFIG}
 PKG_REPO ?= ${PKG_REPO_CONFIG}
 PKG_PROXY_CONFIG != reggae get-config PKG_PROXY
 PKG_PROXY ?= ${PKG_PROXY_CONFIG}
+DEVFS_RULESET ?= 8
 
 
 .if target(pre_up)
@@ -67,6 +68,7 @@ setup:
 		-e "s:EXTRA_PACKAGES:${EXTRA_PACKAGES}:g" \
 		-e "s:INTERFACE:${INTERFACE}:g" \
 		-e "s:VERSION:${VERSION}:g" \
+		-e "s:DEVFS_RULESET:${DEVFS_RULESET}:g" \
 		${REGGAE_PATH}/templates/cbsd-vnet.conf.tpl >cbsd.conf
 .else
 	@sed \
