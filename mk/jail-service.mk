@@ -1,4 +1,5 @@
 SUBTYPE ?= vnet
+DHCP ?= dhcpcd
 INTERFACE != reggae get-config INTERFACE
 PKG_MIRROR_CONFIG != reggae get-config PKG_MIRROR
 PKG_REPO_CONFIG != reggae get-config PKG_REPO
@@ -19,6 +20,21 @@ up: setup
 .if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/sbin/pkg)
 	@sudo cbsd jexec jname=${SERVICE} env ASSUME_ALWAYS_YES=YES pkg bootstrap
 	@sudo cbsd jexec jname=${SERVICE} pkg install -y sudo ${EXTRA_PACKAGES}
+.endif
+.if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/network)
+	@sudo cp ${REGGAE_PATH}/templates/network ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/network
+.if ${DHCP} == "dhcpcd"
+	@sudo cbsd jexec jname=${SERVICE} pkg install -y dhcpcd
+	@sudo sed -i "" \
+		-e "s:DHCP:/usr/local/sbin/dhcpcd:g" \
+		${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/network
+	@sudo cbsd jexec jname=${SERVICE} /bin/pkill -9 dhclient
+	@sudo cbsd jexec jname=${SERVICE} dhcpcd eth0
+.else
+	@sudo sed -i "" \
+		-e "s:DHCP:/sbin/dhclient:g" \
+		${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/network
+.endif
 .endif
 .if ${DEVEL_MODE} == "YES"
 .if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/devel)

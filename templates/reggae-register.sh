@@ -2,7 +2,7 @@
 
 ACTION=$1
 IP=$2
-NAME=$3
+NAME=`echo $3 | cut -f 1 -d '.'`
 DOMAIN=$4
 
 ZONE_FILE="/var/unbound/zones/${DOMAIN}.zone"
