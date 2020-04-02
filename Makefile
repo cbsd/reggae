@@ -26,6 +26,7 @@ TEMPLATES = Makefile.project \
 	    master.fstab \
 	    mount-project.sh \
 	    named.conf \
+	    network \
 	    pf.conf \
 	    pkg.conf \
 	    reggae-register.sh \
