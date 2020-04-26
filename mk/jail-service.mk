@@ -29,6 +29,7 @@ up: setup
 		-e "s:DHCP:/usr/local/sbin/dhcpcd:g" \
 		${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/network
 	@sudo cbsd jexec jname=${SERVICE} /bin/pkill -9 dhclient
+	@sudo cbsd jexec jname=${SERVICE} /sbin/ifconfig eth0 delete
 	@sudo cbsd jexec jname=${SERVICE} dhcpcd eth0
 .else
 	@sudo sed -i "" \
