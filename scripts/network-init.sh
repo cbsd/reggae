@@ -148,5 +148,4 @@ check_config
 network
 pf
 setup_hostname
-setup_ssh
 setup_unbound
