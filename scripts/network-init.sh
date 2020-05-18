@@ -7,7 +7,6 @@ fi
 SCRIPT_DIR=`dirname $0`
 . "${SCRIPT_DIR}/default.conf"
 
-SSHD_FLAGS=`sysrc -n sshd_flags`
 SHORT_HOSTNAME=`hostname -s`
 HOSTNAME=`hostname`
 CLONED_INTERFACES=`sysrc -n cloned_interfaces`
@@ -148,4 +147,5 @@ check_config
 network
 pf
 setup_hostname
+setup_nfs
 setup_unbound
