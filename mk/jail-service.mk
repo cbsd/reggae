@@ -62,8 +62,15 @@ provision: setup
 	@${MAKE} ${MAKEFLAGS} provision-${provisioner}
 .endfor
 
+.if target(pre_down)
+down: setup pre_down
+.else
 down: setup
+.endif
 	@sudo cbsd jstop ${SERVICE} || true
+.if target(post_down)
+	@${MAKE} ${MAKEFLAGS} post_down
+.endif
 
 destroy:
 	@rm -f cbsd.conf .provisioned
