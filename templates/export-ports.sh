@@ -14,5 +14,5 @@ done
 
 
 if [ ! -z "${EXPORTED_PORTS}" ]; then
-  echo "rdr pass inet proto tcp from any to any port { ${EXPORTED_PORTS} } -> ${jname}.${DOMAIN}" | pfctl -a "cbsd/${jname}" -f -
+  echo "rdr pass inet proto { tcp, udp } from any to any port { ${EXPORTED_PORTS} } -> ${jname}.${DOMAIN}" | pfctl -a "cbsd/${jname}" -f -
 fi
