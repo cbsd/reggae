@@ -72,12 +72,19 @@ down: setup
 	@${MAKE} ${MAKEFLAGS} post_down
 .endif
 
+.if target(pre_destroy)
+destroy: pre_destroy
+.else
 destroy:
+.endif
 	@rm -f cbsd.conf .provisioned
 	@sudo cbsd jremove ${SERVICE}
 .for provisioner in ${PROVISIONERS}
 	@${MAKE} ${MAKEFLAGS} clean-${provisioner}
 .endfor
+.if target(post_destroy)
+	@${MAKE} ${MAKEFLAGS} post_destroy
+.endif
 
 .if target(pre_setup)
 setup: pre_setup
