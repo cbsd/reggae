@@ -67,16 +67,17 @@ provision: setup
 down: setup pre_down
 .else
 down: setup
+.endif
 	@sudo cbsd jstop ${SERVICE} || true
 .if target(post_down)
 	@${MAKE} ${MAKEFLAGS} post_down
-.endif
 .endif
 
 .if target(pre_destroy)
 destroy: pre_destroy
 .else
 destroy:
+.endif
 	@rm -f cbsd.conf .provisioned
 	@sudo cbsd jremove ${SERVICE}
 .for provisioner in ${PROVISIONERS}
@@ -84,7 +85,6 @@ destroy:
 .endfor
 .if target(post_destroy)
 	@${MAKE} ${MAKEFLAGS} post_destroy
-.endif
 .endif
 
 .if target(pre_setup)
