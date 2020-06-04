@@ -16,6 +16,7 @@ TEMPLATES = Makefile.project \
 	    devfs.rules \
 	    dhcpd-hook.sh \
 	    dhcpd.conf \
+	    dhcpcd.conf \
 	    export-ports.sh \
 	    freebsd-update.conf \
 	    gitignore \

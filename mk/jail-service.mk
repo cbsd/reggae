@@ -28,6 +28,7 @@ up: setup
 	@sudo sed -i "" \
 		-e "s:DHCP:/usr/local/sbin/dhcpcd:g" \
 		${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/network
+	@sudo cp ${REGGAE_PATH}/templates/dhcpcd.conf ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/dhcpcd.conf
 	@sudo cbsd jexec jname=${SERVICE} /bin/pkill -9 dhclient
 	@sudo cbsd jexec jname=${SERVICE} /sbin/ifconfig eth0 delete
 	@sudo cbsd jexec jname=${SERVICE} dhcpcd eth0
@@ -66,17 +67,16 @@ provision: setup
 down: setup pre_down
 .else
 down: setup
-.endif
 	@sudo cbsd jstop ${SERVICE} || true
 .if target(post_down)
 	@${MAKE} ${MAKEFLAGS} post_down
+.endif
 .endif
 
 .if target(pre_destroy)
 destroy: pre_destroy
 .else
 destroy:
-.endif
 	@rm -f cbsd.conf .provisioned
 	@sudo cbsd jremove ${SERVICE}
 .for provisioner in ${PROVISIONERS}
@@ -84,6 +84,7 @@ destroy:
 .endfor
 .if target(post_destroy)
 	@${MAKE} ${MAKEFLAGS} post_destroy
+.endif
 .endif
 
 .if target(pre_setup)
@@ -175,6 +176,9 @@ login:
 exec:
 	@sudo cbsd jexec jname=${SERVICE} ${command}
 
+.if target(pre_export)
+export: down pre_export
+.else
 export: down
 .if !exists(build)
 	@mkdir build
@@ -184,20 +188,27 @@ export: down
 	@sudo mv ${CBSD_WORKDIR}/export/${SERVICE}.img build/
 	@echo "Chowning ${SERVICE}.img to ${UID}:${GID} ..."
 	@sudo chown ${UID}:${GID} build/${SERVICE}.img
+.if target(post_export)
+	@${MAKE} ${MAKEFLAGS} post_export
+.endif
+.endif
 
 .if target(do_devel)
 devel: up do_devel
 .else
 devel: up
-.if defined(offline)
-	@sudo cbsd jexec jname=${SERVICE} user=devel cmd="/usr/src/bin/devel.sh ${offline}"
-.else
-	@sudo cbsd jexec jname=${SERVICE} user=devel cmd=/usr/src/bin/devel.sh
+	@sudo cbsd jexec jname=${SERVICE} user=devel cmd="env OFFLINE=${offline} /usr/src/bin/devel.sh"
+.if target(post_devel)
+	@${MAKE} ${MAKEFLAGS} post_devel
 .endif
 .endif
 
+.if target(do_test)
+test: up do_test
+.else
 test: up
 	@sudo jexec -U devel ${SERVICE} /usr/src/bin/test.sh
+.endif
 
 upgrade: up
 	@sudo cbsd jexec jname=${SERVICE} pkg upgrade -y
