@@ -7,6 +7,11 @@ RUNNING_UID := `id -u`
 RUNNING_GID := `id -g`
 UID ?= ${RUNNING_UID}
 GID ?= ${RUNNING_GID}
+USE_FREENIT ?= NO
+
+.if ${USE_FREENIT} == "YES"
+.include <${REGGAE_PATH}/mk/frameworks/freenit.project.mk
+.endif
 
 .MAIN: up
 

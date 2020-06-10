@@ -49,6 +49,8 @@ MAKEFILES = ansible.mk \
 	    bhyve-service.mk \
 	    chef.mk \
 	    common.mk \
+	    frameworks/freenit.project.mk \
+	    frameworks/freenit.service.mk \
 	    jail-service.mk \
 	    project.mk \
 	    puppet.mk \
