@@ -13,7 +13,7 @@
 USE_FREENIT ?= NO
 
 .if ${USE_FREENIT} == "YES"
-.include <${REGGAE_PATH}/mk/frameworks/freenit.service.mk
+.include <${REGGAE_PATH}/mk/frameworks/freenit.service.mk>
 .endif
 
 .include <${REGGAE_PATH}/mk/common.mk>
