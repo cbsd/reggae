@@ -10,7 +10,7 @@ GID ?= ${RUNNING_GID}
 USE_FREENIT ?= NO
 
 .if ${USE_FREENIT} == "YES"
-.include <${REGGAE_PATH}/mk/frameworks/freenit.project.mk
+.include <${REGGAE_PATH}/mk/frameworks/freenit.project.mk>
 .endif
 
 .MAIN: up

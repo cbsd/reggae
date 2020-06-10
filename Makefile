@@ -5,6 +5,7 @@ TEMPLATE_DIR = /${REGGAE_DIR}/templates
 MAKE_DIR = /${REGGAE_DIR}/mk
 SCRIPTS_DIR = /${REGGAE_DIR}/scripts
 CBSD_PROFILE_DIR = /${REGGAE_DIR}/cbsd-profile
+FRAMEWORKS_DIR = /${REGGAE_DIR}/mk/frameworks
 BIN_FILES = reggae
 TEMPLATES = Makefile.project \
 	    Makefile.service \
@@ -57,6 +58,8 @@ MAKEFILES = ansible.mk \
 	    salt.mk \
 	    service.mk \
 	    shell.mk
+FRAMEWORKS_MAKEFILES = frameworks/freenit.project.mk \
+		       frameworks/freenit.service.mk
 SCRIPTS = bhyve-init.sh \
 	  cbsd-init.sh \
 	  chef-provision.sh \
@@ -100,7 +103,7 @@ compress_man:
 	gzip -f -k man/${man_file}
 .endfor
 
-install: install_bin install_templates install_makefiles install_scripts install_man install_profile
+install: install_bin install_templates install_makefiles install_scripts install_man install_profile install_frameworks
 	install -d ${DESTDIR}${PREFIX}/etc
 	install -m 0644 reggae.conf.sample ${DESTDIR}${PREFIX}/etc
 	install -m 0600 id_rsa id_rsa.pub ${DESTDIR}${PREFIX}/${REGGAE_DIR}
@@ -152,3 +155,9 @@ install_man:
 install_profile:
 	install -d ${DESTDIR}${PREFIX}${CBSD_PROFILE_DIR}
 	cp -r cbsd-profile/* ${DESTDIR}${PREFIX}${CBSD_PROFILE_DIR}/
+
+install_frameworks:
+	install -d ${DESTDIR}${PREFIX}${FRAMEWORKS_DIR}
+.for framework_file in ${FRAMEWORKS_MAKEFILES}
+	install -m 0644 mk/${framework_file} ${DESTDIR}${PREFIX}${FRAMEWORKS_DIR}
+.endfor
