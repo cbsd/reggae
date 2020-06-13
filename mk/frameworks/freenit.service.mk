@@ -7,3 +7,10 @@ init: up
 do_devel:
 	@sudo cbsd jexec jname=${SERVICE} user=devel env OFFLINE=${offline} SYSPKG=${SYSPKG} /usr/src/bin/devel.sh
 
+collect:
+	@rm -rf build
+	@mkdir -p build
+	@sudo cbsd jexec jname=${SERVICE} user=devel cmd=/usr/src/bin/collect.sh
+
+do_publish:
+	@/bin/sh bin/publish.sh ${server} ${SERVICE}
