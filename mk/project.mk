@@ -79,17 +79,9 @@ devel: up do_devel
 .else
 devel: up
 .if defined(service)
-.if defined(offline)
 	@${MAKE} ${MAKEFLAGS} -C services/${service} devel offline=${offline}
 .else
-	@${MAKE} ${MAKEFLAGS} -C services/${service} devel
-.endif
-.else
-.if defined(offline)
 	@env OFFLINE=${offline} bin/devel.sh reggae
-.else
-	@bin/devel.sh reggae
-.endif
 .endif
 .endif
 

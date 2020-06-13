@@ -1,6 +1,3 @@
-build_lib: up
-	@bin/build.sh
-
 publish:
 .if defined(server)
 .if defined(service)
