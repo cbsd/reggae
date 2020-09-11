@@ -1,3 +1,4 @@
+.if !target(publish)
 publish:
 .if defined(server)
 .if defined(service)
@@ -11,4 +12,5 @@ publish:
 .else
 	@echo "Usage: make publish server=<server>"
 	@fail
+.endif
 .endif
