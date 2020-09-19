@@ -63,6 +63,7 @@ FRAMEWORKS_MAKEFILES = frameworks/freenit.project.mk \
 SCRIPTS = bhyve-init.sh \
 	  cbsd-init.sh \
 	  chef-provision.sh \
+	  expect-run.sh \
 	  get-config.sh \
 	  get-ip.sh \
 	  import.sh \
@@ -72,6 +73,7 @@ SCRIPTS = bhyve-init.sh \
 	  pkg-upgrade.sh \
 	  project-init.sh \
 	  puppet-provision.sh \
+	  read-pass.sh \
 	  register.sh \
 	  salt-provision.sh \
 	  scp.sh \
