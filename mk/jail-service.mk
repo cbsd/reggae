@@ -207,7 +207,7 @@ devel: up
 test: up do_test
 .else
 test: up
-	@sudo jexec -U devel ${SERVICE} /usr/src/bin/test.sh
+	@sudo jexec -U devel ${SERVICE} env SYSPKG=${SYSPKG} /usr/src/bin/test.sh
 .endif
 
 upgrade: up
