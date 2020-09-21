@@ -1,16 +1,22 @@
+.if !target(collect)
+collect: up
+	@bin/collect.sh
+.endif
+
 .if !target(publish)
-publish:
-.if defined(server)
+publish: collect
+.if !defined(server)
+	@echo "Usage: make publish server=<server> domain=<domain>"
+	@fail
+.endif
+.if !defined(domain)
+	@echo "Usage: make publish server=<server> domain=<domain>"
+	@fail
+.endif
 .if defined(service)
 	@${MAKE} ${MAKEFLAGS} -C services/${service} server=${server} publish
 .else
-.for service url in ${SERVICES}
-	@${MAKE} ${MAKEFLAGS} -C services/${service} up collect
-.endfor
-	@bin/publish.sh ${server}
-.endif
-.else
-	@echo "Usage: make publish server=<server>"
-	@fail
+	@rsync -avc --progress --delete-after build/ deploy@${server}:/usr/cbsd/jails-data/nginx-data/usr/local/www/${domain}/
+	@make -C services/backend publish server=${server}
 .endif
 .endif
