@@ -70,6 +70,7 @@ SCRIPTS = bhyve-init.sh \
 	  init.sh \
 	  master-init.sh \
 	  network-init.sh \
+	  pf.sh \
 	  pkg-upgrade.sh \
 	  project-init.sh \
 	  puppet-provision.sh \
