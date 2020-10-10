@@ -53,7 +53,7 @@ fetch:
 .endif
 .endfor
 .for repo url in ${EXTRA_REPOS}
-.if !exists(repos/${service})
+.if !exists(repos/${repo})
 	@git clone ${url} repos/${repo}
 .endif
 .endfor

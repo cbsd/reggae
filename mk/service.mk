@@ -21,6 +21,7 @@ USE_FREENIT ?= NO
 .MAIN: up
 
 update:
-	@git pull --recurse-submodules
+	@git pull
+	@git submodule update --init --recursive
 
 .include <${REGGAE_PATH}/mk/${TYPE}-service.mk>
