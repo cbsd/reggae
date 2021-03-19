@@ -15,6 +15,7 @@ NODEIP=`ifconfig ${EGRESS} | awk '/inet /{print $2}'`
 TEMP_MASTER_CONF=`mktemp`
 TEMP_DHCP_CONF=`mktemp`
 PKG_PROXY=`reggae get-config PKG_PROXY`
+export VER=${VER:="native"}
 
 
 dhcp() {
@@ -23,6 +24,7 @@ dhcp() {
     -e "s:DOMAIN:${DOMAIN}:g" \
     -e "s:INTERFACE:${INTERFACE}:g" \
     -e "s:MASTER_IP:${MASTER_IP}:g" \
+    -e "s:VER:${VER}:g" \
     ${SCRIPT_DIR}/../templates/master.conf >"${TEMP_MASTER_CONF}"
 
   cbsd jcreate inter=0 jconf="${TEMP_MASTER_CONF}"
