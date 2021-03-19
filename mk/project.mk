@@ -7,6 +7,7 @@ RUNNING_UID := `id -u`
 RUNNING_GID := `id -g`
 UID ?= ${RUNNING_UID}
 GID ?= ${RUNNING_GID}
+VERSION ?= "native"
 USE_FREENIT ?= NO
 
 .if ${USE_FREENIT} == "YES"
@@ -69,6 +70,7 @@ setup:
 	@echo "DEVEL_MODE ?= ${DEVEL_MODE}" >>services/${service}/project.mk
 	@echo "GID ?= ${GID}" >>services/${service}/project.mk
 	@echo "UID ?= ${UID}" >>services/${service}/project.mk
+	@echo "VERSION ?= ${VERSION}" >>services/${service}/project.mk
 .endfor
 .if target(post_setup)
 	@${MAKE} ${MAKEFLAGS} post_setup
