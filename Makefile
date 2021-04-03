@@ -21,6 +21,7 @@ TEMPLATES = Makefile.project \
 	    export-ports.sh \
 	    freebsd-update.conf \
 	    gitignore \
+	    gitignore.project \
 	    initenv.conf \
 	    install-packages.sh \
 	    ip-by-mac.sh \
