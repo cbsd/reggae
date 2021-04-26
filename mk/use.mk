@@ -1,38 +1,32 @@
+USE_PRE_letsencrypt ?= https://github.com/mekanix/jail-letsencrypt
+USE_PRE_ldap ?= https://github.com/mekanix/jail-ldap
+USE_PRE_postgresql ?= https://github.com/mekanix/jail-postgresql
+USE_PRE_mysql ?= https://github.com/mekanix/jail-mysql
+USE_PRE_redis ?= https://github.com/mekanix/jail-redis
+
+USE_USED_jabber ?= https://github.com/mekanix/jail-jabber
+USE_USED_mail ?= https://github.com/mekanix/jail-mail
+USE_USED_moodle ?= https://github.com/mekanix/jail-moodle
+USE_USED_opigno ?= https://github.com/mekanix/jail-opigno
+USE_USED_wordpress ?= https://github.com/mekanix/jail-wordpress
+USE_USED_peertube ?= https://github.com/mekanix/jail-peertube
+USE_USED_nextcloud ?= https://github.com/mekanix/jail-peertube
+USE_USED_znc ?= https://github.com/mekanix/jail-znc
+USE_USED_coturn ?= https://github.com/mekanix/jail-coturn
+USE_USED_gitolite ?= https://github.com/mekanix/jail-gitolite
+USE_USED_polipo ?= https://github.com/mekanix/jail-polipo
+
+USE_POST_nginx ?= https://github.com/mekanix/jail-nginx
+
 .for use in ${USE}
-.if ${use} == "letsencrypt"
-PRE_SERVICES += letsencrypt https://github.com/mekanix/jail-letsencrypt
-.elif ${use} == "ldap"
-PRE_SERVICES += ldap https://github.com/mekanix/jail-ldap
-.elif ${use} == "postgresql"
-PRE_SERVICES += postgresql https://github.com/mekanix/jail-postgresql
-.elif ${use} == "mysql"
-PRE_SERVICES += mysql https://github.com/mekanix/jail-mysql
-.elif ${use} == "wordpress"
-USED_SERVICES += wordpress https://github.com/mekanix/jail-wordpress
-.elif ${use} == "jabber"
-USED_SERVICES += jabber https://github.com/mekanix/jail-jabber
-.elif ${use} == "mail"
-USED_SERVICES += mail https://github.com/mekanix/jail-mail
-.elif ${use} == "opigno"
-USED_SERVICES += opigno https://github.com/mekanix/jail-opigno
-.elif ${use} == "moodle"
-USED_SERVICES += moodle https://github.com/mekanix/jail-moodle
-.elif ${use} == "peertube"
-USED_SERVICES += peertube https://github.com/mekanix/jail-peertube
-.elif ${use} == "nextcloud"
-USED_SERVICES += nextcloud https://github.com/mekanix/jail-nextcloud
-.elif ${use} == "redis"
-USED_SERVICES += redis https://github.com/mekanix/jail-redis
-.elif ${use} == "znc"
-USED_SERVICES += znc https://github.com/mekanix/jail-znc
-.elif ${use} == "coturn"
-USED_SERVICES += coturn https://github.com/mekanix/jail-coturn
-.elif ${use} == "gitolite"
-USED_SERVICES += gitolite https://github.com/mekanix/jail-gitolite
-.elif ${use} == "polipo"
-USED_SERVICES += polipo https://github.com/mekanix/jail-polipo
-.elif ${use} == "nginx"
-POST_SERVICES += nginx https://github.com/mekanix/jail-nginx
+.if defined(USE_PRE_${use})
+PRE_SERVICES += ${use} ${USE_PRE_${use}}
+.elif defined(USE_POST_${use})
+POST_SERVICES += ${use} ${USE_POST_${use}}
+.elif defined(USE_USED_${use})
+USED_SERVICES += ${use} ${USE_USED_${use}}
+.elif defined(USE_POST_${use})
+POST_SERVICES += ${use} ${USE_POST_${use}}
 .endif
 .endfor
 ALL_SERVICES = ${PRE_SERVICES} ${USED_SERVICES} ${SERVICES} ${POST_SERVICES}
