@@ -12,7 +12,6 @@ make install
 reggae network-init
 # service pflog restart
 # service pf restart
-# service sshd restart
 reggae cbsd-init
 reggae master-init
 ```
