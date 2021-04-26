@@ -1,3 +1,7 @@
+PRE_SERVICES =
+USED_SERVICES =
+POST_SERVICES =
+
 USE_PRE_letsencrypt ?= https://github.com/mekanix/jail-letsencrypt
 USE_PRE_ldap ?= https://github.com/mekanix/jail-ldap
 USE_PRE_postgresql ?= https://github.com/mekanix/jail-postgresql
@@ -29,4 +33,5 @@ USED_SERVICES += ${use} ${USE_USED_${use}}
 POST_SERVICES += ${use} ${USE_POST_${use}}
 .endif
 .endfor
+
 ALL_SERVICES = ${PRE_SERVICES} ${USED_SERVICES} ${SERVICES} ${POST_SERVICES}
