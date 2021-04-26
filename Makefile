@@ -58,7 +58,8 @@ MAKEFILES = ansible.mk \
 	    puppet.mk \
 	    salt.mk \
 	    service.mk \
-	    shell.mk
+	    shell.mk \
+	    use.mk
 FRAMEWORKS_MAKEFILES = frameworks/freenit.project.mk \
 		       frameworks/freenit.service.mk
 SCRIPTS = bhyve-init.sh \

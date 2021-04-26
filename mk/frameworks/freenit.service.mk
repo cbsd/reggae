@@ -35,9 +35,6 @@ publish: collect
 	@rm -rf passwd
 .endif
 
-do_publish:
-	@/bin/sh bin/publish.sh ${server} ${SERVICE}
-
 build_lib: up
 	@sudo cbsd jexec jname=${SERVICE} user=devel env OFFLINE=${offline} SYSPKG=${SYSPKG} /usr/src/bin/build.sh
 
