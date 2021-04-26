@@ -3,4 +3,3 @@ REGGAE_PATH = /usr/local/share/reggae
 # SERVICES += myservice https://github.com/my/service
 
 .include <${REGGAE_PATH}/mk/project.mk>
-
