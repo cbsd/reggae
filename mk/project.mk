@@ -13,6 +13,7 @@ USE_FREENIT ?= NO
 .if ${USE_FREENIT} == "YES"
 .include <${REGGAE_PATH}/mk/frameworks/freenit.project.mk>
 .endif
+.include <${REGGAE_PATH}/mk/use.mk>
 
 .MAIN: up
 
@@ -25,7 +26,7 @@ up: fetch setup
 	@echo "=== ${service} ==="
 	@${MAKE} ${MAKEFLAGS} -C services/${service} up
 .else
-.for service url in ${SERVICES}
+.for service url in ${ALL_SERVICES}
 	@echo "=== ${service} ==="
 	@${MAKE} ${MAKEFLAGS} -C services/${service} up
 .endfor
@@ -36,7 +37,7 @@ provision:
 	@echo "=== ${service} ==="
 	@${MAKE} ${MAKEFLAGS} -C services/${service} provision
 .else
-.for service url in ${SERVICES}
+.for service url in ${ALL_SERVICES}
 	@echo "=== ${service} ==="
 	@${MAKE} ${MAKEFLAGS} -C services/${service} provision
 .endfor
@@ -48,7 +49,7 @@ init:
 .endif
 
 fetch:
-.for service url in ${SERVICES}
+.for service url in ${ALL_SERVICES}
 .if !exists(services/${service})
 	@git clone ${url} services/${service}
 .endif
@@ -65,7 +66,7 @@ setup: pre_setup
 setup:
 .endif
 	@sudo rm -f services/*/cbsd.conf
-.for service url in ${SERVICES}
+.for service url in ${ALL_SERVICES}
 	@rm -f services/${service}/project.mk
 	@echo "DEVEL_MODE ?= ${DEVEL_MODE}" >>services/${service}/project.mk
 	@echo "GID ?= ${GID}" >>services/${service}/project.mk
@@ -100,9 +101,26 @@ destroy:
 .if defined(service)
 	@${MAKE} ${MAKEFLAGS} -C services/${service} destroy
 .else
+.if defined(all)
+.if ${all} == "yes"
+.for url service in ${POST_SERVICES:[-1..1]}
+	@${MAKE} ${MAKEFLAGS} -C services/${service} destroy
+.endfor
 .for url service in ${SERVICES:[-1..1]}
 	@${MAKE} ${MAKEFLAGS} -C services/${service} destroy
 .endfor
+.endif
+.endif
+.endif
+.if defined(all)
+.if ${all} == "yes"
+.for url service in ${USED_SERVICES:[-1..1]}
+	@${MAKE} ${MAKEFLAGS} -C services/${service} destroy
+.endfor
+.for url service in ${PRE_SERVICES:[-1..1]}
+	@${MAKE} ${MAKEFLAGS} -C services/${service} destroy
+.endfor
+.endif
 .endif
 
 login:
@@ -116,9 +134,26 @@ down: setup
 .if defined(service)
 	@${MAKE} ${MAKEFLAGS} -C services/${service} down
 .else
+.if defined(all)
+.if ${all} == "yes"
+.for url service in ${POST_SERVICES:[-1..1]}
+	@${MAKE} ${MAKEFLAGS} -C services/${service} down
+.endfor
+.endif
+.endif
 .for url service in ${SERVICES:[-1..1]}
 	@${MAKE} ${MAKEFLAGS} -C services/${service} down
 .endfor
+.if defined(all)
+.if ${all} == "yes"
+.for url service in ${USED_SERVICES:[-1..1]}
+	@${MAKE} ${MAKEFLAGS} -C services/${service} down
+.endfor
+.for url service in ${PRE_SERVICES:[-1..1]}
+	@${MAKE} ${MAKEFLAGS} -C services/${service} down
+.endfor
+.endif
+.endif
 .endif
 
 export:
@@ -143,4 +178,17 @@ upgrade:
 .for service url in ${SERVICES}
 	@echo "=== ${service} ==="
 	@${MAKE} ${MAKEFLAGS} -C services/${service} upgrade
+.endfor
+
+print_services:
+	@echo ${ALL_SERVICES}
+
+service_names:
+.for service url in ${ALL_SERVICES}
+	@echo ${service}
+.endfor
+
+service_urls:
+.for service url in ${ALL_SERVICES}
+	@echo ${url}
 .endfor

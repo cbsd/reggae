@@ -18,8 +18,8 @@ up: setup
 	@sudo cbsd jstart ${SERVICE} || true
 	@sudo chown ${UID}:${GID} cbsd.conf
 .if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/sbin/pkg)
-	@sudo cbsd jexec jname=${SERVICE} env ASSUME_ALWAYS_YES=YES pkg bootstrap
-	@sudo cbsd jexec jname=${SERVICE} pkg install -y sudo ${EXTRA_PACKAGES}
+	@sudo jexec ${SERVICE} env ASSUME_ALWAYS_YES=yes pkg bootstrap
+	@sudo jexec ${SERVICE} pkg install -y sudo ${EXTRA_PACKAGES}
 .endif
 .if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/network)
 	@sudo cp ${REGGAE_PATH}/templates/network ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/network

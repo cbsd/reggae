@@ -1,5 +1,6 @@
 REGGAE_PATH = /usr/local/share/reggae
-SERVICES += nginx https://github.com/mekanix/jail-nginx
+# USE = letsencrypt nginx
+# SERVICES += myservice https://github.com/my/service
 
 .include <${REGGAE_PATH}/mk/project.mk>
 
