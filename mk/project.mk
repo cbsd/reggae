@@ -106,12 +106,11 @@ destroy:
 .for url service in ${POST_SERVICES:[-1..1]}
 	@${MAKE} ${MAKEFLAGS} -C services/${service} destroy
 .endfor
+.endif
+.endif
 .for url service in ${SERVICES:[-1..1]}
 	@${MAKE} ${MAKEFLAGS} -C services/${service} destroy
 .endfor
-.endif
-.endif
-.endif
 .if defined(all)
 .if ${all} == "yes"
 .for url service in ${USED_SERVICES:[-1..1]}
@@ -120,6 +119,7 @@ destroy:
 .for url service in ${PRE_SERVICES:[-1..1]}
 	@${MAKE} ${MAKEFLAGS} -C services/${service} destroy
 .endfor
+.endif
 .endif
 .endif
 
