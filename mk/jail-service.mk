@@ -18,20 +18,20 @@ up: setup
 	@sudo cbsd jstart ${SERVICE} || true
 	@sudo chown ${UID}:${GID} cbsd.conf
 .if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/sbin/pkg)
-	@sudo jexec ${SERVICE} env ASSUME_ALWAYS_YES=yes pkg bootstrap
-	@sudo jexec ${SERVICE} pkg install -y sudo ${EXTRA_PACKAGES}
+	@sudo cbsd jexec jname=${SERVICE} cmd="env ASSUME_ALWAYS_YES=yes pkg bootstrap"
+	@sudo cbsd jexec jname=${SERVICE} cmd="pkg install -y sudo ${EXTRA_PACKAGES}"
 .endif
 .if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/network)
 	@sudo cp ${REGGAE_PATH}/templates/network ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/network
 .if ${DHCP} == "dhcpcd"
-	@sudo cbsd jexec jname=${SERVICE} pkg install -y dhcpcd
+	@sudo cbsd jexec jname=${SERVICE} cmd="pkg install -y dhcpcd"
 	@sudo sed -i "" \
 		-e "s:DHCP:/usr/local/sbin/dhcpcd:g" \
 		${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/network
 	@sudo cp ${REGGAE_PATH}/templates/dhcpcd.conf ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/dhcpcd.conf
-	@sudo cbsd jexec jname=${SERVICE} /bin/pkill -9 dhclient
-	@sudo cbsd jexec jname=${SERVICE} /sbin/ifconfig eth0 delete
-	@sudo cbsd jexec jname=${SERVICE} dhcpcd eth0
+	@sudo cbsd jexec jname=${SERVICE} cmd="/bin/pkill -9 dhclient"
+	@sudo cbsd jexec jname=${SERVICE} cmd="/sbin/ifconfig eth0 delete"
+	@sudo cbsd jexec jname=${SERVICE} cmd="dhcpcd eth0"
 .else
 	@sudo sed -i "" \
 		-e "s:DHCP:/sbin/dhclient:g" \
@@ -40,16 +40,16 @@ up: setup
 .endif
 .if ${DEVEL_MODE} == "YES"
 .if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/devel)
-	@sudo cbsd jexec jname=${SERVICE} pw groupadd devel -g ${GID}
-	@sudo cbsd jexec jname=${SERVICE} pw useradd devel -u ${UID} -g devel -s /bin/tcsh -G wheel,operator -m
-	@sudo cbsd jexec jname=${SERVICE} chpass -p '$6$MIv4IXAika7jqFH2$GkYSBax0G9CIBG0DcgQMP5gG7Qt.CojExDcU7YOQy0K.pouAd.edvo/MaQPhVO0fISxjOD4J1nzRsGVXUAxGp1' devel
+	@sudo cbsd jexec jname=${SERVICE} cmd="pw groupadd devel -g ${GID}"
+	@sudo cbsd jexec jname=${SERVICE} cmd="pw useradd devel -u ${UID} -g devel -s /bin/tcsh -G wheel,operator -m"
+	@sudo cbsd jexec jname=${SERVICE} cmd="chpass -p '$6$MIv4IXAika7jqFH2$GkYSBax0G9CIBG0DcgQMP5gG7Qt.CojExDcU7YOQy0K.pouAd.edvo/MaQPhVO0fISxjOD4J1nzRsGVXUAxGp1' devel"
 .endif
 .else
 	@echo 'Deleting user "devel"'
-	-@sudo cbsd jexec jname=${SERVICE} pw user del devel -r >/dev/null 2>&1
+	-@sudo cbsd jexec jname=${SERVICE} cmd="pw user del devel -r >/dev/null 2>&1"
 	@echo 'User "devel" deleted'
 .endif
-	@sudo cbsd jexec jname=${SERVICE} pwd_mkdb /etc/master.passwd
+	@sudo cbsd jexec jname=${SERVICE} cmd="pwd_mkdb /etc/master.passwd"
 .if !exists(${CBSD_WORKDIR}/jails-system/${SERVICE}/.provisioned)
 	@${MAKE} ${MAKEFLAGS} provision
 .endif
@@ -174,7 +174,7 @@ login:
 .endif
 
 exec:
-	@sudo cbsd jexec jname=${SERVICE} ${command}
+	@sudo cbsd jexec jname=${SERVICE} cmd="${command}"
 
 .if target(pre_export)
 export: down pre_export
@@ -197,7 +197,7 @@ export: down
 devel: up do_devel
 .else
 devel: up
-	@sudo cbsd jexec jname=${SERVICE} user=devel env OFFLINE=${offline} /usr/src/bin/devel.sh
+	@sudo cbsd jexec jname=${SERVICE} user=devel env OFFLINE=${offline} cmd=/usr/src/bin/devel.sh
 .if target(post_devel)
 	@${MAKE} ${MAKEFLAGS} post_devel
 .endif
@@ -207,8 +207,8 @@ devel: up
 test: up do_test
 .else
 test: up
-	@sudo jexec -U devel ${SERVICE} env SYSPKG=${SYSPKG} /usr/src/bin/test.sh
+	@sudo jexec -U devel ${SERVICE} env SYSPKG=${SYSPKG} cmd=/usr/src/bin/test.sh
 .endif
 
 upgrade: up
-	@sudo cbsd jexec jname=${SERVICE} pkg upgrade -y
+	@sudo cbsd jexec jname=${SERVICE} cmd="pkg upgrade -y"
