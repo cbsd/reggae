@@ -39,7 +39,7 @@ setup-ansible:
 	@echo "!!! Trying to install one         !!!"
 	@echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 	@echo
-	@sudo pkg install py37-ansible
+	@sudo pkg install py38-ansible
 .endif
 .if target(post_setup_ansible)
 	@${MAKE} ${MAKEFLAGS} post_setup_ansible
