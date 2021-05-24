@@ -181,14 +181,30 @@ upgrade:
 .endfor
 
 print_services:
+.if defined(all)
 	@echo ${ALL_SERVICES}
+.else
+	@echo ${SERVICES}
+.endif
 
 service_names:
+.if defined(all)
 .for service url in ${ALL_SERVICES}
 	@echo ${service}
 .endfor
+.else
+.for service url in ${SERVICES}
+	@echo ${service}
+.endfor
+.endif
 
 service_urls:
+.if defined(all)
 .for service url in ${ALL_SERVICES}
 	@echo ${url}
 .endfor
+.else
+.for service url in ${SERVICES}
+	@echo ${url}
+.endfor
+.endif
