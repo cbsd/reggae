@@ -16,7 +16,7 @@ up: setup pre_up
 up: setup
 .endif
 	@sudo cbsd jstart ${SERVICE} || true
-	@sudo chown ${UID}:${GID} cbsd.conf
+	@-sudo chown ${UID}:${GID} cbsd.conf
 .if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/sbin/pkg)
 	@sudo cbsd jexec jname=${SERVICE} cmd="env ASSUME_ALWAYS_YES=yes pkg bootstrap"
 	@sudo cbsd jexec jname=${SERVICE} cmd="pkg install -y sudo ${EXTRA_PACKAGES}"
