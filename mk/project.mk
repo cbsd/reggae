@@ -15,6 +15,8 @@ USE_FREENIT ?= NO
 .endif
 .include <${REGGAE_PATH}/mk/use.mk>
 
+dependencies := NO
+
 .MAIN: up
 
 .if target(pre_up)
@@ -101,25 +103,21 @@ destroy:
 .if defined(service)
 	@${MAKE} ${MAKEFLAGS} -C services/${service} destroy
 .else
-.if defined(all)
-.if ${all} == "yes"
+.if ${dependencies} == "yes"
 .for url service in ${POST_SERVICES:[-1..1]}
 	@${MAKE} ${MAKEFLAGS} -C services/${service} destroy
 .endfor
 .endif
-.endif
 .for url service in ${SERVICES:[-1..1]}
 	@${MAKE} ${MAKEFLAGS} -C services/${service} destroy
 .endfor
-.if defined(all)
-.if ${all} == "yes"
+.if ${dependencies} == "yes"
 .for url service in ${USED_SERVICES:[-1..1]}
 	@${MAKE} ${MAKEFLAGS} -C services/${service} destroy
 .endfor
 .for url service in ${PRE_SERVICES:[-1..1]}
 	@${MAKE} ${MAKEFLAGS} -C services/${service} destroy
 .endfor
-.endif
 .endif
 .endif
 
@@ -134,25 +132,21 @@ down: setup
 .if defined(service)
 	@${MAKE} ${MAKEFLAGS} -C services/${service} down
 .else
-.if defined(all)
-.if ${all} == "yes"
+.if ${dependencies} == "yes"
 .for url service in ${POST_SERVICES:[-1..1]}
 	@${MAKE} ${MAKEFLAGS} -C services/${service} down
 .endfor
 .endif
-.endif
 .for url service in ${SERVICES:[-1..1]}
 	@${MAKE} ${MAKEFLAGS} -C services/${service} down
 .endfor
-.if defined(all)
-.if ${all} == "yes"
+.if ${dependencies} == "yes"
 .for url service in ${USED_SERVICES:[-1..1]}
 	@${MAKE} ${MAKEFLAGS} -C services/${service} down
 .endfor
 .for url service in ${PRE_SERVICES:[-1..1]}
 	@${MAKE} ${MAKEFLAGS} -C services/${service} down
 .endfor
-.endif
 .endif
 .endif
 
@@ -181,14 +175,14 @@ upgrade:
 .endfor
 
 print_services:
-.if defined(all)
+.if defined(dependencies)
 	@echo ${ALL_SERVICES}
 .else
 	@echo ${SERVICES}
 .endif
 
 service_names:
-.if defined(all)
+.if defined(dependencies)
 .for service url in ${ALL_SERVICES}
 	@echo ${service}
 .endfor
@@ -199,7 +193,7 @@ service_names:
 .endif
 
 service_urls:
-.if defined(all)
+.if defined(dependencies)
 .for service url in ${ALL_SERVICES}
 	@echo ${url}
 .endfor
