@@ -163,10 +163,17 @@ export:
 
 update: fetch
 	@git pull
+.if defined(dependencies)
+.for service url in ${ALL_SERVICES}
+	@echo "=== ${service} ==="
+	@${MAKE} ${MAKEFLAGS} -C services/${service} update
+.endfor
+.else
 .for service url in ${SERVICES}
 	@echo "=== ${service} ==="
 	@${MAKE} ${MAKEFLAGS} -C services/${service} update
 .endfor
+.endif
 
 upgrade:
 .for service url in ${SERVICES}
