@@ -155,15 +155,22 @@ export:
 	@echo "exporting ${service}"
 	@${MAKE} ${MAKEFLAGS} -C services/${service} export
 .else
+.if ${dependencies} == "yes"
+.for service url in ${ALL_SERVICES}
+	@echo "exporting ${service}"
+	@${MAKE} ${MAKEFLAGS} -C services/${service} export
+.endfor
+.else
 .for service url in ${SERVICES}
 	@echo "exporting ${service}"
 	@${MAKE} ${MAKEFLAGS} -C services/${service} export
 .endfor
 .endif
+.endif
 
 update: fetch
 	@git pull
-.if defined(dependencies)
+.if ${dependencies} == "yes"
 .for service url in ${ALL_SERVICES}
 	@echo "=== ${service} ==="
 	@${MAKE} ${MAKEFLAGS} -C services/${service} update
@@ -182,14 +189,14 @@ upgrade:
 .endfor
 
 print_services:
-.if defined(dependencies)
+.if ${dependencies} == "yes"
 	@echo ${ALL_SERVICES}
 .else
 	@echo ${SERVICES}
 .endif
 
 service_names:
-.if defined(dependencies)
+.if ${dependencies} == "yes"
 .for service url in ${ALL_SERVICES}
 	@echo ${service}
 .endfor
@@ -200,7 +207,7 @@ service_names:
 .endif
 
 service_urls:
-.if defined(dependencies)
+.if ${dependencies} == "yes"
 .for service url in ${ALL_SERVICES}
 	@echo ${url}
 .endfor

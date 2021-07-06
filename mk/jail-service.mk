@@ -199,6 +199,7 @@ export: down
 devel: up do_devel
 .else
 devel: up
+	@sudo cbsd jexec jname=${SERVICE} user=devel env OFFLINE=${offline} cmd=/usr/src/bin/init.sh
 	@sudo cbsd jexec jname=${SERVICE} user=devel env OFFLINE=${offline} cmd=/usr/src/bin/devel.sh
 .if target(post_devel)
 	@${MAKE} ${MAKEFLAGS} post_devel
