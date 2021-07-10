@@ -57,8 +57,9 @@ pf() {
   fi
   sysrc pflog_enable="YES"
   sysrc pf_enable="YES"
+  sysrc blacklistd_enable="YES"
+  sysrc sshd_flags+="-oUserBlacklist=yes"
 }
-
 
 setup_hostname() {
     if [ "${HOSTNAME}" == "${SHORT_HOSTNAME}" ]; then
