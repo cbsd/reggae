@@ -10,6 +10,7 @@ USE_PRE_redis ?= https://github.com/mekanix/jail-redis
 
 USE_USED_jabber ?= https://github.com/mekanix/jail-jabber
 USE_USED_mail ?= https://github.com/mekanix/jail-mail
+USE_USED_webmail ?= https://github.com/mekanix/jail-webmail
 USE_USED_moodle ?= https://github.com/mekanix/jail-moodle
 USE_USED_opigno ?= https://github.com/mekanix/jail-opigno
 USE_USED_wordpress ?= https://github.com/mekanix/jail-wordpress
