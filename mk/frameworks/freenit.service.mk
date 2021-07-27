@@ -3,12 +3,6 @@ shell: up
 	@sudo cbsd jexec user=devel jname=${SERVICE} cmd=/usr/src/bin/shell.sh
 .endif
 
-init: up
-	@sudo cbsd jexec jname=${SERVICE} user=devel cmd="env OFFLINE=${offline} SYSPKG=${SYSPKG} /usr/src/bin/init.sh"
-
-do_devel: init
-	@sudo cbsd jexec jname=${SERVICE} user=devel cmd="env OFFLINE=${offline} SYSPKG=${SYSPKG} BACKEND_URL=${BACKEND_URL} /usr/src/bin/devel.sh"
-
 .if !target(collect)
 collect:
 	@rm -rf build
