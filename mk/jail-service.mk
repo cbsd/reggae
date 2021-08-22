@@ -34,6 +34,7 @@ up: setup
 	@sudo cbsd jexec jname=${SERVICE} cmd="/bin/pkill -9 dhclient"
 	@sudo cbsd jexec jname=${SERVICE} cmd="/sbin/ifconfig eth0 delete"
 	@sudo cbsd jexec jname=${SERVICE} cmd="dhcpcd eth0"
+	@sudo cbsd jexec jrestart ${SERVICE}
 .else
 	@sudo sed -i "" \
 		-e "s:DHCP:/sbin/dhclient:g" \
