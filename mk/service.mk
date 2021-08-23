@@ -24,4 +24,6 @@ update:
 	@git pull
 	@git submodule update --init --recursive
 
+restart: down up
+
 .include <${REGGAE_PATH}/mk/${TYPE}-service.mk>

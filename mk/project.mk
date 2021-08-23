@@ -216,3 +216,5 @@ service_urls:
 	@echo ${url}
 .endfor
 .endif
+
+restart: down up
