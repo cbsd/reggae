@@ -217,4 +217,10 @@ service_urls:
 .endfor
 .endif
 
+.if ${dependencies} == "yes"
+restart:
+	@${MAKE} ${MAKEFLAGS} down dependencies=yes
+	@${MAKE} ${MAKEFLAGS} up
+.else
 restart: down up
+.endif
