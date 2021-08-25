@@ -33,6 +33,8 @@ setup_devfs() {
   if [ ! -e "/etc/devfs.rules" -o -z `grep -o 'cbsd=7' /etc/devfs.rules` ]; then
     cat ${SCRIPT_DIR}/../templates/devfs.rules >>/etc/devfs.rules
   fi
+  service devd restart
+  service devfs restart
 }
 
 

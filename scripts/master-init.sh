@@ -40,8 +40,8 @@ dhcp() {
   cp ${SCRIPT_DIR}/../templates/master.fstab "${CBSD_WORKDIR}/jails-fstab/fstab.cbsd.local"
   cbsd jset jname=cbsd b_order=0
   cbsd jstart cbsd
-  cbsd jexec jname=cbsd env ASSUME_ALWAYS_YES=YES pkg bootstrap
-  cbsd jexec jname=cbsd pkg install -y isc-dhcp44-server
+  cbsd jexec jname=cbsd cmd="env ASSUME_ALWAYS_YES=YES pkg bootstrap"
+  cbsd jexec jname=cbsd cmd="pkg install -y isc-dhcp44-server"
 
   cp ${SCRIPT_DIR}/../templates/dhcpd-hook.sh "${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/bin/"
   chmod 755 "${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/bin/dhcpd-hook.sh"
