@@ -17,7 +17,7 @@ USE_USED_wordpress ?= https://github.com/mekanix/jail-wordpress
 USE_USED_peertube ?= https://github.com/mekanix/jail-peertube
 USE_USED_nextcloud ?= https://github.com/mekanix/jail-peertube
 USE_USED_znc ?= https://github.com/mekanix/jail-znc
-USE_USED_coturn ?= https://github.com/mekanix/jail-coturn
+USE_USED_turn ?= https://github.com/mekanix/jail-turn
 USE_USED_gitolite ?= https://github.com/mekanix/jail-gitolite
 USE_USED_polipo ?= https://github.com/mekanix/jail-polipo
 

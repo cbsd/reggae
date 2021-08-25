@@ -53,11 +53,11 @@ up: setup
 	@echo 'User "devel" deleted'
 .endif
 	@sudo cbsd jexec jname=${SERVICE} cmd="pwd_mkdb /etc/master.passwd"
-.if !exists(${CBSD_WORKDIR}/jails-system/${SERVICE}/.provisioned)
-	@${MAKE} ${MAKEFLAGS} provision
-.endif
 .if target(post_up)
 	@${MAKE} ${MAKEFLAGS} post_up
+.endif
+.if !exists(${CBSD_WORKDIR}/jails-system/${SERVICE}/.provisioned)
+	@${MAKE} ${MAKEFLAGS} provision
 .endif
 
 provision: setup
