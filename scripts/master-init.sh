@@ -8,7 +8,7 @@ SCRIPT_DIR=`dirname $0`
 . "${SCRIPT_DIR}/default.conf"
 
 HOSTNAME=`hostname`
-EGRESS=`netstat -rn | awk '/^default/{print $4}'`
+EGRESS=`netstat -rn4 | awk '/^default/{print $4}'`
 EGRESS_CONFIG=`sysrc -n ifconfig_${EGRESS}`
 DHCP_CONFIG=`echo ${EGRESS_CONFIG} | grep -io dhcp`
 NODEIP=`ifconfig ${EGRESS} | awk '/inet /{print $2}'`

@@ -58,7 +58,7 @@ pf() {
   sysrc pflog_enable="YES"
   sysrc pf_enable="YES"
   sysrc blacklistd_enable="YES"
-  sysrc sshd_flags+="-oUserBlacklist=yes"
+  sysrc sshd_flags+="\-oUseBlacklist=yes"
 }
 
 setup_hostname() {
