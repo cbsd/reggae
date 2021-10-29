@@ -196,10 +196,16 @@ export: down
 .endif
 .endif
 
+devel_check:
+.if ${DEVEL_MODE} != "YES"
+	@echo "DEVEL_MODE must be set to YES"
+	@exit 1
+.endif
+
 .if target(do_devel)
-devel: up do_devel
+devel: devel_check up do_devel
 .else
-devel: up
+devel: devel_check up
 	@sudo cbsd jexec jname=${SERVICE} user=devel cmd="env OFFLINE=${offline} SYSPKG=${SYSPKG} /usr/src/bin/devel.sh"
 .if target(post_devel)
 	@${MAKE} ${MAKEFLAGS} post_devel
