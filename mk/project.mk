@@ -79,10 +79,16 @@ setup:
 	@${MAKE} ${MAKEFLAGS} post_setup
 .endif
 
+devel_check:
+.if ${DEVEL_MODE} != "YES"
+	@echo "DEVEL_MODE must be set to YES"
+	@exit 1
+.endif
+
 .if target(do_devel)
-devel: up do_devel
+devel: devel_check up do_devel
 .else
-devel: up
+devel: devel_check up
 .if defined(service)
 	@${MAKE} ${MAKEFLAGS} -C services/${service} devel offline=${offline}
 .else
