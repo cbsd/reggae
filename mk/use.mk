@@ -2,24 +2,25 @@ PRE_SERVICES =
 USED_SERVICES =
 POST_SERVICES =
 
-USE_PRE_letsencrypt ?= https://github.com/mekanix/jail-letsencrypt
 USE_PRE_ldap ?= https://github.com/mekanix/jail-ldap
-USE_PRE_postgresql ?= https://github.com/mekanix/jail-postgresql
+USE_PRE_letsencrypt ?= https://github.com/mekanix/jail-letsencrypt
+USE_PRE_mongodb ?= https://github.com/mekanix/jail-mongodb
 USE_PRE_mysql ?= https://github.com/mekanix/jail-mysql
+USE_PRE_postgresql ?= https://github.com/mekanix/jail-postgresql
 USE_PRE_redis ?= https://github.com/mekanix/jail-redis
 
+USE_USED_gitolite ?= https://github.com/mekanix/jail-gitolite
 USE_USED_jabber ?= https://github.com/mekanix/jail-jabber
 USE_USED_mail ?= https://github.com/mekanix/jail-mail
-USE_USED_webmail ?= https://github.com/mekanix/jail-webmail
 USE_USED_moodle ?= https://github.com/mekanix/jail-moodle
+USE_USED_nextcloud ?= https://github.com/mekanix/jail-nextcloud
 USE_USED_opigno ?= https://github.com/mekanix/jail-opigno
-USE_USED_wordpress ?= https://github.com/mekanix/jail-wordpress
 USE_USED_peertube ?= https://github.com/mekanix/jail-peertube
-USE_USED_nextcloud ?= https://github.com/mekanix/jail-peertube
-USE_USED_znc ?= https://github.com/mekanix/jail-znc
-USE_USED_turn ?= https://github.com/mekanix/jail-turn
-USE_USED_gitolite ?= https://github.com/mekanix/jail-gitolite
 USE_USED_polipo ?= https://github.com/mekanix/jail-polipo
+USE_USED_turn ?= https://github.com/mekanix/jail-turn
+USE_USED_webmail ?= https://github.com/mekanix/jail-webmail
+USE_USED_wordpress ?= https://github.com/mekanix/jail-wordpress
+USE_USED_znc ?= https://github.com/mekanix/jail-znc
 
 USE_POST_nginx ?= https://github.com/mekanix/jail-nginx
 

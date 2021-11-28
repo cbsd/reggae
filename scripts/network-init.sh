@@ -27,6 +27,10 @@ check_config() {
     echo "PROJECTS_DIR must be set in /usr/local/etc/reggae.conf" >&2
     exit 1
   fi
+  if [ `hostname` = `hostname -s` ]; then
+    echo "Hostname must be FQDN. Please set hostname to something like 'myhost.example.com'" >&2
+    exit 1
+  fi
 }
 
 
