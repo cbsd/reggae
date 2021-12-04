@@ -18,7 +18,7 @@ STATIC=NO
 
 
 if [ -z "${DHCP_CONFIG}" ]; then
-    STATIC=YES
+  STATIC=YES
 fi
 
 
