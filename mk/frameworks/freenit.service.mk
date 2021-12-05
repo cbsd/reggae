@@ -10,16 +10,12 @@ do_devel:
 collect:
 	@rm -rf build
 	@mkdir -p build
-	@sudo cbsd jexec jname=${SERVICE} user=devel env OFFLINE=${offline} SYSPKG=${SYSPKG} cmd=/usr/src/bin/collect.sh
+	sudo cbsd jexec jname=${SERVICE} user=devel cmd="env OFFLINE=${offline} SYSPKG=${SYSPKG} /usr/src/bin/collect.sh"
 .endif
 
 .if !target(publish)
 publish: collect
 .if !defined(server)
-	@echo "Usage: make publish server=<server> domain=<domain>"
-	@fail
-.endif
-.if !defined(domain)
 	@echo "Usage: make publish server=<server> domain=<domain>"
 	@fail
 .endif
@@ -33,7 +29,7 @@ publish: collect
 .endif
 
 build_lib: up
-	@sudo cbsd jexec jname=${SERVICE} user=devel env OFFLINE=${offline} SYSPKG=${SYSPKG} cmd=/usr/src/bin/build.sh
+	@sudo cbsd jexec jname=${SERVICE} user=devel cmd="env OFFLINE=${offline} SYSPKG=${SYSPKG} /usr/src/bin/build.sh"
 
 publish_lib: build_lib
 	@sudo cbsd jexec jname=${SERVICE} user=devel cmd=/usr/src/bin/publish.sh
