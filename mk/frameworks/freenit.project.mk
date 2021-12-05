@@ -9,15 +9,11 @@ publish:
 	@echo "Usage: make publish server=<server> domain=<domain>"
 	@fail
 .endif
-.if !defined(domain)
-	@echo "Usage: make publish server=<server> domain=<domain>"
-	@fail
-.endif
 .if defined(service)
-	@${MAKE} ${MAKEFLAGS} -C services/${service} server=${server} publish
+	@${MAKE} ${MAKEFLAGS} -C services/${service} publish server=${server}
 .else
 .for service url in ${SERVICES}
-	@make -C services/${service} publish server=${server} domain=${domain}
+	@${MAKE} ${MAKEFLAGS} -C services/${service} publish server=${server}
 .endfor
 .endif
 .endif
