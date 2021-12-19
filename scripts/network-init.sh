@@ -33,16 +33,21 @@ check_config() {
 network() {
   interface_config="inet ${INTERFACE_IP} netmask 255.255.255.0 description ${EGRESS}"
   interface_alias_config="inet ${JAIL_INTERFACE_IP} netmask 255.255.255.0"
+  interface_ipv6_config="inet6 -ifdisabled auto_linklocal fd1a:db86:3f72:9dc4::1"
   sysctl net.inet.ip.forwarding=1
+  sysctl net.inet6.ip6.forwarding=1
   sysrc gateway_enable="YES"
+  sysrc ipv6_gateway_enable="YES"
   sysrc cloned_interfaces+="bridge0"
   sysrc ifconfig_bridge0_name="${INTERFACE}"
   sysrc ifconfig_${INTERFACE}="${interface_config}"
   sysrc ifconfig_${INTERFACE}_alias0="${interface_alias_config}"
+  sysrc ifconfig_${INTERFACE}_ipv6="${interface_ipv6_config}"
   service netif cloneup
   sleep 1
   ifconfig ${INTERFACE} ${interface_config}
   ifconfig ${INTERFACE} ${interface_alias_config} alias
+  ifconfig ${INTERFACE} ${interface_ipv6_config}
 }
 
 
@@ -61,12 +66,20 @@ pf() {
   sysrc sshd_flags+="\-oUseBlacklist=yes"
 }
 
+
 setup_hostname() {
     if [ "${HOSTNAME}" == "${SHORT_HOSTNAME}" ]; then
         HOSTNAME="${SHORT_HOSTNAME}.${DOMAIN}"
         hostname ${HOSTNAME}
         sysrc hostname="${HOSTNAME}"
     fi
+}
+
+
+setup_rtadvd() {
+  sysrc 'rtadvd_enable="YES"'
+  sysrc 'rtadvd_interfaces="cbsd0"'
+  echo 'cbsd0::addrs#1:addr="fd1a:db86:3f72:9dc4::":prefixlen#64:tc=ether:rltime#0' >/etc/rtadvd.conf
 }
 
 
@@ -148,5 +161,6 @@ check_config
 network
 pf
 setup_hostname
+setup_rtadvd
 setup_nfs
 setup_unbound
