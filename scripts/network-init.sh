@@ -83,7 +83,7 @@ setup_hostname() {
 setup_rtadvd() {
   sysrc 'rtadvd_enable="YES"'
   sysrc 'rtadvd_interfaces="cbsd0"'
-  echo 'cbsd0::addrs#1:addr="fd1a:db86:3f72:9dc4::":prefixlen#64:tc=ether:rltime#0' >/etc/rtadvd.conf
+  echo 'cbsd0:addrs#1:addr="fd1a:db86:3f72:9dc4::"' >/etc/rtadvd.conf
 }
 
 
