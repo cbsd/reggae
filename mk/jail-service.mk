@@ -1,11 +1,11 @@
 SUBTYPE ?= vnet
-DHCP ?= dhcpcd
+DHCP ?= dhclient
 INTERFACE != reggae get-config INTERFACE
 PKG_MIRROR_CONFIG != reggae get-config PKG_MIRROR
 PKG_REPO_CONFIG != reggae get-config PKG_REPO
+PKG_PROXY_CONFIG != reggae get-config PKG_PROXY
 PKG_MIRROR ?= ${PKG_MIRROR_CONFIG}
 PKG_REPO ?= ${PKG_REPO_CONFIG}
-PKG_PROXY_CONFIG != reggae get-config PKG_PROXY
 PKG_PROXY ?= ${PKG_PROXY_CONFIG}
 DEVFS_RULESET ?= 8
 
@@ -165,6 +165,8 @@ setup:
 		${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/pkg.conf
 .endif
 .endif
+	@sudo cp ${REGGAE_PATH}/templates/netif ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/
+	@sudo cp ${REGGAE_PATH}/templates/rtsold ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/
 .if target(post_create)
 	@${MAKE} ${MAKEFLAGS} post_create
 .endif
