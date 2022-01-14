@@ -1,0 +1,1 @@
+ifconfig_eth0_ipv6="inet6 -ifdisabled auto_linklocal accept_rtadv"
