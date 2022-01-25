@@ -14,7 +14,7 @@ get_ip() {
   HWADDR=`echo $nic_args | grep --color=auto -o 'mac=..:..:..:..:..:..' | cut -f 2 -d '='`
   IP=""
   while [ -z ${IP} ]; do
-    IP=`cbsd jexec jname=cbsd ip-by-mac.sh ${HWADDR}`
+    IP=`cbsd jexec jname=cbsd cmd="ip-by-mac.sh ${HWADDR}"`
   done
   echo ${IP}
 }

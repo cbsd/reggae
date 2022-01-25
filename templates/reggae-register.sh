@@ -5,9 +5,9 @@ IP=$2
 NAME=`echo $3 | cut -f 1 -d '.'`
 DOMAIN=$4
 
-ZONE_FILE="/var/unbound/zones/${DOMAIN}.zone"
+ZONE_FILE="/usr/local/etc/nsd/zones/master/${DOMAIN}.zone"
 REVERSE_ZONE=`echo ${IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
-REVERSE_ZONE_FILE="/var/unbound/zones/${REVERSE_ZONE}.zone"
+REVERSE_ZONE_FILE="/usr/local/etc/nsd/zones/master/${REVERSE_ZONE}.zone"
 LAST_OCTET=`echo "${IP}" | awk -F '.' '{print $4}'`
 TEMP_FILE=`mktemp`
 
@@ -31,4 +31,4 @@ elif [ "${ACTION}" = "delete" ]; then
   /sbin/pfctl -t cbsd -T delete $IP
 fi
 
-local-unbound-control reload
+nsd-control reload

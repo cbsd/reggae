@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ -f "/usr/local/etc/reggae.conf" ]; then
-    . "/usr/local/etc/reggae.conf"
+  . "/usr/local/etc/reggae.conf"
 fi
 
 SCRIPT_DIR=`dirname $0`
@@ -14,6 +14,7 @@ NATIP=`netstat -rn4 | awk '/^default/{print $2}'`
 EGRESS=`netstat -rn4 | awk '/^default/{print $4}'`
 EGRESS_CONFIG=`sysrc -n ifconfig_${EGRESS}`
 DHCP_CONFIG=`echo ${EGRESS_CONFIG} | grep -io dhcp`
+IPV6_PREFIX=`reggae get-config IPV6_PREFIX`
 STATIC=NO
 
 
@@ -37,7 +38,7 @@ check_config() {
 network() {
   interface_config="inet ${INTERFACE_IP} netmask 255.255.255.0 description ${EGRESS}"
   interface_alias_config="inet ${JAIL_INTERFACE_IP} netmask 255.255.255.0"
-  interface_ipv6_config="inet6 -ifdisabled auto_linklocal fd1a:db86:3f72:9dc4::1"
+  interface_ipv6_config="inet6 -ifdisabled auto_linklocal ${IPV6_PREFIX}:1"
   sysctl net.inet.ip.forwarding=1
   sysctl net.inet6.ip6.forwarding=1
   sysrc gateway_enable="YES"
@@ -81,8 +82,8 @@ setup_hostname() {
 
 
 setup_rtadvd() {
-  sysrc 'rtadvd_enable="YES"'
-  sysrc 'rtadvd_interfaces="cbsd0"'
+  sysrc rtadvd_enable="YES"
+  sysrc rtadvd_interfaces="cbsd0"
   echo 'cbsd0:addrs#1:addr="fd1a:db86:3f72:9dc4::"' >/etc/rtadvd.conf
 }
 
@@ -119,43 +120,12 @@ setup_unbound() {
     "${SCRIPT_DIR}/../templates/unbound.conf" >/var/unbound/unbound.conf
   sed \
     -e "s:DOMAIN:${DOMAIN}:g" \
-    "${SCRIPT_DIR}/../templates/unbound_cbsd.conf" >/var/unbound/conf.d/cbsd.conf
-  if [ ! -d /var/unbound/zones ]; then
-    mkdir /var/unbound/zones
-  fi
-  sed \
-    -e "s:DOMAIN:${DOMAIN}:g" \
-    -e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
-    "${SCRIPT_DIR}/../templates/unbound_cbsd.zone" >/var/unbound/zones/${DOMAIN}.zone
+    -e "s:MASTER_IP:${MASTER_IP}:g" \
+    "${SCRIPT_DIR}/../templates/unbound_cbsd.conf" >/var/unbound/cbsd.conf
   cp "${SCRIPT_DIR}/../templates/unbound_control.conf" /var/unbound/control.conf
   cp "${SCRIPT_DIR}/../templates/resolvconf.conf" /etc/resolvconf.conf
 
-  rm -f /var/unbound/conf.d/cbsd-reverse.conf
-  ZONE=`echo ${INTERFACE_IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
-  LAST_OCTET=`echo ${INTERFACE_IP} | awk -F '.' '{print $4}'`
-  sed \
-    -e "s:DOMAIN:${DOMAIN}:g" \
-    -e "s:ZONE:${ZONE}:g" \
-    -e "s:LAST_OCTET:${LAST_OCTET}:g" \
-    "${SCRIPT_DIR}/../templates/unbound_cbsd_reverse.zone" >"/var/unbound/zones/${ZONE}.zone"
-  sed \
-    -e "s:ZONE:${ZONE}:g" \
-    "${SCRIPT_DIR}/../templates/unbound_cbsd_reverse.conf" >>/var/unbound/conf.d/cbsd-reverse.conf
-
-  ZONE=`echo ${JAIL_INTERFACE_IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
-  LAST_OCTET=`echo ${JAIL_INTERFACE_IP} | awk -F '.' '{print $4}'`
-  sed \
-    -e "s:DOMAIN:${DOMAIN}:g" \
-    -e "s:ZONE:${ZONE}:g" \
-    -e "s:LAST_OCTET:${LAST_OCTET}:g" \
-    "${SCRIPT_DIR}/../templates/unbound_cbsd_reverse.zone" >"/var/unbound/zones/${ZONE}.zone"
-  echo >>/var/unbound/conf.d/cbsd-reverse.conf
-  sed \
-    -e "s:ZONE:${ZONE}:g" \
-    "${SCRIPT_DIR}/../templates/unbound_cbsd_reverse.conf" >>/var/unbound/conf.d/cbsd-reverse.conf
-
   chown -R unbound:unbound /var/unbound
-  chmod g+w /var/unbound/conf.d /var/unbound/zones/*.zone
   service local_unbound restart
   resolvconf -u
 }

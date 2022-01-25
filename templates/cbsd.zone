@@ -4,7 +4,7 @@ DOMAIN. SOA DOMAIN. hostmaster.DOMAIN. (
                   1800        ; Retry
                   3600        ; Expire
                   1728 )      ; Minimum TTL
-DOMAIN.            NS      DOMAIN."
+DOMAIN.            NS      DOMAIN.
 
-$ORIGIN DOMAIN
+$ORIGIN DOMAIN.
 @    A   INTERFACE_IP

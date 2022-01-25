@@ -12,3 +12,4 @@
 # PKG_MIRROR="pkg.FreeBSD.org"
 # PKG_REPO="latest"
 # PKG_PROXY="no"
+# IPV6_PREFIX="fd10:6c79:8ae5:8b91:"
