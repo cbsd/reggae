@@ -14,7 +14,7 @@ TEMP_FILE=`mktemp`
 
 /usr/bin/sed "/^.* *A *${IP}$/d" "${ZONE_FILE}" >"${TEMP_FILE}"
 /bin/cat "${TEMP_FILE}" >"${ZONE_FILE}"
-/usr/bin/sed "/^${NAME} *A *.*$/d" "${ZONE_FILE}" >"${TEMP_FILE}"
+/usr/bin/sed "/^${NAME}    A *.*$/d" "${ZONE_FILE}" >"${TEMP_FILE}"
 /bin/cat "${TEMP_FILE}" >"${ZONE_FILE}"
 /usr/bin/sed "/^${LAST_OCTET} *PTR *.*/d" "${REVERSE_ZONE_FILE}" >"${TEMP_FILE}"
 /bin/cat "${TEMP_FILE}" >"${REVERSE_ZONE_FILE}"
