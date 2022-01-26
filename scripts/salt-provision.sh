@@ -3,6 +3,9 @@
 CBSD_WORKDIR=`sysrc -n cbsd_workdir`
 SERVICE="${1}"
 TYPE="${2}"
+PY_VERSION_MAJOR="3"
+PY_VERSION_MINOR="8"
+PY_PREFIX="py${PY_VERSION_MAJOR}${PY_VERSION_MINOR}"
 
 if [ -z "${SERVICE}" ]; then
   echo "Usage: ${0} <jail>" 2>&1
@@ -11,13 +14,13 @@ fi
 
 init() {
   if [ "${TYPE}" = "jail" ]; then
-    cbsd jexec jname=${SERVICE} pkg install -y py36-salt
+    cbsd jexec jname=${SERVICE} cmd="pkg install -y ${PY_PREFIX}-salt"
     mkdir -p ${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/salt/minion.d >/dev/null 2>&1 || true
     mkdir -p ${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/salt/states >/dev/null 2>&1 || true
     mount_nullfs "${PWD}/salt/states" "${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/salt/states"
     echo 'file_client: local' >"${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/salt/minion.d/reggae.conf"
   elif [ "${TYPE}" = "bhyve" ]; then
-    reggae ssh provision ${SERVICE} sudo pkg install -y py36-salt
+    reggae ssh provision ${SERVICE} sudo pkg install -y "${PY_PREFIX}-salt"
     reggae ssh provision ${SERVICE} sudo mkdir -p /usr/local/etc/salt/minion.d >/dev/null 2>&1 || true
     reggae ssh provision ${SERVICE} sudo mkdir -p /usr/local/etc/salt/states >/dev/null 2>&1 || true
     reggae ssh provision ${SERVICE} sudo mount_nullfs /usr/src/salt/states /usr/local/etc/salt/states

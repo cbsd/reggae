@@ -17,7 +17,7 @@ if [ "${TYPE}" = "jail" ]; then
   trap "cleanup" HUP INT ABRT BUS TERM  EXIT
   mkdir ${CBSD_WORKDIR}/jails/${SERVICE}/root/shell >/dev/null 2>&1 || true
   mount_nullfs "${PWD}/shell" "${CBSD_WORKDIR}/jails/${SERVICE}/root/shell"
-  cbsd jexec "jname=${SERVICE}" /root/shell/provision.sh
+  cbsd jexec "jname=${SERVICE}" cmd="/root/shell/provision.sh"
 elif [ "${TYPE}" = "bhyve" ]; then
   reggae scp provision ${SERVICE} shell
   env VERBOSE="yes" reggae ssh provision ${SERVICE} sudo shell/provision.sh

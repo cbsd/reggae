@@ -12,6 +12,8 @@ TEMPLATES = Makefile.project \
 	    cbsd.conf.tpl \
 	    cbsd-bhyve.conf.tpl \
 	    cbsd-vnet.conf.tpl \
+	    cbsd.zone \
+	    cbsd_reverse.zone \
 	    cloud-devops.sh \
 	    cloud-initial.sh \
 	    devfs.rules \
@@ -28,9 +30,9 @@ TEMPLATES = Makefile.project \
 	    master.conf \
 	    master.fstab \
 	    mount-project.sh \
-	    named.conf \
 	    netif \
 	    network \
+	    nsd.conf \
 	    pf.conf \
 	    pkg.conf \
 	    reggae-register.sh \
@@ -40,9 +42,6 @@ TEMPLATES = Makefile.project \
 	    sudoers \
 	    unbound.conf \
 	    unbound_cbsd.conf \
-	    unbound_cbsd.zone \
-	    unbound_cbsd_reverse.conf \
-	    unbound_cbsd_reverse.zone \
 	    unbound_control.conf \
 	    xorg.sh
 ANSIBLE_TEMPLATES = ansible/inventory.local.tpl ansible/inventory.remote.tpl

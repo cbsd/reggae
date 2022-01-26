@@ -15,16 +15,17 @@ NODEIP=`ifconfig ${EGRESS} | awk '/inet /{print $2}'`
 TEMP_MASTER_CONF=`mktemp`
 TEMP_DHCP_CONF=`mktemp`
 PKG_PROXY=`reggae get-config PKG_PROXY`
+IPV6_PREFIX=`reggae get-config IPV6_PREFIX`
 export VER=${VER:="native"}
 
 
-dhcp() {
+setup() {
   sed \
-    -e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
-    -e "s:DOMAIN:${DOMAIN}:g" \
-    -e "s:INTERFACE:${INTERFACE}:g" \
-    -e "s:MASTER_IP:${MASTER_IP}:g" \
-    -e "s:VER:${VER}:g" \
+    -e "s;CBSD_WORKDIR;${CBSD_WORKDIR};g" \
+    -e "s;DOMAIN;${DOMAIN};g" \
+    -e "s;INTERFACE;${INTERFACE};g" \
+    -e "s;MASTER_IP;${MASTER_IP},${IPV6_PREFIX}:2;g" \
+    -e "s;VER;${VER};g" \
     ${SCRIPT_DIR}/../templates/master.conf >"${TEMP_MASTER_CONF}"
 
   cbsd jcreate inter=0 jconf="${TEMP_MASTER_CONF}"
@@ -41,8 +42,11 @@ dhcp() {
   cbsd jset jname=cbsd b_order=0
   cbsd jstart cbsd
   cbsd jexec jname=cbsd cmd="env ASSUME_ALWAYS_YES=YES pkg bootstrap"
-  cbsd jexec jname=cbsd cmd="pkg install -y isc-dhcp44-server"
+  cbsd jexec jname=cbsd cmd="pkg install -y isc-dhcp44-server nsd"
+}
 
+
+dhcp() {
   cp ${SCRIPT_DIR}/../templates/dhcpd-hook.sh "${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/bin/"
   chmod 755 "${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/bin/dhcpd-hook.sh"
   cp ${SCRIPT_DIR}/../templates/reggae-register.sh "${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/bin/"
@@ -69,10 +73,29 @@ dhcp() {
   echo 'dhcpd_withumask="022"' >>"${CBSD_WORKDIR}/jails-data/cbsd-data/etc/rc.conf.d/dhcpd"
   echo 'dhcpd_withgroup="unbound"' >>"${CBSD_WORKDIR}/jails-data/cbsd-data/etc/rc.conf.d/dhcpd"
 
-  cbsd jexec jname=cbsd pw group mod unbound -m dhcpd
-  cbsd jexec jname=cbsd pwd_mkdb /etc/master.passwd
-  cbsd jexec jname=cbsd service isc-dhcpd restart
+  cbsd jexec jname=cbsd cmd="pw group mod unbound -m dhcpd"
+  cbsd jexec jname=cbsd cmd="pwd_mkdb /etc/master.passwd"
+  cbsd jexec jname=cbsd cmd="service isc-dhcpd restart"
 }
 
 
+dns() {
+  echo 'nsd_enable="YES"' >"${CBSD_WORKDIR}/jails-data/cbsd-data/etc/rc.conf.d/nsd"
+  mkdir -p "${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/nsd/zones/master"
+  mkdir -p "${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/nsd/zones/slave"
+  sed \
+    -e "s:DOMAIN:${DOMAIN}:g" \
+    "${SCRIPT_DIR}/../templates/nsd.conf" >${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/nsd/nsd.conf
+  sed \
+    -e "s:DOMAIN:${DOMAIN}:g" \
+    -e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
+    "${SCRIPT_DIR}/../templates/cbsd.zone" >${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/nsd/zones/master/${DOMAIN}
+
+  cbsd jexec jname=cbsd cmd="nsd-control-setup"
+  cbsd jexec jname=cbsd cmd="service nsd restart"
+}
+
+
+setup
 dhcp
+dns
