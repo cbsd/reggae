@@ -15,11 +15,7 @@ if [ "${vnet}" != "1" ]; then
   ACTION="${1}"
   PF_ACTION="add"
   DOMAIN=`reggae get-config DOMAIN`
-
-  ZONE_FILE="/var/unbound/zones/${DOMAIN}.zone"
-  REVERSE_ZONE=`echo ${IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
-  REVERSE_ZONE_FILE="/var/unbound/zones/${REVERSE_ZONE}.zone"
-  LAST_OCTET=`echo "${IP}" | awk -F '.' '{print $4}'`
+  ZONE_FILE="${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/nsd/zones/master/${DOMAIN}.zone"
 
 
   if [ "${ACTION}" = "deregister" ]; then
@@ -28,15 +24,20 @@ if [ "${vnet}" != "1" ]; then
     xhost -"${NAME}.${DOMAIN}" >/dev/null 2>&1
   fi
 
-  /usr/bin/sed -i "" "/^.* *A *${IP}$/d" "${ZONE_FILE}"
-  /usr/bin/sed -i "" "/^${NAME} *A *.*$/d" "${ZONE_FILE}"
-  /usr/bin/sed -i "" "/^${LAST_OCTET} *PTR *.*/d" "${REVERSE_ZONE_FILE}"
+  if [ -e "${ZONE_FILE}" ]; then
+    REVERSE_ZONE=`echo ${IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
+    REVERSE_ZONE_FILE="${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/nsd/zones/master/${REVERSE_ZONE}.zone"
+    LAST_OCTET=`echo "${IP}" | awk -F '.' '{print $4}'`
 
-  if [ "${ACTION}" = "register" ]; then
-    # Forward
-    /bin/echo "${NAME}    A   ${IP}" >>"${ZONE_FILE}"
-    /bin/echo "${LAST_OCTET}    PTR   ${NAME}.${DOMAIN}." >>"${REVERSE_ZONE_FILE}"
+    /usr/bin/sed -i "" "/^.* *A *${IP}$/d" "${ZONE_FILE}"
+    /usr/bin/sed -i "" "/^${NAME} *A *.*$/d" "${ZONE_FILE}"
+    /usr/bin/sed -i "" "/^${LAST_OCTET} *PTR *.*/d" "${REVERSE_ZONE_FILE}"
+    if [ "${ACTION}" = "register" ]; then
+      /bin/echo "${NAME}    A   ${IP}" >>"${ZONE_FILE}"
+      /bin/echo "${LAST_OCTET}    PTR   ${NAME}.${DOMAIN}." >>"${REVERSE_ZONE_FILE}"
+    fi
+    cbsd jexec jname=cbsd cmd="nsd-control reload"
   fi
-  local-unbound-control reload
+
   pfctl -t cbsd -T ${PF_ACTION} ${IP}
 fi
