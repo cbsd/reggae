@@ -5,21 +5,16 @@ IP=$2
 NAME=`echo $3 | cut -f 1 -d '.'`
 DOMAIN=$4
 
-ZONE_FILE="/usr/local/etc/nsd/zones/master/${DOMAIN}.zone"
+ZONE_FILE="/usr/local/etc/nsd/zones/master/${DOMAIN}"
 REVERSE_ZONE=`echo ${IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
-REVERSE_ZONE_FILE="/usr/local/etc/nsd/zones/master/${REVERSE_ZONE}.zone"
+REVERSE_ZONE_FILE="/usr/local/etc/nsd/zones/master/${REVERSE_ZONE}"
 LAST_OCTET=`echo "${IP}" | awk -F '.' '{print $4}'`
-TEMP_FILE=`mktemp`
 
 
-/usr/bin/sed "/^.* *A *${IP}$/d" "${ZONE_FILE}" >"${TEMP_FILE}"
-/bin/cat "${TEMP_FILE}" >"${ZONE_FILE}"
-/usr/bin/sed "/^${NAME}    A *.*$/d" "${ZONE_FILE}" >"${TEMP_FILE}"
-/bin/cat "${TEMP_FILE}" >"${ZONE_FILE}"
-/usr/bin/sed "/^${LAST_OCTET} *PTR *.*/d" "${REVERSE_ZONE_FILE}" >"${TEMP_FILE}"
-/bin/cat "${TEMP_FILE}" >"${REVERSE_ZONE_FILE}"
+/usr/bin/sed -i "" "/^.* *A *${IP}$/d" "${ZONE_FILE}"
+/usr/bin/sed -i "" "/^${NAME}    A *.*$/d" "${ZONE_FILE}"
+/usr/bin/sed -i "" "/^${LAST_OCTET} *PTR *.*/d" "${REVERSE_ZONE_FILE}"
 
-rm "${TEMP_FILE}"
 
 if [ "${ACTION}" = "add" ]; then
   /sbin/pfctl -t cbsd -T add $IP
@@ -31,4 +26,4 @@ elif [ "${ACTION}" = "delete" ]; then
   /sbin/pfctl -t cbsd -T delete $IP
 fi
 
-nsd-control reload
+/usr/local/bin/sudo /usr/local/sbin/nsd-control reload
