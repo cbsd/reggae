@@ -81,16 +81,28 @@ dhcp() {
 
 
 dns() {
+  REVERSE_ZONE=`echo ${INTERFACE_IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
+  REVERSE_ZONE_FILE="${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/nsd/zones/master/${REVERSE_ZONE}"
+  LAST_OCTET=`echo "${INTERFACE_IP}" | awk -F '.' '{print $4}'`
+
   echo 'nsd_enable="YES"' >"${CBSD_WORKDIR}/jails-data/cbsd-data/etc/rc.conf.d/nsd"
   mkdir -p "${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/nsd/zones/master"
   mkdir -p "${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/nsd/zones/slave"
   sed \
     -e "s:DOMAIN:${DOMAIN}:g" \
+    -e "s:REVERSE:${REVERSE_ZONE}:g" \
     "${SCRIPT_DIR}/../templates/nsd.conf" >${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/nsd/nsd.conf
+
+  ZONE_FILE="${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/nsd/zones/master/${DOMAIN}"
   sed \
     -e "s:DOMAIN:${DOMAIN}:g" \
     -e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
-    "${SCRIPT_DIR}/../templates/cbsd.zone" >${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/nsd/zones/master/${DOMAIN}
+    "${SCRIPT_DIR}/../templates/cbsd.zone" >"${ZONE_FILE}"
+  sed \
+    -e "s:DOMAIN:${DOMAIN}:g" \
+    -e "s:ZONE:${REVERSE_ZONE}:g" \
+    -e "s:LAST_OCTET:${LAST_OCTET}:g" \
+    "${SCRIPT_DIR}/../templates/cbsd_reverse.zone" >"${REVERSE_ZONE_FILE}"
 
   chmod -R g+w ${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/nsd
   chown -R root:216 ${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/nsd

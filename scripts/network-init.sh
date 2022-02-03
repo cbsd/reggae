@@ -110,6 +110,8 @@ setup_nfs() {
 
 
 setup_unbound() {
+  REVERSE_ZONE=`echo ${INTERFACE_IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
+
   sysrc local_unbound_enable="YES"
   sysrc local_unbound_tls="NO"
   fetch -o /var/unbound/root.hints https://www.internic.net/domain/named.cache
@@ -121,6 +123,7 @@ setup_unbound() {
   sed \
     -e "s:DOMAIN:${DOMAIN}:g" \
     -e "s:MASTER_IP:${MASTER_IP}:g" \
+    -e "s:REVERSE:${REVERSE_ZONE}:g" \
     "${SCRIPT_DIR}/../templates/unbound_cbsd.conf" >/var/unbound/cbsd.conf
   cp "${SCRIPT_DIR}/../templates/unbound_control.conf" /var/unbound/control.conf
   cp "${SCRIPT_DIR}/../templates/resolvconf.conf" /etc/resolvconf.conf

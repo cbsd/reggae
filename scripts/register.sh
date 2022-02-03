@@ -15,7 +15,7 @@ if [ "${vnet}" != "1" ]; then
   ACTION="${1}"
   PF_ACTION="add"
   DOMAIN=`reggae get-config DOMAIN`
-  ZONE_FILE="${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/nsd/zones/master/${DOMAIN}.zone"
+  ZONE_FILE="${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/nsd/zones/master/${DOMAIN}"
 
 
   if [ "${ACTION}" = "deregister" ]; then
@@ -26,7 +26,7 @@ if [ "${vnet}" != "1" ]; then
 
   if [ -e "${ZONE_FILE}" ]; then
     REVERSE_ZONE=`echo ${IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
-    REVERSE_ZONE_FILE="${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/nsd/zones/master/${REVERSE_ZONE}.zone"
+    REVERSE_ZONE_FILE="${CBSD_WORKDIR}/jails-data/cbsd-data/usr/local/etc/nsd/zones/master/${REVERSE_ZONE}"
     LAST_OCTET=`echo "${IP}" | awk -F '.' '{print $4}'`
 
     /usr/bin/sed -i "" "/^.* *A *${IP}$/d" "${ZONE_FILE}"
