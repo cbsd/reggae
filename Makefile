@@ -37,6 +37,7 @@ TEMPLATES = Makefile.project \
 	    pkg.conf \
 	    reggae-register.sh \
 	    resolvconf.conf \
+	    rtadvd.conf \
 	    rtsold \
 	    setup-vm.sh \
 	    sudoers \
