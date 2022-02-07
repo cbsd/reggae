@@ -84,7 +84,9 @@ setup_hostname() {
 setup_rtadvd() {
   sysrc rtadvd_enable="YES"
   sysrc rtadvd_interfaces="cbsd0"
-  echo 'cbsd0:addrs#1:addr="fd1a:db86:3f72:9dc4::"' >/etc/rtadvd.conf
+  sed \
+    -e "s:IPV6_PREFIX:${IPV6_PREFIX}:g" \
+    "${SCRIPT_DIR}/../templates/rtadvd.conf" >/etc/rtadvd.conf
 }
 
 
