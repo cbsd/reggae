@@ -23,6 +23,7 @@ up: setup
 	@sudo cbsd jexec jname=${SERVICE} cmd="env ASSUME_ALWAYS_YES=yes pkg bootstrap"
 	@sudo cbsd jexec jname=${SERVICE} cmd="pkg install -y sudo ${EXTRA_PACKAGES}"
 .endif
+.if ${SUBTYPE} != "linux"
 .if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/network)
 	@sudo cp ${REGGAE_PATH}/templates/network ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/network
 .if ${DHCP} == "dhcpcd"
@@ -39,6 +40,7 @@ up: setup
 	@sudo sed -i "" \
 		-e "s:DHCP:/sbin/dhclient:g" \
 		${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/network
+.endif
 .endif
 .endif
 .if ${DEVEL_MODE} == "YES"
@@ -105,6 +107,13 @@ setup:
 		-e "s:VERSION:${VERSION}:g" \
 		-e "s:DEVFS_RULESET:${DEVFS_RULESET}:g" \
 		${REGGAE_PATH}/templates/cbsd-vnet.conf.tpl >cbsd.conf
+.elif $(SUBTYPE) == "linux"
+	@sed \
+		-e "s:SERVICE:${SERVICE}:g" \
+		-e "s:DOMAIN:${DOMAIN}:g" \
+		-e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
+		-e "s:INTERFACE:${INTERFACE}:g" \
+		${REGGAE_PATH}/templates/linux.conf.tpl >cbsd.conf
 .else
 	@sed \
 		-e "s:SERVICE:${SERVICE}:g" \
@@ -135,6 +144,7 @@ setup:
 	@sudo cbsd jset jname=${SERVICE} astart=1
 .endif
 .if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys)
+.if ${SUBTYPE} != "linux"
 .if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh)
 	-@sudo mkdir ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh
 .endif
@@ -142,6 +152,7 @@ setup:
 	@sudo cp ~/.ssh/id_rsa.pub ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys
 	@sudo chmod 600 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys
 	@sudo chown -R 666:666 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh
+.endif
 .endif
 	@sudo cp ${REGGAE_PATH}/templates/export-ports.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d
 	@sudo sed -i "" \
@@ -165,8 +176,10 @@ setup:
 		${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/pkg.conf
 .endif
 .endif
+.if ${SUBTYPE} != "linux"
 	@sudo cp ${REGGAE_PATH}/templates/netif ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/
 	@sudo cp ${REGGAE_PATH}/templates/rtsold ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/
+.endif
 .if target(post_create)
 	@${MAKE} ${MAKEFLAGS} post_create
 .endif
