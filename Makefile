@@ -27,6 +27,7 @@ TEMPLATES = Makefile.project \
 	    initenv.conf \
 	    install-packages.sh \
 	    ip-by-mac.sh \
+	    linux.conf.tpl \
 	    master.conf \
 	    master.fstab \
 	    mount-project.sh \
