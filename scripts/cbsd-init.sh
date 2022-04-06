@@ -41,14 +41,16 @@ setup_devfs() {
 setup_cbsd() {
   RESOLVER_BASE=`echo ${JAIL_INTERFACE_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
   JAIL_IP_POOL="${RESOLVER_BASE}.0/24"
+  JAIL_IP6_POOL="${IPV6_PREFIX}:/64"
   sed \
-    -e "s:HOSTNAME:${HOSTNAME}:g" \
-    -e "s:NODEIP:${NODEIP}:g" \
-    -e "s:NATIP:${NATIP}:g" \
-    -e "s:JAIL_IP_POOL:${JAIL_IP_POOL}:g" \
-    -e "s:ZFSFEAT:${ZFSFEAT}:g" \
-    -e "s:CBSD_WORKDIR:${CBSD_WORKDIR}:g" \
-    -e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
+    -e "s;HOSTNAME;${HOSTNAME};g" \
+    -e "s;NODEIP;${NODEIP};g" \
+    -e "s;NATIP;${NATIP};g" \
+    -e "s;JAIL_IP_POOL;${JAIL_IP_POOL};g" \
+    -e "s;JAIL_IP6_POOL;${JAIL_IP6_POOL};g" \
+    -e "s;ZFSFEAT;${ZFSFEAT};g" \
+    -e "s;CBSD_WORKDIR;${CBSD_WORKDIR};g" \
+    -e "s;INTERFACE_IP;${INTERFACE_IP};g" \
     ${SCRIPT_DIR}/../templates/initenv.conf >"${TEMP_INITENV_CONF}"
 
   env workdir="${CBSD_WORKDIR}" /usr/local/cbsd/sudoexec/initenv "${TEMP_INITENV_CONF}"
