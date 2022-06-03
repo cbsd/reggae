@@ -10,7 +10,7 @@ do_devel:
 collect:
 	@rm -rf build
 	@mkdir -p build
-	sudo cbsd jexec jname=${SERVICE} user=devel cmd="env OFFLINE=${offline} SYSPKG=${SYSPKG} /usr/src/bin/collect.sh"
+	@sudo cbsd jexec jname=${SERVICE} user=devel cmd="env OFFLINE=${offline} SYSPKG=${SYSPKG} /usr/src/bin/collect.sh"
 .endif
 
 .if !target(publish)
