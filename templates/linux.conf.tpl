@@ -9,7 +9,7 @@ rcconf="CBSD_WORKDIR/jails-rcconf/rc.conf_SERVICE";
 # FQDN for environment
 host_hostname="SERVICE.DOMAIN";
 # default environment IP
-ip4_addr="DHCP";
+ip4_addr="DHCP,DHCPv6";
 
 # defaultrouter in /etc/rc.conf?
 ci_gw4="";
