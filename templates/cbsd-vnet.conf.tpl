@@ -63,7 +63,6 @@ pkg_bootstrap="0";
 with_img_helpers="";
 
 allow_reserved_ports="1";
-allow_unprivileged_proc_debug="1";
 
 persist="1";
 childrenmax="0";

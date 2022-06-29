@@ -92,16 +92,16 @@ devel: devel_check up
 .if defined(service)
 	@${MAKE} ${MAKEFLAGS} -C services/${service} devel offline=${offline}
 .else
-	@env OFFLINE=${offline} env REGGAE=yes bin/devel.sh `make service_names`
+	@env OFFLINE=${offline} REGGAE=yes bin/devel.sh `make service_names`
 .endif
 .endif
 
 test: up
 .if defined(service)
-	@${MAKE} ${MAKEFLAGS} -C services/${service} test
+	@${MAKE} ${MAKEFLAGS} -C services/${service} OFFLINE=${offline} test
 .else
 .for service url in ${SERVICES}
-	@${MAKE} ${MAKEFLAGS} -C services/${service} test
+	@${MAKE} ${MAKEFLAGS} -C services/${service} OFFLINE=${offline} test
 .endfor
 .endif
 
