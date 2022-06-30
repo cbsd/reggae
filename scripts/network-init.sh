@@ -16,6 +16,8 @@ EGRESS_CONFIG=`sysrc -n ifconfig_${EGRESS}`
 DHCP_CONFIG=`echo ${EGRESS_CONFIG} | grep -io dhcp`
 IPV6_PREFIX=`reggae get-config IPV6_PREFIX`
 STATIC=NO
+MASTER_IP=`reggae get-config MASTER_IP`
+NETWORK=`echo ${MASTER_IP} | awk -F '.' '{print $1 "." $2 "." $3 ".0/24"}'`
 
 
 if [ -z "${DHCP_CONFIG}" ]; then
@@ -63,6 +65,7 @@ pf() {
       -e "s:JAIL_INTERFACE_IP:${JAIL_INTERFACE_IP}:g" \
       -e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
       -e "s:INTERFACE:${INTERFACE}:g" \
+      -e "s:NETWORK:${NETWORK}:g" \
       "${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
   fi
   sysrc pflog_enable="YES"
