@@ -83,6 +83,7 @@ SCRIPTS = bhyve-init.sh \
 	  register.sh \
 	  salt-provision.sh \
 	  scp.sh \
+	  service.sh \
 	  shell-provision.sh \
 	  ssh-ping.sh \
 	  ssh.sh \
