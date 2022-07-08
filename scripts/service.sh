@@ -32,12 +32,12 @@ register_v6() {
 }
 
 
-deregister_v4() {
+unregister_v4() {
   pfctl -t cbsd -T delete $1
 }
 
 
-deregister_v6() {
+unregister_v6() {
   pfctl -t cbsd6 -T delete $1
 }
 
@@ -45,18 +45,17 @@ deregister_v6() {
 run() {
   rm -rf "${SOCKET}"
   /usr/bin/nc -k -l -U "${SOCKET}" | while read action inet ip; do
-    echo "action = ${action}, inet = ${inet}, ip = ${ip}"
     if [ "${action}" = "register" ]; then
       if [ "${inet}" = "ipv4" ]; then
         register_v4 ${ip}
       elif [ "${inet}" = "ipv6" ]; then
         register_v6 ${ip}
       fi
-    elif [ "${action}" = "deregister" ]; then
+    elif [ "${action}" = "unregister" ]; then
       if [ "${inet}" = "ipv4" ]; then
-        deregister_v4 ${ip}
+        unregister_v4 ${ip}
       elif [ "${inet}" = "ipv6" ]; then
-        deregister_v6 ${ip}
+        unregister_v6 ${ip}
       fi
     fi
   done
@@ -65,4 +64,7 @@ run() {
 run &
 MYPID=$!
 echo $$ >"${PID_FILE}"
+sleep 0.3
+chmod g+w "${SOCKET}"
+chown root:216 "${SOCKET}"
 wait

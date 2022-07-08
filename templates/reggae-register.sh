@@ -2,13 +2,14 @@
 
 ACTION=$1
 IP=$2
-NAME=`echo $3 | cut -f 1 -d '.'`
+NAME=`/bin/echo $3 | /usr/bin/cut -f 1 -d '.'`
 DOMAIN=$4
 
+SOCKET="/var/run/reggae/reggae.sock"
 ZONE_FILE="/usr/local/etc/nsd/zones/master/${DOMAIN}"
-REVERSE_ZONE=`echo ${IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
+REVERSE_ZONE=`/bin/echo ${IP} | /usr/bin/awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
 REVERSE_ZONE_FILE="/usr/local/etc/nsd/zones/master/${REVERSE_ZONE}"
-LAST_OCTET=`echo "${IP}" | awk -F '.' '{print $4}'`
+LAST_OCTET=`/bin/echo "${IP}" | /usr/bin/awk -F '.' '{print $4}'`
 
 
 /usr/bin/sed -i "" "/^.* *A *${IP}$/d" "${ZONE_FILE}"
@@ -17,13 +18,13 @@ LAST_OCTET=`echo "${IP}" | awk -F '.' '{print $4}'`
 
 
 if [ "${ACTION}" = "add" ]; then
-  /sbin/pfctl -t cbsd -T add $IP
+  /bin/echo "register ipv4 ${IP}" | /usr/bin/nc -U "${SOCKET}" -w 0
   if [ ! -z "${NAME}" ]; then
     /bin/echo "${NAME}    A   ${IP}" >>"${ZONE_FILE}"
     /bin/echo "${LAST_OCTET}    PTR   ${NAME}.${DOMAIN}." >>"${REVERSE_ZONE_FILE}"
   fi
 elif [ "${ACTION}" = "delete" ]; then
-  /sbin/pfctl -t cbsd -T delete $IP
+  /bin/echo "unregister ipv4 ${IP}" | /usr/bin/nc -U "${SOCKET}" -w 0
 fi
 
 /usr/local/bin/sudo /usr/local/sbin/nsd-control reload
