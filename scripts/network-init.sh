@@ -65,7 +65,7 @@ pf() {
       -e "s:JAIL_INTERFACE_IP:${JAIL_INTERFACE_IP}:g" \
       -e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
       -e "s:INTERFACE:${INTERFACE}:g" \
-      -e "s:NETWORK:${NETWORK}:g" \
+      -e "s:MASTER_IP:${MASTER_IP}:g" \
       "${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
   fi
   sysrc pflog_enable="YES"

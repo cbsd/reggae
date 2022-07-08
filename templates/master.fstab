@@ -1,1 +1,1 @@
-/var/unbound /var/unbound nullfs rw 0 0
+/var/run/reggae /var/run/reggae nullfs rw 0 0
