@@ -37,6 +37,10 @@ setup() {
   echo -e "FreeBSD: {\n    url: \"pkg+http://${PKG_MIRROR}/\${ABI}/${PKG_REPO}\",\n}">"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/pkg/repos/FreeBSD.conf"
   echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/sendmail"
   cp ${SCRIPT_DIR}/../templates/master.fstab "${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local"
+  echo "#!/bin/sh" >"${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
+  echo "ifconfig eth0 inet6 -ifdisabled auto_linklocal -accept_rtadv ${IPV6_PREFIX}:2" >>"${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
+  echo "route -6 add default ${IPV6_PREFIX}:1" >>"${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
+  chmod +x "${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
   cbsd jset jname=${SERVICE} b_order=0
   cbsd jstart ${SERVICE}
   cbsd jexec jname=${SERVICE} cmd="env ASSUME_ALWAYS_YES=YES pkg bootstrap"
