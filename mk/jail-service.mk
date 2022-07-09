@@ -1,5 +1,5 @@
 SUBTYPE ?= vnet
-DHCP ?= dhclient
+DHCP ?= dhcpcd
 INTERFACE != reggae get-config INTERFACE
 PKG_MIRROR_CONFIG != reggae get-config PKG_MIRROR
 PKG_REPO_CONFIG != reggae get-config PKG_REPO
@@ -178,7 +178,9 @@ setup:
 .endif
 .if ${SUBTYPE} != "linux"
 	@sudo cp ${REGGAE_PATH}/templates/netif ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/
+.if ${DHCP} != "dhcpcd"
 	@sudo cp ${REGGAE_PATH}/templates/rtsold ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/
+.endif
 .endif
 .if target(post_create)
 	@${MAKE} ${MAKEFLAGS} post_create

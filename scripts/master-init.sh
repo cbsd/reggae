@@ -55,9 +55,13 @@ setup() {
 
 dhcp() {
   cp ${SCRIPT_DIR}/../templates/dhcpd-hook.sh "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/"
+  cp ${SCRIPT_DIR}/../templates/dhcpd6-hook.sh "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/"
   chmod 755 "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/dhcpd-hook.sh"
+  chmod 755 "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/dhcpd6-hook.sh"
   cp ${SCRIPT_DIR}/../templates/reggae-register.sh "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/"
+  cp ${SCRIPT_DIR}/../templates/reggae-register6.sh "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/"
   chmod 755 "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/reggae-register.sh"
+  chmod 755 "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/reggae-register6.sh"
   DHCP_BASE=`echo ${MASTER_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
   DHCP_SUBNET_FIRST="${DHCP_BASE}.1"
   DHCP_SUBNET_LAST="${DHCP_BASE}.200"
