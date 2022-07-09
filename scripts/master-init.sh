@@ -40,6 +40,7 @@ setup() {
   echo "#!/bin/sh" >"${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
   echo "ifconfig eth0 inet6 -ifdisabled auto_linklocal -accept_rtadv ${IPV6_PREFIX}:2" >>"${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
   echo "route -6 add default ${IPV6_PREFIX}:1" >>"${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
+  echo "service isc-dhcpd6 restart" >>"${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
   chmod +x "${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
   cbsd jset jname=${SERVICE} b_order=0
   cbsd jstart ${SERVICE}
@@ -66,6 +67,10 @@ dhcp() {
     -e "s:DHCP_BASE:${DHCP_BASE}:g" \
     ${SCRIPT_DIR}/../templates/dhcpd.conf >"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/dhcpd.conf"
   sed \
+    -e "s;DOMAIN;${DOMAIN};g" \
+    -e "s;IPV6_PREFIX;${IPV6_PREFIX};g" \
+    ${SCRIPT_DIR}/../templates/dhcpd6.conf >"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/dhcpd6.conf"
+  sed \
     -e "s:MASTER_IP:${MASTER_IP}:g" \
     ${SCRIPT_DIR}/../templates/ip-by-mac.sh >"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/ip-by-mac.sh"
   chmod 755 "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/ip-by-mac.sh"
@@ -74,10 +79,15 @@ dhcp() {
   echo 'dhcpd_conf="/usr/local/etc/dhcpd.conf"' >>"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/dhcpd"
   echo 'dhcpd_withumask="022"' >>"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/dhcpd"
   echo 'dhcpd_withgroup="nsd"' >>"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/dhcpd"
+  echo 'dhcpd6_enable="YES"' >"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/dhcpd6"
+  echo 'dhcpd6_withumask="022"' >>"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/dhcpd6"
+  echo 'dhcpd6_withgroup="nsd"' >>"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/dhcpd6"
+  touch "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/var/db/dhcpd6.leases"
 
   cbsd jexec jname=${SERVICE} cmd="pw group mod nsd -m dhcpd"
   cbsd jexec jname=${SERVICE} cmd="pwd_mkdb /etc/master.passwd"
   cbsd jexec jname=${SERVICE} cmd="service isc-dhcpd restart"
+  cbsd jexec jname=${SERVICE} cmd="service isc-dhcpd6 restart"
 }
 
 
