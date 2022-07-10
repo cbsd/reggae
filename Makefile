@@ -18,6 +18,7 @@ TEMPLATES = Makefile.project \
 	    cloud-initial.sh \
 	    devfs.rules \
 	    dhcpd-hook.sh \
+	    dhcpd6-hook.sh \
 	    dhcpd.conf \
 	    dhcpd6.conf \
 	    dhcpcd.conf \
@@ -38,6 +39,7 @@ TEMPLATES = Makefile.project \
 	    pf.conf \
 	    pkg.conf \
 	    reggae-register.sh \
+	    reggae-register6.sh \
 	    resolvconf.conf \
 	    rtadvd.conf \
 	    rtsold \
