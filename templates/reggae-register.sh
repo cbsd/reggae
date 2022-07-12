@@ -140,7 +140,11 @@ alter_host() {
       /bin/echo "register ipv4 ${IP}" | /usr/bin/nc -U "${SOCKET}" -w 0
       if [ ! -z "${NAME}" ]; then
         /bin/echo "${NAME}    A   ${IP}" >>"${ZONE_FILE}"
-        /bin/echo "${IP_REVERSE}    PTR   ${NAME}.${DOMAIN}." >>"${REVERSE_ZONE_FILE}"
+        if [ "${NAME}" = "@" ]; then
+          /bin/echo "${IP_REVERSE}    PTR   ${DOMAIN}." >>"${REVERSE_ZONE_FILE}"
+        else
+          /bin/echo "${IP_REVERSE}    PTR   ${NAME}.${DOMAIN}." >>"${REVERSE_ZONE_FILE}"
+        fi
       fi
     elif [ "${ACTION}" = "delete" ]; then
       /bin/echo "unregister ipv4 ${IP}" | /usr/bin/nc -U "${SOCKET}" -w 0
@@ -150,7 +154,11 @@ alter_host() {
       /bin/echo "register ipv6 ${IP}" | /usr/bin/nc -U "${SOCKET}" -w 0
       if [ ! -z "${NAME}" ]; then
         /bin/echo "${NAME}    AAAA   ${IP}" >>"${ZONE_FILE}"
-        /bin/echo "${IP_REVERSE}    PTR   ${NAME}.${DOMAIN}." >>"${REVERSE_ZONE_FILE}"
+        if [ "${NAME}" = "@" ]; then
+          /bin/echo "${IP_REVERSE}    PTR   ${DOMAIN}." >>"${REVERSE_ZONE_FILE}"
+        else
+          /bin/echo "${IP_REVERSE}    PTR   ${NAME}.${DOMAIN}." >>"${REVERSE_ZONE_FILE}"
+        fi
       fi
     elif [ "${ACTION}" = "delete" ]; then
       /bin/echo "unregister ipv6 ${IP}" | /usr/bin/nc -U "${SOCKET}" -w 0
