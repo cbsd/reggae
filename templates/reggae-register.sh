@@ -131,6 +131,7 @@ cleanup() {
   /usr/bin/sed -i "" "/^.* *${RECORD} *${IP}$/d" "${ZONE_FILE}"
   /usr/bin/sed -i "" "/^${NAME} *${RECORD} *.*$/d" "${ZONE_FILE}"
   /usr/bin/sed -i "" "/^${IP_REVERSE} *PTR *.*/d" "${REVERSE_ZONE_FILE}"
+  /usr/bin/sed -i "" "/^.* *PTR *${NAME}.${DOMAIN}/d" "${REVERSE_ZONE_FILE}"
 }
 
 
