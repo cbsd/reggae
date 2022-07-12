@@ -55,13 +55,9 @@ setup() {
 
 dhcp() {
   cp ${SCRIPT_DIR}/../templates/dhcpd-hook.sh "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/"
-  cp ${SCRIPT_DIR}/../templates/dhcpd6-hook.sh "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/"
   chmod 755 "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/dhcpd-hook.sh"
-  chmod 755 "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/dhcpd6-hook.sh"
   cp ${SCRIPT_DIR}/../templates/reggae-register.sh "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/"
-  cp ${SCRIPT_DIR}/../templates/reggae-register6.sh "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/"
   chmod 755 "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/reggae-register.sh"
-  chmod 755 "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/reggae-register6.sh"
   DHCP_BASE=`echo ${MASTER_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
   DHCP_SUBNET_FIRST="${DHCP_BASE}.1"
   DHCP_SUBNET_LAST="${DHCP_BASE}.200"
@@ -99,10 +95,6 @@ dhcp() {
 
 
 dns() {
-  REVERSE_ZONE=`echo ${INTERFACE_IP} | awk -F '.' '{print $3 "." $2 "." $1 ".in-addr.arpa"}'`
-  REVERSE_ZONE_FILE="${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/nsd/zones/master/${REVERSE_ZONE}"
-  LAST_OCTET=`echo "${INTERFACE_IP}" | awk -F '.' '{print $4}'`
-
   echo 'nsd_enable="YES"' >"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/nsd"
   mkdir -p "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/nsd/zones/master"
   mkdir -p "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/nsd/zones/slave"
@@ -111,21 +103,12 @@ dns() {
     -e "s:REVERSE:${REVERSE_ZONE}:g" \
     "${SCRIPT_DIR}/../templates/nsd.conf" >${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/nsd/nsd.conf
 
-  ZONE_FILE="${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/nsd/zones/master/${DOMAIN}"
-  sed \
-    -e "s:DOMAIN:${DOMAIN}:g" \
-    -e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
-    "${SCRIPT_DIR}/../templates/cbsd.zone" >"${ZONE_FILE}"
-  sed \
-    -e "s:DOMAIN:${DOMAIN}:g" \
-    -e "s:ZONE:${REVERSE_ZONE}:g" \
-    -e "s:LAST_OCTET:${LAST_OCTET}:g" \
-    "${SCRIPT_DIR}/../templates/cbsd_reverse.zone" >"${REVERSE_ZONE_FILE}"
-
   chmod -R g+w ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/nsd
   chown -R root:216 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/nsd
   cbsd jexec jname=${SERVICE} cmd="nsd-control-setup"
   cbsd jexec jname=${SERVICE} cmd="service nsd restart"
+  cbsd jexec jname=${SERVICE} cmd="/usr/local/bin/reggae-register.sh ipv4 add ${INTERFACE_IP} @ ${DOMAIN}"
+  cbsd jexec jname=${SERVICE} cmd="/usr/local/bin/reggae-register.sh ipv6 add ${IPV6_PREFIX}:1 @ ${DOMAIN}"
 }
 
 

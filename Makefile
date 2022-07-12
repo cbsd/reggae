@@ -12,13 +12,10 @@ TEMPLATES = Makefile.project \
 	    cbsd.conf.tpl \
 	    cbsd-bhyve.conf.tpl \
 	    cbsd-vnet.conf.tpl \
-	    cbsd.zone \
-	    cbsd_reverse.zone \
 	    cloud-devops.sh \
 	    cloud-initial.sh \
 	    devfs.rules \
 	    dhcpd-hook.sh \
-	    dhcpd6-hook.sh \
 	    dhcpd.conf \
 	    dhcpd6.conf \
 	    dhcpcd.conf \
@@ -39,7 +36,6 @@ TEMPLATES = Makefile.project \
 	    pf.conf \
 	    pkg.conf \
 	    reggae-register.sh \
-	    reggae-register6.sh \
 	    resolvconf.conf \
 	    rtadvd.conf \
 	    rtsold \
