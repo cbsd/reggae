@@ -11,7 +11,7 @@ export ZONE_FILE="/usr/local/etc/nsd/zones/master/${DOMAIN}"
 
 expand_address() {
   ip=$1
-  double_color_exists=`grep -o '::'`
+  double_color_exists=`echo ${ip} | grep -o '::'`
   if [ -z "${double_color_exists}" ]; then
     echo "${ip}"
     return
