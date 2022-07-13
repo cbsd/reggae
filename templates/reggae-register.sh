@@ -185,14 +185,17 @@ fi
 
 if [ ! -e "${ZONE_FILE}" ]; then
   create_zone
+  /usr/local/bin/sudo /usr/sbin/service nsd restart
 fi
 
 if [ ! -e "${REVERSE_ZONE_FILE}" ]; then
   create_reverse_zone
+  /usr/local/bin/sudo /usr/sbin/service nsd restart
 fi
 
 
 cleanup
 alter_host
 
-/usr/local/bin/sudo /usr/local/sbin/nsd-control reload
+/usr/local/bin/sudo /usr/local/sbin/nsd-control reload ${DOMAIN}
+/usr/local/bin/sudo /usr/local/sbin/nsd-control reload ${REVERSE_ZONE}
