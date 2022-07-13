@@ -109,6 +109,8 @@ dns() {
   cbsd jexec jname=${SERVICE} cmd="service nsd restart"
   cbsd jexec jname=${SERVICE} cmd="/usr/local/bin/reggae-register.sh ipv4 add ${INTERFACE_IP} @ ${DOMAIN}"
   cbsd jexec jname=${SERVICE} cmd="/usr/local/bin/reggae-register.sh ipv6 add ${IPV6_PREFIX}:1 @ ${DOMAIN}"
+  cbsd jexec jname=${SERVICE} cmd="/usr/local/bin/reggae-register.sh ipv4 add ${MASTER_IP} network ${DOMAIN}"
+  cbsd jexec jname=${SERVICE} cmd="/usr/local/bin/reggae-register.sh ipv6 add ${IPV6_PREFIX}:2 network ${DOMAIN}"
 }
 
 
