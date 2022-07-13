@@ -44,7 +44,7 @@ unregister_v6() {
 
 run() {
   rm -rf "${SOCKET}"
-  /usr/bin/nc -k -l -U "${SOCKET}" | while read action inet ip; do
+  /usr/bin/nc -k -l -U "${SOCKET}" | while read action inet ip fqdn; do
     if [ "${action}" = "register" ]; then
       if [ "${inet}" = "ipv4" ]; then
         register_v4 ${ip}
@@ -58,6 +58,7 @@ run() {
         unregister_v6 ${ip}
       fi
     fi
+    /usr/sbin/local-unbound-control flush ${fqdn}
   done
 }
 
