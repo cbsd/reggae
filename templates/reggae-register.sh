@@ -131,13 +131,13 @@ cleanup() {
   /usr/bin/sed -i "" "/^.* *${RECORD} *${IP}$/d" "${ZONE_FILE}"
   /usr/bin/sed -i "" "/^${NAME} *${RECORD} *.*$/d" "${ZONE_FILE}"
   /usr/bin/sed -i "" "/^${IP_REVERSE} *PTR *.*/d" "${REVERSE_ZONE_FILE}"
+  /usr/bin/sed -i "" "/^.* *PTR *${NAME}.${DOMAIN}/d" "${REVERSE_ZONE_FILE}"
 }
 
 
 alter_host() {
   if [ "${INET}" = "ipv4" ]; then
     if [ "${ACTION}" = "add" ]; then
-      /bin/echo "register ipv4 ${IP}" | /usr/bin/nc -U "${SOCKET}" -w 0
       if [ ! -z "${NAME}" ]; then
         /bin/echo "${NAME}    A   ${IP}" >>"${ZONE_FILE}"
         if [ "${NAME}" = "@" ]; then
@@ -146,12 +146,12 @@ alter_host() {
           /bin/echo "${IP_REVERSE}    PTR   ${NAME}.${DOMAIN}." >>"${REVERSE_ZONE_FILE}"
         fi
       fi
+      /bin/echo "register ipv4 ${IP} ${NAME}${DOMAIN}" | /usr/bin/nc -U "${SOCKET}" -w 0
     elif [ "${ACTION}" = "delete" ]; then
-      /bin/echo "unregister ipv4 ${IP}" | /usr/bin/nc -U "${SOCKET}" -w 0
+      /bin/echo "unregister ipv4 ${IP} ${NAME}${DOMAIN}" | /usr/bin/nc -U "${SOCKET}" -w 0
     fi
   elif [ "${INET}" = "ipv6" ]; then
     if [ "${ACTION}" = "add" ]; then
-      /bin/echo "register ipv6 ${IP}" | /usr/bin/nc -U "${SOCKET}" -w 0
       if [ ! -z "${NAME}" ]; then
         /bin/echo "${NAME}    AAAA   ${IP}" >>"${ZONE_FILE}"
         if [ "${NAME}" = "@" ]; then
@@ -160,8 +160,9 @@ alter_host() {
           /bin/echo "${IP_REVERSE}    PTR   ${NAME}.${DOMAIN}." >>"${REVERSE_ZONE_FILE}"
         fi
       fi
+      /bin/echo "register ipv6 ${IP} ${NAME}${DOMAIN}" | /usr/bin/nc -U "${SOCKET}" -w 0
     elif [ "${ACTION}" = "delete" ]; then
-      /bin/echo "unregister ipv6 ${IP}" | /usr/bin/nc -U "${SOCKET}" -w 0
+      /bin/echo "unregister ipv6 ${IP} ${NAME}${DOMAIN}" | /usr/bin/nc -U "${SOCKET}" -w 0
     fi
   fi
 }
