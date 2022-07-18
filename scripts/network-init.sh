@@ -67,6 +67,7 @@ pf() {
       -e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
       -e "s:INTERFACE:${INTERFACE}:g" \
       -e "s:MASTER_IP:${MASTER_IP}:g" \
+      -e "s:IPV6_PREFIX:${IPV6_PREFIX}:g" \
       "${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
   fi
   sysrc pflog_enable="YES"
