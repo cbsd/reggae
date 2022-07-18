@@ -2,6 +2,8 @@
 
 PROVISIONERS += ansible
 ANSIBLE != sh -c "which ansible || true"
+PYTHON_MAJOR = 3
+PYTHON_MINOR = 9
 
 provision-ansible: setup-ansible
 	@sudo rm -rf ansible/site.retry
@@ -39,7 +41,7 @@ setup-ansible:
 	@echo "!!! Trying to install one         !!!"
 	@echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 	@echo
-	@sudo pkg install py38-ansible
+	@sudo pkg install py${PYTHON_MAJOR}${PYTHON_MINOR}-ansible
 .endif
 .if target(post_setup_ansible)
 	@${MAKE} ${MAKEFLAGS} post_setup_ansible
