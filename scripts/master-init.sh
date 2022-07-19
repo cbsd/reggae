@@ -45,6 +45,7 @@ setup() {
   echo "#!/bin/sh" >"${CBSD_WORKDIR}/jails-system/network/master_poststart.d/reggae.sh"
   echo "service reggae onerestart" >>"${CBSD_WORKDIR}/jails-system/network/master_poststart.d/reggae.sh"
   chmod +x "${CBSD_WORKDIR}/jails-system/network/master_poststart.d/reggae.sh"
+  mkdir /var/run/reggae &>/dev/null
   cbsd jset jname=${SERVICE} b_order=0
   cbsd jstart ${SERVICE}
   cbsd jexec jname=${SERVICE} cmd="env ASSUME_ALWAYS_YES=YES pkg bootstrap"
