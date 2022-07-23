@@ -3,7 +3,6 @@
 # CBSD_WORKDIR="/usr/cbsd"
 # MASTER_IP="172.16.0.253"
 # DOMAIN=`hostname`
-# USE_ZFS="yes"
 # INTERFACE="cbsd0"
 # INTERFACE_IP="172.16.0.254"
 # JAIL_INTERFACE_IP="172.16.1.254"
@@ -13,3 +12,6 @@
 # PKG_REPO="latest"
 # PKG_PROXY="no"
 # IPV6_PREFIX="fd10:6c79:8ae5:8b91:"
+# USE_ZFS="yes"
+# USE_IPV4="yes"
+# USE_IPV6="yes"
