@@ -38,7 +38,7 @@ check_config() {
 }
 
 
-network() {
+setup_network() {
   interface_config="inet ${INTERFACE_IP} netmask 255.255.255.0 description ${EGRESS}"
   interface_alias_config="inet ${JAIL_INTERFACE_IP} netmask 255.255.255.0"
   interface_ipv6_config="inet6 -ifdisabled auto_linklocal ${IPV6_PREFIX}:1"
@@ -59,15 +59,15 @@ network() {
 }
 
 
-pf() {
+setup_pf() {
   if [ ! -e /etc/pf.conf ]; then
     sed \
-      -e "s:EGRESS:${EGRESS}:g" \
-      -e "s:JAIL_INTERFACE_IP:${JAIL_INTERFACE_IP}:g" \
-      -e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
-      -e "s:INTERFACE:${INTERFACE}:g" \
-      -e "s:MASTER_IP:${MASTER_IP}:g" \
-      -e "s:IPV6_PREFIX:${IPV6_PREFIX}:g" \
+      -e "s;EGRESS;${EGRESS};g" \
+      -e "s;JAIL_INTERFACE_IP;${JAIL_INTERFACE_IP};g" \
+      -e "s;INTERFACE_IP;${INTERFACE_IP};g" \
+      -e "s;INTERFACE;${INTERFACE};g" \
+      -e "s;MASTER_IP;${MASTER_IP};g" \
+      -e "s;IPV6_PREFIX;${IPV6_PREFIX};g" \
       "${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
   fi
   sysrc pflog_enable="YES"
@@ -143,8 +143,8 @@ setup_unbound() {
 
 
 check_config
-network
-pf
+setup_network
+setup_pf
 setup_hostname
 setup_rtadvd
 setup_nfs
