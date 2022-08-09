@@ -19,6 +19,7 @@ IPV6_PREFIX=`reggae get-config IPV6_PREFIX`
 STATIC=NO
 MASTER_IP=`reggae get-config MASTER_IP`
 NETWORK=`echo ${MASTER_IP} | awk -F '.' '{print $1 "." $2 "." $3 ".0/24"}'`
+USE_IPV6=`reggae get-config USE_IPV6`
 
 
 if [ -z "${DHCP_CONFIG}" ]; then
@@ -87,9 +88,11 @@ setup_hostname() {
 
 
 setup_rtadvd() {
-  sysrc rtadvd_enable="YES"
-  sysrc rtadvd_interfaces="cbsd0"
-  cp "${SCRIPT_DIR}/../templates/rtadvd.conf" /etc/rtadvd.conf
+  if [ "${USE_IPV6}" = "yes" ]; then
+    sysrc rtadvd_enable="YES"
+    sysrc rtadvd_interfaces="cbsd0"
+    cp "${SCRIPT_DIR}/../templates/rtadvd.conf" /etc/rtadvd.conf
+  fi
 }
 
 
