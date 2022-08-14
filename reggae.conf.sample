@@ -2,9 +2,11 @@
 
 # CBSD_WORKDIR="/usr/cbsd"
 # MASTER_IP="172.16.0.253"
+# MASTER_IP6=":2"
 # DOMAIN=`hostname`
 # INTERFACE="cbsd0"
 # INTERFACE_IP="172.16.0.254"
+# INTERFACE_IP6=":1"
 # JAIL_INTERFACE_IP="172.16.1.254"
 # ZFS_POOL="zroot"
 # PROJECTS_DIR="/home/user/reggae/repos"
