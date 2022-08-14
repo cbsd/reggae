@@ -85,7 +85,6 @@ dhcp() {
     sed \
       -e "s;DOMAIN;${DOMAIN};g" \
       -e "s;IPV6_PREFIX;${IPV6_PREFIX};g" \
-      -e "s;MASTER_IP6;${MASTER_IP6};g" \
       -e "s;INTERFACE_IP6;${INTERFACE_IP6};g" \
       ${SCRIPT_DIR}/../templates/dhcpd6.conf >"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/dhcpd6.conf"
     echo 'dhcpd6_enable="YES"' >"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/dhcpd6"
