@@ -40,6 +40,13 @@ setup_network() {
   interface_config="inet ${INTERFACE_IP} netmask 255.255.255.0 description ${EGRESS}"
   interface_alias_config="inet ${JAIL_INTERFACE_IP} netmask 255.255.255.0"
   interface_ipv6_config="inet6 -ifdisabled auto_linklocal ${IPV6_PREFIX}${INTERFACE_IP6}"
+  BRIDGE_MEMBERS_CONFIG=""
+  for member in ${BRIDGE_MEMBERS}; do
+    BRIDGE_MEMBERS_CONFIG="addm ${member}"
+  done
+  if [ ! -z "${BRIDGE_MEMBERS_CONFIG}" ]; then
+    interface_config="${interface_config} ${BRIDGE_MEMBERS_CONFIG}"
+  fi
   sysctl net.inet.ip.forwarding=1
   sysctl net.inet6.ip6.forwarding=1
   sysrc gateway_enable="YES"
@@ -90,7 +97,10 @@ setup_rtadvd() {
   if [ "${USE_IPV6}" = "yes" ]; then
     sysrc rtadvd_enable="YES"
     sysrc rtadvd_interfaces="cbsd0"
-    cp "${SCRIPT_DIR}/../templates/rtadvd.conf" /etc/rtadvd.conf
+    sed \
+      -e "s;INTERFACE;${INTERFACE};g" \
+      -e "s;IPV6_PREFIX;${IPV6_PREFIX};g" \
+      "${SCRIPT_DIR}/../templates/rtadvd.conf" >/etc/rtadvd.conf
   fi
 }
 
@@ -104,10 +114,11 @@ setup_nfs() {
   sysrc rpcbind_enable="YES"
 
   if [ -e /etc/exports ]; then
-    cp /etc/exports "${TMP_EXPORTS}"
+    egrep -v '^V4:' /etc/exports >"${TMP_EXPORTS}"
   fi
   echo "${PROJECTS_DIR} -alldirs -network ${INTERFACE_IP} -mask 255.255.255.0" -maproot=root >>"${TMP_EXPORTS}"
   sort "${TMP_EXPORTS}" | uniq > /etc/exports
+  echo "V4: /" >>/etc/exports
 
   service rpcbind start
   service nfsd start
