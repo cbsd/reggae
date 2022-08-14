@@ -17,3 +17,4 @@
 # USE_ZFS="yes"
 # USE_IPV4="yes"
 # USE_IPV6="yes"
+# BRIDGE_MEMBERS=""
