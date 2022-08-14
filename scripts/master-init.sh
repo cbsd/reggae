@@ -47,6 +47,7 @@ setup() {
   fi
   echo "#!/bin/sh" >"${CBSD_WORKDIR}/jails-system/network/master_poststart.d/reggae.sh"
   echo "service reggae onerestart" >>"${CBSD_WORKDIR}/jails-system/network/master_poststart.d/reggae.sh"
+  echo "service reggae_pf onerestart" >>"${CBSD_WORKDIR}/jails-system/network/master_poststart.d/reggae.sh"
   chmod +x "${CBSD_WORKDIR}/jails-system/network/master_poststart.d/reggae.sh"
   mkdir /var/run/reggae &>/dev/null
   cbsd jset jname=${SERVICE} b_order=0
