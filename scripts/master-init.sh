@@ -14,11 +14,6 @@ DHCP_CONFIG=`echo ${EGRESS_CONFIG} | grep -io dhcp`
 NODEIP=`ifconfig ${EGRESS} | awk '/inet /{print $2}'`
 TEMP_MASTER_CONF=`mktemp`
 TEMP_DHCP_CONF=`mktemp`
-PKG_PROXY=`reggae get-config PKG_PROXY`
-USE_IPV4=`reggae get-config USE_IPV4`
-USE_IPV6=`reggae get-config USE_IPV6`
-IPV6_PREFIX=`reggae get-config IPV6_PREFIX`
-INTERFACE_IP=`reggae get-config INTERFACE_IP`
 export VER=${VER:="native"}
 SERVICE="network"
 
@@ -45,8 +40,8 @@ setup() {
   cp ${SCRIPT_DIR}/../templates/master.fstab "${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local"
   if [ "${USE_IPV6}" = "yes" ]; then
     echo "#!/bin/sh" >"${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
-    echo "ifconfig eth0 inet6 -ifdisabled auto_linklocal -accept_rtadv ${IPV6_PREFIX}:2" >>"${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
-    echo "route -6 add default ${IPV6_PREFIX}:1" >>"${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
+    echo "ifconfig eth0 inet6 -ifdisabled auto_linklocal -accept_rtadv ${IPV6_PREFIX}${MASTER_IP6}" >>"${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
+    echo "route -6 add default ${IPV6_PREFIX}${INTERFACE_IP6}" >>"${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
     echo "service isc-dhcpd6 restart" >>"${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
     chmod +x "${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
   fi
@@ -89,6 +84,8 @@ dhcp() {
     sed \
       -e "s;DOMAIN;${DOMAIN};g" \
       -e "s;IPV6_PREFIX;${IPV6_PREFIX};g" \
+      -e "s;MASTER_IP6;${MASTER_IP6};g" \
+      -e "s;INTERFACE_IP6;${INTERFACE_IP6};g" \
       ${SCRIPT_DIR}/../templates/dhcpd6.conf >"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/dhcpd6.conf"
     echo 'dhcpd6_enable="YES"' >"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/dhcpd6"
     echo 'dhcpd6_withumask="022"' >>"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/dhcpd6"
@@ -127,8 +124,8 @@ dns() {
     cbsd jexec jname=${SERVICE} cmd="/usr/local/bin/reggae-register.sh ipv4 add ${MASTER_IP} network ${DOMAIN}"
   fi
   if [ "${USE_IPV6}" = "yes" ]; then
-    cbsd jexec jname=${SERVICE} cmd="/usr/local/bin/reggae-register.sh ipv6 add ${IPV6_PREFIX}:1 @ ${DOMAIN}"
-    cbsd jexec jname=${SERVICE} cmd="/usr/local/bin/reggae-register.sh ipv6 add ${IPV6_PREFIX}:2 network ${DOMAIN}"
+    cbsd jexec jname=${SERVICE} cmd="/usr/local/bin/reggae-register.sh ipv6 add ${IPV6_PREFIX}${MASTER_IP6} @ ${DOMAIN}"
+    cbsd jexec jname=${SERVICE} cmd="/usr/local/bin/reggae-register.sh ipv6 add ${IPV6_PREFIX}${MASTER_IP6} network ${DOMAIN}"
   fi
 }
 

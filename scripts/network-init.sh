@@ -15,11 +15,8 @@ NATIP=`netstat -rn4 | awk '/^default/{print $2}'`
 EGRESS=`netstat -rn4 | awk '/^default/{print $4}'`
 EGRESS_CONFIG=`sysrc -n ifconfig_${EGRESS}`
 DHCP_CONFIG=`echo ${EGRESS_CONFIG} | grep -io dhcp`
-IPV6_PREFIX=`reggae get-config IPV6_PREFIX`
 STATIC=NO
-MASTER_IP=`reggae get-config MASTER_IP`
 NETWORK=`echo ${MASTER_IP} | awk -F '.' '{print $1 "." $2 "." $3 ".0/24"}'`
-USE_IPV6=`reggae get-config USE_IPV6`
 
 
 if [ -z "${DHCP_CONFIG}" ]; then
@@ -42,7 +39,7 @@ check_config() {
 setup_network() {
   interface_config="inet ${INTERFACE_IP} netmask 255.255.255.0 description ${EGRESS}"
   interface_alias_config="inet ${JAIL_INTERFACE_IP} netmask 255.255.255.0"
-  interface_ipv6_config="inet6 -ifdisabled auto_linklocal ${IPV6_PREFIX}:1"
+  interface_ipv6_config="inet6 -ifdisabled auto_linklocal ${IPV6_PREFIX}${INTERFACE_IP6}"
   sysctl net.inet.ip.forwarding=1
   sysctl net.inet6.ip6.forwarding=1
   sysrc gateway_enable="YES"
@@ -64,11 +61,13 @@ setup_pf() {
   if [ ! -e /etc/pf.conf ]; then
     sed \
       -e "s;EGRESS;${EGRESS};g" \
+      -e "s;IPV6_PREFIX;${IPV6_PREFIX};g" \
+      -e "s;MASTER_IP6;${MASTER_IP6};g" \
+      -e "s;INTERFACE_IP6;${INTERFACE_IP6};g" \
       -e "s;JAIL_INTERFACE_IP;${JAIL_INTERFACE_IP};g" \
       -e "s;INTERFACE_IP;${INTERFACE_IP};g" \
       -e "s;INTERFACE;${INTERFACE};g" \
       -e "s;MASTER_IP;${MASTER_IP};g" \
-      -e "s;IPV6_PREFIX;${IPV6_PREFIX};g" \
       "${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
   fi
   sysrc pflog_enable="YES"
@@ -119,22 +118,26 @@ setup_nfs() {
 
 setup_unbound() {
   REVERSE_ZONE=`get_zone ipv4 ${INTERFACE_IP}`
-  REVERSEV6=`get_zone ipv6 ${IPV6_PREFIX}:1`
+  REVERSEV6=`get_zone ipv6 ${IPV6_PREFIX}${MASTER_IP6}`
 
   sysrc local_unbound_enable="YES"
   sysrc local_unbound_tls="NO"
   fetch -o /var/unbound/root.hints https://www.internic.net/domain/named.cache
+  resolvconf -u
   service local_unbound restart
   sed \
-    -e "s:JAIL_INTERFACE_IP:${JAIL_INTERFACE_IP}:g" \
-    -e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
+    -e "s;JAIL_INTERFACE_IP;${JAIL_INTERFACE_IP};g" \
+    -e "s;IPV6_PREFIX;${IPV6_PREFIX};g" \
+    -e "s;INTERFACE_IP6;${INTERFACE_IP6};g" \
+    -e "s;INTERFACE_IP;${INTERFACE_IP};g" \
     "${SCRIPT_DIR}/../templates/unbound.conf" >/var/unbound/unbound.conf
   sed \
-    -e "s:DOMAIN:${DOMAIN}:g" \
-    -e "s:MASTER_IP:${MASTER_IP}:g" \
+    -e "s;DOMAIN;${DOMAIN};g" \
     -e "s;IPV6_PREFIX;${IPV6_PREFIX};g" \
+    -e "s;MASTER_IP6;${MASTER_IP6};g" \
     -e "s;REVERSEV6;${REVERSEV6};g" \
-    -e "s:REVERSE:${REVERSE_ZONE}:g" \
+    -e "s;REVERSE;${REVERSE_ZONE};g" \
+    -e "s;MASTER_IP;${MASTER_IP};g" \
     "${SCRIPT_DIR}/../templates/unbound_cbsd.conf" >/var/unbound/cbsd.conf
   cp "${SCRIPT_DIR}/../templates/unbound_control.conf" /var/unbound/control.conf
   cp "${SCRIPT_DIR}/../templates/resolvconf.conf" /etc/resolvconf.conf
