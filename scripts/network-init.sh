@@ -42,7 +42,7 @@ setup_network() {
   interface_ipv6_config="inet6 -ifdisabled auto_linklocal ${IPV6_PREFIX}${INTERFACE_IP6}"
   BRIDGE_MEMBERS_CONFIG=""
   for member in ${BRIDGE_MEMBERS}; do
-    BRIDGE_MEMBERS_CONFIG="addm ${member}"
+    BRIDGE_MEMBERS_CONFIG="${BRIDGE_MEMBERS_CONFIG} addm ${member}"
   done
   if [ ! -z "${BRIDGE_MEMBERS_CONFIG}" ]; then
     interface_config="${interface_config} ${BRIDGE_MEMBERS_CONFIG}"
