@@ -156,7 +156,7 @@ setup:
 .endif
 	@sudo cp ${REGGAE_PATH}/templates/export-ports.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d
 	@sudo sed -i "" \
-		-e "s;PRTS;${PORTS};g" \
+		-e "s;PORTS;${PORTS};g" \
 		${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/export-ports.sh
 	@sudo chmod 700 ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d/export-ports.sh
 	@sudo cp ${REGGAE_PATH}/templates/xorg.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d
