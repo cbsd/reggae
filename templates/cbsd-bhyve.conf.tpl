@@ -35,7 +35,7 @@ vm_ram="1g";
 # profile os type
 vm_os_type="freebsd";
 # vm defaults/setting profile
-vm_os_profile="cloud-FreeBSD-zfs-x64-12.1";
+vm_os_profile="cloud-FreeBSD-zfs-x64-VERSION";
 # end of Bhyve minimal configuration
 
 emulator="bhyve";
@@ -46,13 +46,13 @@ vm_efi="uefi";
 # source site's for iso
 iso_site="https://mirror.bsdstore.ru/cloud/";
 # iso image filename
-iso_img="FreeBSD-zfs-12.1-RELEASE-amd64.raw";
+iso_img="FreeBSD-zfs-VERSION-RELEASE-amd64.raw";
 # iso image type?
 iso_img_type="cloud";
 # register ISO as name
-register_iso_name="cbsd-cloud-FreeBSD-zfs-12.1-RELEASE-amd64.raw"
+register_iso_name="cbsd-cloud-FreeBSD-zfs-VERSION-RELEASE-amd64.raw"
 # register ISO as
-register_iso_as="cloud-FreeBSD-zfs-x64-12.1-RELEASE-amd64"
+register_iso_as="cloud-FreeBSD-zfs-x64-VERSION-RELEASE-amd64"
 # vm hostbridge
 vm_hostbridge="hostbridge";
 # additional bhyve flags
@@ -62,7 +62,7 @@ virtio_type="";
 # swap size for vm-from-jail
 swapsize="";
 # path to iso image
-vm_iso_path="cloud-FreeBSD-zfs-x64-12.1-RELEASE-amd64";
+vm_iso_path="cloud-FreeBSD-zfs-x64-VERSION-RELEASE-amd64";
 # guest fs for vm-from-jail
 vm_guestfs="ufs";
 # VNC port
@@ -124,8 +124,7 @@ ci_jname='SERVICE';
 ci_fqdn='SERVICE.DOMAIN';
 ci_template='centos7';
 ci_interface='vtnet0';
-ci_ip4_addr='10.0.0.222';
-ci_gw4='10.0.0.254';
+ci_ip4_addr='DHCP';
 ci_nameserver_address='MASTER_IP';
 ci_nameserver_search='DOMAIN';
 ci_adjust_inteface_helper='0';
