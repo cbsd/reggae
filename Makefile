@@ -10,7 +10,7 @@ BIN_FILES = reggae
 TEMPLATES = Makefile.project \
 	    Makefile.service \
 	    cbsd.conf.tpl \
-	    cbsd-bhyve.conf.tpl \
+	    cbsd-bhyve.freebsd.conf.tpl \
 	    cbsd-vnet.conf.tpl \
 	    cloud-devops.sh \
 	    cloud-initial.sh \
