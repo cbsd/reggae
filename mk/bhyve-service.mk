@@ -3,8 +3,13 @@ INTERFACE != reggae get-config INTERFACE
 INTERFACE_IP != reggae get-config INTERFACE_IP
 MASTER_IP != reggae get-config MASTER_IP
 PROJECTS_DIR != reggae get-config PROJECTS_DIR
+VERSION ?= "native"
 CPU ?= 1
 MEM ?= "1G"
+
+.if ${VERSION} == "native"
+VERSION != freebsd-version | sed -e 's/-RELEASE.*//'
+.endif
 
 .if target(pre_up)
 up: ${DATA_DIR} pre_up
@@ -46,6 +51,7 @@ ${DATA_DIR}:
 		-e "s:MASTER_IP:${MASTER_IP}:g" \
 		-e "s:INTERFACE_IP:${INTERFACE_IP}:g" \
 		-e "s:INTERFACE:${INTERFACE}:g" \
+		-e "s:VERSION:${VERSION}:g" \
 		${REGGAE_PATH}/templates/cbsd-bhyve.conf.tpl >cbsd.conf
 	@sudo cbsd bcreate jconf=${PWD}/cbsd.conf
 	@sudo cp ${REGGAE_PATH}/templates/cloud-init/user-data ${CBSD_WORKDIR}/jails-system/${SERVICE}/cloud-init

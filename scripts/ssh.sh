@@ -22,6 +22,7 @@ fi
 ssh_cmd="ssh -t -i ${PROJECT_ROOT}/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${USER}@${IP} ${@}"
 
 if [ "${VERBOSE}" = "yes" ]; then
+  echo "ssh_cmd=${ssh_cmd}"
   ${ssh_cmd}
 else
   ${ssh_cmd} >/dev/null 2>&1

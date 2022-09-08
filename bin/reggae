@@ -4,7 +4,7 @@ SCRIPT_ROOT="${SCRIPT_ROOT:=/usr/local/share/reggae/scripts}"
 
 help() {
   echo "Usage: $0 <action>"
-  echo -n "  where action is 'init', 'network-init', 'cbsd-init'"
+  echo -n "  where action is 'init', 'bhyve-init', 'network-init', 'cbsd-init'"
   echo ", 'master-init', 'register' or 'deregister'"
 }
 
