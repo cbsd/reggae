@@ -4,7 +4,7 @@
 EXPORTED_PORTS=""
 DOMAIN=`reggae get-config DOMAIN`
 
-for port in PORTS; do
+for port in PRTS; do
   if [ -z "${EXPORTED_PORTS}" ]; then
     EXPORTED_PORTS="${port}"
   else
