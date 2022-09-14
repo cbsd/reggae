@@ -40,27 +40,39 @@ setup_network() {
   interface_config="inet ${INTERFACE_IP} netmask 255.255.255.0 description ${EGRESS}"
   interface_alias_config="inet ${JAIL_INTERFACE_IP} netmask 255.255.255.0"
   interface_ipv6_config="inet6 -ifdisabled auto_linklocal ${IPV6_PREFIX}${INTERFACE_IP6}"
+
   BRIDGE_MEMBERS_CONFIG=""
   for member in ${BRIDGE_MEMBERS}; do
     BRIDGE_MEMBERS_CONFIG="${BRIDGE_MEMBERS_CONFIG} addm ${member}"
   done
   if [ ! -z "${BRIDGE_MEMBERS_CONFIG}" ]; then
-    interface_config="${interface_config} ${BRIDGE_MEMBERS_CONFIG}"
+    interface_config="${interface_config}${BRIDGE_MEMBERS_CONFIG}"
   fi
-  sysctl net.inet.ip.forwarding=1
-  sysctl net.inet6.ip6.forwarding=1
-  sysrc gateway_enable="YES"
-  sysrc ipv6_gateway_enable="YES"
+
   sysrc cloned_interfaces+="bridge0"
   sysrc ifconfig_bridge0_name="${INTERFACE}"
-  sysrc ifconfig_${INTERFACE}="${interface_config}"
-  sysrc ifconfig_${INTERFACE}_alias0="${interface_alias_config}"
-  sysrc ifconfig_${INTERFACE}_ipv6="${interface_ipv6_config}"
+  if [ "${USE_IPV4}" = "yes" ]; then
+    sysctl net.inet.ip.forwarding=1
+    sysrc gateway_enable="YES"
+    sysrc ifconfig_${INTERFACE}="${interface_config}"
+    sysrc ifconfig_${INTERFACE}_alias0="${interface_alias_config}"
+  fi
+  if [ "${USE_IPV6}" = "yes" ]; then
+    sysrc ipv6_gateway_enable="YES"
+    sysctl net.inet6.ip6.forwarding=1
+    sysrc ifconfig_${INTERFACE}_ipv6="${interface_ipv6_config}"
+  fi
+
   service netif cloneup
   sleep 1
-  ifconfig ${INTERFACE} ${interface_config}
-  ifconfig ${INTERFACE} ${interface_alias_config} alias
-  ifconfig ${INTERFACE} ${interface_ipv6_config}
+
+  if [ "${USE_IPV4}" = "yes" ]; then
+    ifconfig ${INTERFACE} ${interface_config}
+    ifconfig ${INTERFACE} ${interface_alias_config} alias
+  fi
+  if [ "${USE_IPV6}" = "yes" ]; then
+    ifconfig ${INTERFACE} ${interface_ipv6_config}
+  fi
 }
 
 
