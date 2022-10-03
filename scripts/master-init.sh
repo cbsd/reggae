@@ -23,34 +23,16 @@ setup() {
     echo "IPv4 or IPv6 has to be enable, check USE_IPV{4,6} in config!" >&2
     exit 1
   fi
-  sed \
-    -e "s;CBSD_WORKDIR;${CBSD_WORKDIR};g" \
-    -e "s;DOMAIN;${DOMAIN};g" \
-    -e "s;MASTER_IP;${MASTER_IP};g" \
-    -e "s;VERSION;${VER};g" \
-    -e "s;SERVICE;${SERVICE};g" \
-    -e "s;DEVFS_RULESET;8;g" \
-    -e "s;INTERFACE_IP;${INTERFACE_IP};g" \
-    ${SCRIPT_DIR}/../templates/master.conf >"${TEMP_MASTER_CONF}"
-
-  cbsd jcreate inter=0 jconf="${TEMP_MASTER_CONF}"
+  cbsd jcreate jname=network runasap=0 vnet=1 b_order=0 ip4_addr=${MASTER_IP},${IPV6_PREFIX}${MASTER_IP6} ci_gw4=${INTERFACE_IP},${IPV6_PREFIX}${INTERFACE_IP6}
   mkdir -p "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/pkg/repos"
   echo -e "FreeBSD: {\n    url: \"pkg+http://${PKG_MIRROR}/\${ABI}/${PKG_REPO}\",\n}">"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/pkg/repos/FreeBSD.conf"
   echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/sendmail"
   cp ${SCRIPT_DIR}/../templates/master.fstab "${CBSD_WORKDIR}/jails-fstab/fstab.${SERVICE}.local"
-  if [ "${USE_IPV6}" = "yes" ]; then
-    echo "#!/bin/sh" >"${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
-    echo "ifconfig eth0 inet6 -ifdisabled auto_linklocal -accept_rtadv ${IPV6_PREFIX}${MASTER_IP6}" >>"${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
-    echo "route -6 add default ${IPV6_PREFIX}${INTERFACE_IP6}" >>"${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
-    echo "service isc-dhcpd6 restart" >>"${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
-    chmod +x "${CBSD_WORKDIR}/jails-system/network/start.d/ipv6.sh"
-  fi
   echo "#!/bin/sh" >"${CBSD_WORKDIR}/jails-system/network/master_poststart.d/reggae.sh"
   echo "service reggae onerestart" >>"${CBSD_WORKDIR}/jails-system/network/master_poststart.d/reggae.sh"
   echo "service reggae_pf onerestart" >>"${CBSD_WORKDIR}/jails-system/network/master_poststart.d/reggae.sh"
   chmod +x "${CBSD_WORKDIR}/jails-system/network/master_poststart.d/reggae.sh"
   mkdir /var/run/reggae &>/dev/null
-  cbsd jset jname=${SERVICE} b_order=0
   cbsd jstart ${SERVICE}
   cbsd jexec jname=${SERVICE} cmd="env ASSUME_ALWAYS_YES=YES pkg bootstrap"
   cbsd jexec jname=${SERVICE} cmd="pkg install -y isc-dhcp44-server nsd sudo"
