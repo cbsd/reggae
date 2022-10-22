@@ -22,7 +22,7 @@ zfs_snapsrc="";
 # run immediately upon creation
 runasap="0";
 # bind to interface
-interface="auto";
+interface="INTERFACE";
 rctl_nice="0"
 jailskeldir="CBSD_WORKDIR/share/FreeBSD-jail-reggae-skel";
 systemskeldir="CBSD_WORKDIR/share/jail-system-reggae";
