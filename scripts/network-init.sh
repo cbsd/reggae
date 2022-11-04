@@ -13,7 +13,7 @@ HOSTNAME=`hostname`
 CLONED_INTERFACES=`sysrc -n cloned_interfaces`
 NATIP=`netstat -rn4 | awk '/^default/{print $2}'`
 EGRESS=`netstat -rn4 | awk '/^default/{print $4}'`
-EGRESS_CONFIG=`sysrc -n ifconfig_${EGRESS}`
+EGRESS_CONFIG=`sysrc -n ifconfig_${EGRESS} 2>/dev/null`
 DHCP_CONFIG=`echo ${EGRESS_CONFIG} | grep -io dhcp`
 STATIC=NO
 NETWORK=`echo ${MASTER_IP} | awk -F '.' '{print $1 "." $2 "." $3 ".0/24"}'`
@@ -37,7 +37,7 @@ check_config() {
 
 
 setup_network() {
-  interface_config="inet ${INTERFACE_IP} netmask 255.255.255.0 description ${EGRESS}"
+  interface_config="inet ${INTERFACE_IP} netmask 255.255.255.0"
   interface_alias_config="inet ${JAIL_INTERFACE_IP} netmask 255.255.255.0"
   interface_ipv6_config="inet6 -ifdisabled auto_linklocal ${IPV6_PREFIX}${INTERFACE_IP6}"
 
