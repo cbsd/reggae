@@ -20,7 +20,7 @@ up: setup
 	@sudo chown ${UID}:${GID} cbsd.conf
 .endif
 .if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/sbin/pkg)
-	@sudo cbsd jexec jname=${SERVICE} cmd="env ASSUME_ALWAYS_YES=yes pkg bootstrap"
+	@sudo cbsd jexec jname=${SERVICE} cmd="env ASSUME_ALWAYS_YES=yes pkg bootstrap -f"
 	@sudo cbsd jexec jname=${SERVICE} cmd="pkg install -y sudo ${EXTRA_PACKAGES}"
 .endif
 .if ${SUBTYPE} != "linux"
