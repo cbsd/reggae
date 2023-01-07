@@ -37,7 +37,7 @@ setup() {
     # extra check for "${CBSD_WORKDIR}/basejail/base_${ARCH}_${TARGET_ARCH}_${VER}/bin" directory ?
   fi
 
-  cbsd jcreate jname=network host_hostname=network.${DOMAIN} runasap=0 vnet=1 b_order=0 devfs_ruleset=8 ip4_addr=${MASTER_IP},${IPV6_PREFIX}${MASTER_IP6} ci_gw4=${INTERFACE_IP},${IPV6_PREFIX}${INTERFACE_IP6}
+  env NOINTER=1 cbsd jcreate jname=network host_hostname=network.${DOMAIN} runasap=0 vnet=1 b_order=0 devfs_ruleset=8 ip4_addr=${MASTER_IP},${IPV6_PREFIX}${MASTER_IP6} ci_gw4=${INTERFACE_IP},${IPV6_PREFIX}${INTERFACE_IP6}
   mkdir -p "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/pkg/repos"
   echo -e "FreeBSD: {\n    url: \"pkg+http://${PKG_MIRROR}/\${ABI}/${PKG_REPO}\",\n}">"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/pkg/repos/FreeBSD.conf"
   echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/sendmail"
