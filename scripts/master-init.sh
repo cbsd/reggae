@@ -16,14 +16,28 @@ TEMP_MASTER_CONF=`mktemp`
 TEMP_DHCP_CONF=`mktemp`
 export VER=${VER:="native"}
 SERVICE="network"
-
+export ARCH=${ARCH:="`uname -m`"}
+export TARGET_ARCH=${TARGET_ARCH:="`uname -p`"}
 
 setup() {
   if [ "${USE_IPV4}" != "yes" -a "${USE_IPV6}" != "yes" ]; then
     echo "IPv4 or IPv6 has to be enable, check USE_IPV{4,6} in config!" >&2
     exit 1
   fi
-  cbsd jcreate jname=network host_hostname=network.${DOMAIN} runasap=0 vnet=1 b_order=0 devfs_ruleset=8 ip4_addr=${MASTER_IP},${IPV6_PREFIX}${MASTER_IP6} ci_gw4=${INTERFACE_IP},${IPV6_PREFIX}${INTERFACE_IP6} interface=${INTERFACE}
+
+  if [ -z "${VER}" -o "${VER}" = "native" ]; then
+    tmpver=$( uname -r )
+    VER=${tmpver%%-*}
+    unset tmpver
+  fi
+  # or check for /bin/sh via: [ ! -x ${CBSD_WORKDIR}/basejail/base_${ARCH}_${TARGET_ARCH}_${VER}/bin/sh" ]  - whats about linux jail without /bin/sh ?
+  if [ ! -d "${CBSD_WORKDIR}/basejail/base_${ARCH}_${TARGET_ARCH}_${VER}/bin" ]; then
+    echo "no such bases: base_${ARCH}_${TARGET_ARCH}_${VER}/bin, fetch via 'cbsd repo'"
+    cbsd repo action=get sources=base ver=${VER}
+    # extra check for "${CBSD_WORKDIR}/basejail/base_${ARCH}_${TARGET_ARCH}_${VER}/bin" directory ?
+  fi
+
+  env NOINTER=1 cbsd jcreate jname=network host_hostname=network.${DOMAIN} runasap=0 vnet=1 b_order=0 devfs_ruleset=8 ip4_addr=${MASTER_IP},${IPV6_PREFIX}${MASTER_IP6} ci_gw4=${INTERFACE_IP},${IPV6_PREFIX}${INTERFACE_IP6} interface=${INTERFACE}
   mkdir -p "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/pkg/repos"
   echo -e "FreeBSD: {\n    url: \"pkg+http://${PKG_MIRROR}/\${ABI}/${PKG_REPO}\",\n}">"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/pkg/repos/FreeBSD.conf"
   echo 'sendmail_enable="NONE"' >"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/sendmail"
