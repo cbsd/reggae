@@ -1,6 +1,6 @@
 #!/bin/sh
 
-CBSD_WORKDIR=`sysrc -n cbsd_workdir`
+CBSD_WORKDIR=`sysrc -s cbsdd -n cbsd_workdir`
 SERVICE="${1}"
 TYPE="${2}"
 

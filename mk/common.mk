@@ -8,7 +8,7 @@ RUNNING_GID != id -g
 UID ?= ${RUNNING_UID}
 GID ?= ${RUNNING_GID}
 DOMAIN != reggae get-config DOMAIN
-CBSD_WORKDIR != sysrc -n cbsd_workdir
+CBSD_WORKDIR != sysrc -s cbsdd -n cbsd_workdir
 EXTRA_PACKAGES =
 
 .for provisioner in ${PROVISIONERS}

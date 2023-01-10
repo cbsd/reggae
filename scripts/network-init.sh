@@ -89,9 +89,9 @@ setup_pf() {
       -e "s;MASTER_IP;${MASTER_IP};g" \
       "${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
   fi
-  sysrc pflog_enable="YES"
-  sysrc pf_enable="YES"
-  sysrc blacklistd_enable="YES"
+  service pflog enable
+  service pf enable
+  service blacklistd enable
   sysrc sshd_flags+="\-oUseBlacklist=yes"
 }
 

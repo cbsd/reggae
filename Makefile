@@ -64,7 +64,8 @@ MAKEFILES = ansible.mk \
 	    use.mk
 FRAMEWORKS_MAKEFILES = frameworks/freenit.project.mk \
 		       frameworks/freenit.service.mk
-SCRIPTS = bhyve-init.sh \
+SCRIPTS = apply-proxy.sh \
+	  bhyve-init.sh \
 	  cbsd-init.sh \
 	  chef-provision.sh \
 	  expect-run.sh \
