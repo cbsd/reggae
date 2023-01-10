@@ -1,6 +1,6 @@
 #!/bin/sh
 
-CBSD_WORKDIR=`sysrc -n cbsd_workdir`
+CBSD_WORKDIR=`sysrc -s cbsdd -n cbsd_workdir`
 IMAGE_PATH="${1}"
 HYPERVISOR="${2:-jail}"
 DOMAIN=`reggae get-config DOMAIN`

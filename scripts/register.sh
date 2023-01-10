@@ -9,7 +9,7 @@ if [ "${vnet}" != "1" ]; then
   fi
   . "${PROJECT_ROOT}/scripts/default.conf"
 
-  CBSD_WORKDIR=`sysrc -n cbsd_workdir`
+  CBSD_WORKDIR=`sysrc -s cbsdd -n cbsd_workdir`
   NAME=${jname}
   IP=${ipv4_first}
   ACTION="${1}"
