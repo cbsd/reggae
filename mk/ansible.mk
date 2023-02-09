@@ -6,6 +6,9 @@ PYTHON_MAJOR = 3
 PYTHON_MINOR = 9
 
 provision-ansible: setup-ansible
+.if !exists(${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/bin/python)
+	@sudo jexec ${SERVICE} pkg install -y python
+.endif
 	@sudo rm -rf ansible/site.retry
 	@-sudo chown -R ${UID}:${GID} ~/.ansible
 .if exists(requirements.yml)

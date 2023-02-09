@@ -21,7 +21,7 @@ export TARGET_ARCH=${TARGET_ARCH:="`uname -p`"}
 
 setup() {
   if [ "${USE_IPV4}" != "yes" -a "${USE_IPV6}" != "yes" ]; then
-    echo "IPv4 or IPv6 has to be enable, check USE_IPV{4,6} in config!" >&2
+    echo "IPv4 and/or IPv6 has to be enable, check USE_IPV{4,6} in config!" >&2
     exit 1
   fi
 
