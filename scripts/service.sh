@@ -23,22 +23,22 @@ trap cleanup HUP INT ABRT BUS TERM  EXIT
 
 
 register_v4() {
-  pfctl -t cbsd -T add $1
+  pfctl -t reggae -T add $1
 }
 
 
 register_v6() {
-  pfctl -t cbsd6 -T add $1
+  pfctl -t reggae6 -T add $1
 }
 
 
 unregister_v4() {
-  pfctl -t cbsd -T delete $1
+  pfctl -t reggae -T delete $1
 }
 
 
 unregister_v6() {
-  pfctl -t cbsd6 -T delete $1
+  pfctl -t reggae6 -T delete $1
 }
 
 

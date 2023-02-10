@@ -36,8 +36,8 @@ if [ "${vnet}" != "1" ]; then
       /bin/echo "${NAME}    A   ${IP}" >>"${ZONE_FILE}"
       /bin/echo "${LAST_OCTET}    PTR   ${NAME}.${DOMAIN}." >>"${REVERSE_ZONE_FILE}"
     fi
-    cbsd jexec jname=cbsd cmd="nsd-control reload"
+    cbsd jexec jname=network cmd="nsd-control reload"
   fi
 
-  pfctl -t cbsd -T ${PF_ACTION} ${IP}
+  pfctl -t reggae -T ${PF_ACTION} ${IP}
 fi

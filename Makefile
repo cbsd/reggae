@@ -9,6 +9,7 @@ FRAMEWORKS_DIR = /${REGGAE_DIR}/mk/frameworks
 BIN_FILES = reggae
 TEMPLATES = Makefile.project \
 	    Makefile.service \
+	    base-jail.conf \
 	    cbsd.conf.tpl \
 	    cbsd-bhyve.freebsd.conf.tpl \
 	    cbsd-vnet.conf.tpl \
@@ -32,6 +33,7 @@ TEMPLATES = Makefile.project \
 	    mount-project.sh \
 	    netif \
 	    network \
+	    network-jail.conf \
 	    nsd.conf \
 	    pf.conf \
 	    pkg.conf \
@@ -42,15 +44,17 @@ TEMPLATES = Makefile.project \
 	    setup-vm.sh \
 	    sudoers \
 	    unbound.conf \
-	    unbound_cbsd.conf \
 	    unbound_control.conf \
+	    unbound_reggae.conf \
 	    xorg.sh
 ANSIBLE_TEMPLATES = ansible/inventory.local.tpl ansible/inventory.remote.tpl
 ANSIBLE_GROUP_TEMPLATES = ansible/group_vars/all.tpl
 CLOUDINIT_TEMPLATES = cloud-init/meta-data \
 		      cloud-init/user-data
 MAKEFILES = ansible.mk \
+	    base-jail.mk \
 	    bhyve-service.mk \
+	    cbsd-jail.mk \
 	    chef.mk \
 	    common.mk \
 	    frameworks/freenit.project.mk \
@@ -65,15 +69,19 @@ MAKEFILES = ansible.mk \
 FRAMEWORKS_MAKEFILES = frameworks/freenit.project.mk \
 		       frameworks/freenit.service.mk
 SCRIPTS = apply-proxy.sh \
+	  base-init.sh \
+	  base-network-init.sh \
 	  bhyve-init.sh \
 	  cbsd-init.sh \
+	  cbsd-network-init.sh \
 	  chef-provision.sh \
 	  expect-run.sh \
 	  get-config.sh \
 	  get-ip.sh \
+	  host-init.sh \
 	  import.sh \
 	  init.sh \
-	  master-init.sh \
+	  mkjail.sh \
 	  network-init.sh \
 	  pf.sh \
 	  pkg-upgrade.sh \
@@ -81,6 +89,7 @@ SCRIPTS = apply-proxy.sh \
 	  puppet-provision.sh \
 	  read-pass.sh \
 	  register.sh \
+	  rmjail.sh \
 	  salt-provision.sh \
 	  scp.sh \
 	  service.sh \

@@ -1,16 +1,16 @@
 .if !target(shell)
 shell: up
-	@sudo cbsd jexec user=devel jname=${SERVICE} cmd=/usr/src/bin/shell.sh
+	@sudo jexec -U devel ${SERVICE} /usr/src/bin/shell.sh
 .endif
 
 do_devel:
-	@sudo cbsd jexec jname=${SERVICE} user=devel cmd="env OFFLINE=${offline} SYSPKG=${SYSPKG} BACKEND_URL=${BACKEND_URL} /usr/src/bin/devel.sh"
+	@sudo jexec -U devel ${SERVICE} env OFFLINE=${offline} SYSPKG=${SYSPKG} BACKEND_URL=${BACKEND_URL} /usr/src/bin/devel.sh
 
 .if !target(collect)
 collect:
 	@rm -rf build
 	@mkdir -p build
-	@sudo cbsd jexec jname=${SERVICE} user=devel cmd="env OFFLINE=${offline} SYSPKG=${SYSPKG} /usr/src/bin/collect.sh"
+	@sudo jexec -U devel ${SERVICE} env OFFLINE=${offline} SYSPKG=${SYSPKG} /usr/src/bin/collect.sh
 .endif
 
 .if !target(publish)
@@ -29,7 +29,7 @@ publish: collect
 .endif
 
 build_lib: up
-	@sudo cbsd jexec jname=${SERVICE} user=devel cmd="env OFFLINE=${offline} SYSPKG=${SYSPKG} /usr/src/bin/build.sh"
+	@sudo jexec -U devel ${SERVICE} env OFFLINE=${offline} SYSPKG=${SYSPKG} /usr/src/bin/build.sh
 
 publish_lib: build_lib
-	@sudo cbsd jexec jname=${SERVICE} user=devel cmd=/usr/src/bin/publish.sh
+	@sudo jexec -U devel ${SERVICE} /usr/src/bin/publish.sh
