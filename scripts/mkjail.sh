@@ -84,11 +84,11 @@ ID=`next_id`
 if [ "${NAME}" = "network" ]; then
   cat "${SCRIPT_DIR}/../templates/network-jail.conf" >>/etc/jail.conf
 else
-  MYDEPENDS="network"
-  for dep in ${DEPENDS}; do
-    MYDEPENDS="${MYDEPENDS},${dep}"
-  done
-  echo "${NAME} { \$id = ${ID}; depend = ${MYDEPENDS}; }" >>/etc/jail.conf
+  if [ -z "${DEPENDS}" ]; then
+    echo "${NAME} { \$id = ${ID} }" >>/etc/jail.conf
+  else
+    echo "${NAME} { \$id = ${ID}; depend = ${DEPENDS}; }" >>/etc/jail.conf
+  fi
   if [ "${USE_IPV4}" = "yes" ]; then
     echo "ifconfig_eth0=\"DHCP\"" >>"${BSDINSTALL_CHROOT}/etc/rc.conf"
   fi
