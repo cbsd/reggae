@@ -16,6 +16,20 @@ TEMP_INITENV_CONF=`mktemp`
 ZFSFEAT=1
 
 
+check() {
+  CBSD_BIN=$(which cbsd)
+  if [ -z "${CBSD_BIN}" ]; then
+    echo
+    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    echo "!!! No cbsd binary on the host !!!"
+    echo "!!! Trying to install one         !!!"
+    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    echo
+    pkg install cbsd
+  fi
+}
+
+
 setup_file_system() {
   if [ ! -d "${CBSD_WORKDIR}" ]; then
     if [ "${USE_ZFS}" = "yes" ]; then
@@ -30,7 +44,7 @@ setup_file_system() {
 
 
 setup_devfs() {
-  if [ ! -e "/etc/devfs.rules" -o -z `grep -o 'cbsd=7' /etc/devfs.rules` ]; then
+  if [ ! -e "/etc/devfs.rules" -o -z `grep -o 'vnet=8' /etc/devfs.rules` ]; then
     cat ${SCRIPT_DIR}/../templates/devfs.rules >>/etc/devfs.rules
   fi
   service devd restart
@@ -68,6 +82,7 @@ setup_cbsd() {
 }
 
 
+check
 setup_file_system
 setup_devfs
 setup_cbsd
