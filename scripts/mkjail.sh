@@ -85,7 +85,7 @@ if [ "${NAME}" = "network" ]; then
   cat "${SCRIPT_DIR}/../templates/network-jail.conf" >>/etc/jail.conf
 else
   if [ -z "${DEPENDS}" ]; then
-    echo "${NAME} { \$id = ${ID} }" >>/etc/jail.conf
+    echo "${NAME} { \$id = ${ID}; }" >>/etc/jail.conf
   else
     echo "${NAME} { \$id = ${ID}; depend = ${DEPENDS}; }" >>/etc/jail.conf
   fi
