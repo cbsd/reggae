@@ -11,7 +11,7 @@ fi
 
 init() {
   if [ "${TYPE}" = "jail" ]; then
-    cbsd jexec jname=${SERVICE} pkg install -y rubygem-chef
+    jexec ${SERVICE} pkg install -y rubygem-chef
     mkdir ${CBSD_WORKDIR}/jails/${SERVICE}/etc/chef >/dev/null 2>&1 || true
     mkdir ${CBSD_WORKDIR}/jails/${SERVICE}/root/chef >/dev/null 2>&1 || true
     mount_nullfs "${PWD}/chef" "${CBSD_WORKDIR}/jails/${SERVICE}/root/chef"
@@ -34,7 +34,7 @@ trap "cleanup" HUP INT ABRT BUS TERM  EXIT
 init
 
 if [ "${TYPE}" = "jail" ]; then
-  cbsd jexec "jname=${SERVICE}" 'cd /root/chef && chef-client --local-mode --override-runlist core'
+  jexec ${SERVICE} cd /root/chef && chef-client --local-mode --override-runlist core
 elif [ "${TYPE}" = "bhyve" ]; then
 	reggae ssh provision ${SERVICE} 'cd /usr/src/chef && sudo chef-client --local-mode --override-runlist core'
 else
