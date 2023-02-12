@@ -84,7 +84,7 @@ setup:
 	@sudo chown -R 666:666 ${BASE_WORKDIR}/${SERVICE}/usr/home/provision/.ssh
 .endif
 .if !exists(${BASE_WORKDIR}/${SERVICE}/usr/local/etc)
-	@mkdir ${BASE_WORKDIR}/${SERVICE}/usr/local/etc
+	@sudo mkdir ${BASE_WORKDIR}/${SERVICE}/usr/local/etc
 .endif
 .if !exists(${BASE_WORKDIR}/${SERVICE}/usr/local/etc/pkg.conf)
 .if ${PKG_PROXY} != no
