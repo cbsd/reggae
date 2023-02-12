@@ -182,10 +182,10 @@ alter_host() {
           echo "${IP_REVERSE}    PTR   ${NAME}.${DOMAIN}." >>"${REVERSE_ZONE_FILE}"
         fi
       fi
-      echo "register ipv4 ${IP} ${NAME}${DOMAIN}" | /usr/bin/nc -U "${SOCKET}" -w 0
+      echo "register ipv4 ${IP} ${NAME}.${DOMAIN}" | /usr/bin/nc -U "${SOCKET}" -w 0
   IP_REVERSE="${5}"
     elif [ "${ACTION}" = "delete" ]; then
-      echo "unregister ipv4 ${IP} ${NAME}${DOMAIN}" | /usr/bin/nc -U "${SOCKET}" -w 0
+      echo "unregister ipv4 ${IP} ${NAME}.${DOMAIN}" | /usr/bin/nc -U "${SOCKET}" -w 0
     fi
   elif [ "${INET}" = "ipv6" ]; then
     if [ "${ACTION}" = "add" ]; then
@@ -197,9 +197,9 @@ alter_host() {
           echo "${IP_REVERSE}    PTR   ${NAME}.${DOMAIN}." >>"${REVERSE_ZONE_FILE}"
         fi
       fi
-      echo "register ipv6 ${IP} ${NAME}${DOMAIN}" | /usr/bin/nc -U "${SOCKET}" -w 0
+      echo "register ipv6 ${IP} ${NAME}.${DOMAIN}" | /usr/bin/nc -U "${SOCKET}" -w 0
     elif [ "${ACTION}" = "delete" ]; then
-      echo "unregister ipv6 ${IP} ${NAME}${DOMAIN}" | /usr/bin/nc -U "${SOCKET}" -w 0
+      echo "unregister ipv6 ${IP} ${NAME}.${DOMAIN}" | /usr/bin/nc -U "${SOCKET}" -w 0
     fi
   fi
   /usr/local/bin/sudo /usr/local/sbin/nsd-control reload ${DOMAIN}
