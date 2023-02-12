@@ -88,7 +88,6 @@ SCRIPTS = apply-proxy.sh \
 	  project-init.sh \
 	  puppet-provision.sh \
 	  read-pass.sh \
-	  register.sh \
 	  rmjail.sh \
 	  salt-provision.sh \
 	  scp.sh \

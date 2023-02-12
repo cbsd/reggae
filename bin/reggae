@@ -4,21 +4,17 @@ SCRIPT_ROOT="${SCRIPT_ROOT:=/usr/local/share/reggae/scripts}"
 
 help() {
   echo "Usage: $0 <action>"
-  echo -n "  where action is 'init', 'bhyve-init', 'network-init', 'cbsd-init'"
-  echo ", 'master-init', 'register' or 'deregister'"
+  echo "where action is one of:"
+  cd "${SCRIPT_ROOT}"
+  for script_file in $(ls -1 *.sh); do
+    if [ -x "${script_file}" ]; then
+      echo -n "  "
+      echo "${script_file}" | sed 's/\.sh$//'
+    fi
+  done
 }
 
 case "${1}" in
-  register)
-    shift
-    "${SCRIPT_ROOT}/register.sh" register
-    break
-    ;;
-  deregister)
-    shift
-    "${SCRIPT_ROOT}/register.sh" deregister
-    break
-    ;;
   --version)
     shift
     "${SCRIPT_ROOT}/version.sh"

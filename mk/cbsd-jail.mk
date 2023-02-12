@@ -1,5 +1,5 @@
 SUBTYPE ?= vnet
-DHCP ?= dhcpcd
+DHCP ?= dhclient
 CBSD_WORKDIR != sysrc -s cbsdd -n cbsd_workdir
 INTERFACE != reggae get-config INTERFACE
 PKG_MIRROR_CONFIG != reggae get-config PKG_MIRROR
