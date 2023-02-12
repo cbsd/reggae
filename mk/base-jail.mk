@@ -1,4 +1,5 @@
 BASE_WORKDIR != reggae get-config BASE_WORKDIR
+PKG_PROXY != reggae get-config PKG_PROXY
 
 
 .if target(pre_up)
@@ -81,6 +82,14 @@ setup:
 	@sudo cp ~/.ssh/id_rsa.pub ${BASE_WORKDIR}/${SERVICE}/usr/home/provision/.ssh/authorized_keys
 	@sudo chmod 600 ${BASE_WORKDIR}/${SERVICE}/usr/home/provision/.ssh/authorized_keys
 	@sudo chown -R 666:666 ${BASE_WORKDIR}/${SERVICE}/usr/home/provision/.ssh
+.endif
+.if !exists(${BASE_WORKDIR}/${SERVICE}/usr/local/etc/pkg.conf)
+.if ${PKG_PROXY} != no
+	@sudo cp ${REGGAE_PATH}/templates/pkg.conf ${BASE_WORKDIR}/${SERVICE}/usr/local/etc/
+	@sudo sed -i "" \
+		-e 's;PKG_PROXY;pkg_env : { http_proxy: "http://${PKG_PROXY}" };g' \
+		${BASE_WORKDIR}/${SERVICE}/usr/local/etc/pkg.conf
+.endif
 .endif
 .if target(post_create)
 	@${MAKE} ${MAKEFLAGS} post_create
