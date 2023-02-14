@@ -69,6 +69,7 @@ MAKEFILES = ansible.mk \
 FRAMEWORKS_MAKEFILES = frameworks/freenit.project.mk \
 		       frameworks/freenit.service.mk
 SCRIPTS = apply-proxy.sh \
+	  backend-init.sh \
 	  base-init.sh \
 	  base-network-init.sh \
 	  bhyve-init.sh \
@@ -81,6 +82,7 @@ SCRIPTS = apply-proxy.sh \
 	  host-init.sh \
 	  import.sh \
 	  init.sh \
+	  jexec.sh \
 	  mkjail.sh \
 	  network-init.sh \
 	  pf.sh \
@@ -98,16 +100,8 @@ SCRIPTS = apply-proxy.sh \
 	  version.sh \
 	  update-profiles.sh
 MAN_FILES = reggae.1 \
-	    reggae-ansible.1 \
-	    reggae-chef.1 \
-	    reggae-init.1 \
 	    reggae-project.1 \
-	    reggae-provision.1 \
-	    reggae-puppet.1 \
-	    reggae-register.1 \
-	    reggae-salt.1 \
-	    reggae-shell.1 \
-	    reggae-service.1
+	    reggae-provision.1
 CBSD_PROFILE_ITEMS = skel \
 		     system \
 		     reggae-jail.conf
@@ -178,3 +172,6 @@ install_frameworks:
 .for framework_file in ${FRAMEWORKS_MAKEFILES}
 	install -m 0644 mk/${framework_file} ${DESTDIR}${PREFIX}${FRAMEWORKS_DIR}
 .endfor
+
+clean:
+	rm man/*.gz
