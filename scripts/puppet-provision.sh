@@ -7,7 +7,7 @@ TYPE="${2}"
 init() {
   if [ "${TYPE}" = "jail" ]; then
     mount_nullfs "${PWD}/puppet/manifests" "${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/puppet/manifests"
-    cbsd jexec "jname=${SERVICE}" cmd="pkg install -y puppet5"
+    jexec ${SERVICE} pkg install -y puppet5
   elif [ "${TYPE}" = "bhyve" ]; then
     reggae ssh provision ${SERVICE} sudo mount_nullfs /usr/src/puppet/manifests /usr/local/etc/puppet/manifests
     reggae ssh provision ${SERVICE} sudo pkg install -y puppet5
@@ -31,7 +31,7 @@ trap "cleanup" HUP INT ABRT BUS TERM  EXIT
 init
 
 if [ "${TYPE}" = "jail" ]; then
-  cbsd jexec "jname=${SERVICE}" cmd="puppet apply /usr/local/etc/puppet/manifests/site.pp"
+  jexec ${SERVICE} puppet apply /usr/local/etc/puppet/manifests/site.pp
 elif [ "${TYPE}" = "bhyve" ]; then
   reggae ssh provision ${SERVICE} sudo puppet apply /usr/local/etc/puppet/manifests/site.pp
 else
