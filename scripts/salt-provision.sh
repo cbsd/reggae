@@ -14,11 +14,12 @@ fi
 
 init() {
   if [ "${TYPE}" = "jail" ]; then
-    jexec ${SERVICE} pkg install -y ${PY_PREFIX}-salt
-    mkdir -p ${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/salt/minion.d >/dev/null 2>&1 || true
-    mkdir -p ${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/salt/states >/dev/null 2>&1 || true
-    mount_nullfs "${PWD}/salt/states" "${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/salt/states"
-    echo 'file_client: local' >"${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/salt/minion.d/reggae.conf"
+    JAIL_PATH=$(jls -j ${JNAME} path)
+    reggae jexec ${SERVICE} pkg install -y ${PY_PREFIX}-salt
+    mkdir -p "${JAIL_PATH}/usr/local/etc/salt/minion.d" >/dev/null 2>&1 || true
+    mkdir -p "${JAIL_PATH}/usr/local/etc/salt/states" >/dev/null 2>&1 || true
+    mount_nullfs "${PWD}/salt/states" "${JAIL_PATH}/usr/local/etc/salt/states"
+    echo 'file_client: local' >"${JAIL_PATH}/usr/local/etc/salt/minion.d/reggae.conf"
   elif [ "${TYPE}" = "bhyve" ]; then
     reggae ssh provision ${SERVICE} sudo pkg install -y "${PY_PREFIX}-salt"
     reggae ssh provision ${SERVICE} sudo mkdir -p /usr/local/etc/salt/minion.d >/dev/null 2>&1 || true
@@ -31,8 +32,9 @@ init() {
 
 cleanup() {
   if [ "${TYPE}" = "jail" ]; then
-    rm -rf "${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/salt/minion.d/reggae.conf"
-    umount "${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/etc/salt/states"
+    JAIL_PATH=$(jls -j ${JNAME} path)
+    rm -rf "${JAIL_PATH}/usr/local/etc/salt/minion.d/reggae.conf"
+    umount "${JAIL_PATH}/usr/local/etc/salt/states"
   elif [ "${TYPE}" = "bhyve" ]; then
     reggae ssh provision ${SERVICE} sudo rm -rf /usr/local/etc/salt/minion.d/reggae.conf
     reggae ssh provision ${SERVICE} sudo umount /usr/local/etc/salt/states
@@ -43,7 +45,7 @@ trap "cleanup" HUP INT ABRT BUS TERM  EXIT
 init
 
 if [ "${TYPE}" = "jail" ]; then
-  jexec ${SERVICE} salt-call --local state.apply
+  reggae jexec ${SERVICE} salt-call --local state.apply
 elif [ "${TYPE}" = "bhyve" ]; then
   reggae ssh provision ${SERVICE} sudo salt-call --local state.apply
 else

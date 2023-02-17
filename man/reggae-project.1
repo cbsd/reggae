@@ -17,7 +17,14 @@ A project consists of:
 One project can contain many services, and that's going to be shown in the
 generated Makefile. The SERVICES variable in it will be commented but populated
 with example services. All services when downloaded will be in
-services/<service> directory.
+services/<service> directory. You can use preexisting services if you define
+\fBUSE = <service>\fR. For example, you can write the following:
+.Pp
+.Dl REGGAE_PATH = /usr/local/share/reggae
+.Dl USE = letsencrypt mysql wordpress nginx
+.Dl .include <${REGGAE_PATH}/mk/project.mk>
+.Pp
+This project will set Wordpress in a jail.
 .Pp
 You can run \fBmake <target>\fR on the project:
 .Bl -bullet -offset indent -compact
@@ -39,8 +46,8 @@ setup
 up
 .El
 .Pp
-Special note for the devel target: your repo must have bin/devel.sh which be
-ran on the host. All project targets can be suffixed with service=<service>
+Special note for the devel target: your repo must have bin/devel.sh which will
+be run on the host. All project targets can be suffixed with service=<service>
 but in the above list only those which require a service are explicitely
 mentioned. If the service is passed as an argument, the target will be
 executed only on that service/jail.
@@ -52,8 +59,6 @@ Quickest way to get basic project is:
 .Dl cd myproject
 .Dl reggae init-project
 .Sh SEE ALSO
-.Xr reggae-service 1
 .Xr reggae-provision 1
 .Sh AUTHORS
 Goran Mekić <meka@tilda.center>
-

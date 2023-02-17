@@ -13,9 +13,9 @@ PROJECT_DIR="${SCRIPT_DIR}/.."
 RUNNING_JAILS=$(jls host.hostname | cut -f 1 -d '.')
 for jname in ${RUNNING_JAILS}; do
   echo "=== ${jname} ===="
-  jexec ${jname} pkg upgrade
-  jexec ${jname} pkg autoremove -y
-  jexec ${jname} pkg clean -y
+  reggae jexec ${jname} pkg upgrade
+  reggae jexec ${jname} pkg autoremove -y
+  reggae jexec ${jname} pkg clean -y
   echo
 done
 

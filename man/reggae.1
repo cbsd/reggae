@@ -3,12 +3,15 @@
 .Os
 .Sh NAME
 .Nm reggae
-.Nd \fBREG\fRister \fBG\fRlobaly \fBA\fRccess \fBEv\fRerywhere is a package which helps in common DevOps tasks
+.Nd \fBREG\fRister \fBG\fRlobaly \fBA\fRccess \fBEv\fRerywhere is a package
+which helps in common DevOps tasks
 .Sh SYNOPSIS
 .Nm reggae <command>
 .Sh DESCRIPTION
 .Pp
-\fBReggae\fR is an open source package which relays on \fBCBSD\fR to provide lower level management for jails and virtual machines.
+\fBReggae\fR is an open source package which relays on base \fBFreeBSD\fR
+and/or \fBCBSD\fR to provide lower level management for jails and virtual
+machines.
 .Pp
 If you have ever used Vagrant or Docker Compose, Reggae is best described as an
 alternative to those. It enables you easy development inside jail while code
@@ -17,42 +20,46 @@ easier by using provisioners. It makes host clean of all requirements of
 development and puts them inside jail which is easily stopped, started,
 provisioned, and destroyed.
 .Pp
-To initialize Reggae run the following as root:
+To initialize Reggae, first edit /usr/local/etc/reggae.conf and add:
 .Pp
-.Dl reggae network-init
+.Dl PROJECTS_DIR=/usr/home/me/repos
+.Pp
+It will set directory to be shared with virtual machines, like directory
+containing your projects. If you don't need such a directory, you can set it to
+/var/empty.
+.Pp
+.Dl PROJECTS_DIR=/var/empty
+.Pp
+If you want to run Reggae with base jails, no need to do any other edits, but
+if you'd like to use \fBCBSD\fR as the backend, you need to add
+.Pp
+.Dl BACKEND=cbsd
+.Pp
+run the following as root:
+.Pp
+.Dl reggae host-init
 .Dl # service pflog restart
 .Dl # service pf restart
 .Dl service sshd restart
-.Dl reggae cbsd-init
-.Dl reggae master-init
+.Dl reggae backend-init
+.Dl reggae network-init
 .Pp
 PF is initialized only if /etc/pf.conf doesn't exist already. In those cases PF
 services should be restarted.
 .Pp
 Through config file in /usr/local/etc/reggae.conf you can change values for
-anything Reggae is using. \fBreggae network-init\fR will make sure sshd is
-listening to lo0 on hosts with dynamic IP, and on lo0 and egress if the IP is
-static.  This way host sshd doesn't have a conflict with the jailed one. Also,
-if IP is dynamic, PF will be configured so it redirects all requests for SSH on
-egress to lo0. One of the advantages is that you can use ssh's
-\fBProxyCommand\fR to login to jail, even though jail is behind NAT.
-.Pp
-Ater \fBreggae master-init\fR, you'll get two master jails: DHCP and DNS. They
-are used to lease IPs to virtual machines and to register all resources in DNS
-so that you can use FQDN instead of IP addresses. The DNS jail IP is used in
-/etc/resolvconf.conf if host has dynamic IP on egress, so that changes of
-network parameters are passed to the appropriate jail. Also, host will use DNS
-jail IP in /etc/resolv.conf. In short, it enables you to not remember jail IPs
-when you have to use them, but use <jail name>.<domain> to reference them, in
-which case comes from /usr/local/etc/reggae.conf.
+anything Reggae is using. Ater \fBreggae network-init\fR, you'll get jail
+containing DHCP and DNS. They are used to lease IPs to jails and virtual
+machines and to register all resources in DNS so that you can use FQDN instead
+of IP addresses. This jail IP is used in /etc/resolvconf.conf if host has
+dynamic IP on egress, so that changes of network parameters are passed to the
+appropriate jail. Also, host will use DNS jail IP in /etc/resolv.conf. In
+short, it enables you to not remember jail IPs when you have to use them,
+but use <jail name>.<domain> to reference them.
 .Sh SEE ALSO
-.Xr reggae-init 1
 .Xr reggae-project 1
-.Xr reggae-project-init 1
 .Xr reggae-provision 1
-.Xr reggae-register 1
-.Xr reggae-service 1
 .Sh BUGS
-Report bugs to https://github.com/mekanix/reggae/issues.
+Report bugs to https://github.com/cbsd/reggae/issues.
 .Sh AUTHORS
 Goran Mekić <meka@tilda.center>

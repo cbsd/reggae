@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ -f "/usr/local/etc/reggae.conf" ]; then
-    . "/usr/local/etc/reggae.conf"
+  . "/usr/local/etc/reggae.conf"
 fi
 
 SCRIPT_DIR=`dirname $0`
