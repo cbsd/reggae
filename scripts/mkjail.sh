@@ -4,12 +4,49 @@ if [ -f "/usr/local/etc/reggae.conf" ]; then
   . "/usr/local/etc/reggae.conf"
 fi
 
-SCRIPT_DIR=`dirname $0`
+SCRIPT_DIR=$(dirname $0)
 . "${SCRIPT_DIR}/default.conf"
+
+help() {
+  echo "Usage: ${0} [options] <jail>"
+  echo ""
+  echo "options:"
+  echo "  -d <list of jails>"
+  echo "    Lilt of jails this jail depends on."
+  echo "  -f <path to fstab file>"
+  echo "    Aditional mount points defined in <path to fstab file>."
+}
+
+DEPS=""
+FSTAB=""
+optstring="d:f:"
+args=$(getopt "${optstring}" ${*})
+if [ $? -ne 0 ]; then
+  help >&2
+  exit 1
+fi
+set -- ${args}
+while :; do
+  case "${1}" in
+    -d)
+      DEPS="${2}"
+      shift; shift
+      ;;
+    -f)
+      FSTAB="${2}"
+      shift; shift
+      ;;
+    --)
+      shift
+      break
+    ;;
+  esac
+done
+
 
 NAME="${1}"
 if [ -z "${NAME}" ]; then
-  echo "Usage: $0 <jail>" >&2
+  help >&2
   exit 1
 fi
 
@@ -61,6 +98,26 @@ check() {
 }
 
 
+get_mounts() {
+  if [ -z "${FSTAB}" ]; then
+    return
+  fi
+  cat "${FSTAB}" | while read mountpoint; do
+    mount_dest=$(eval echo ${mountpoint} | awk '{print $2}')
+    mkdir "${BSDINSTALL_CHROOT}${mount_dest}"
+    echo -n " mount += \"${mountpoint}\";"
+  done
+}
+
+
+get_dependencies() {
+  if [ -z "${DEPS}" ]; then
+    return
+  fi
+  echo -n " depend = ${DEPS};"
+}
+
+
 check
 
 if [ ! -d "${BSDINSTALL_DISTDIR}" ]; then
@@ -80,15 +137,14 @@ mkdir -p "${BSDINSTALL_CHROOT}/home/provision/.ssh"
 chmod 700 "${BSDINSTALL_CHROOT}/home/provision/.ssh"
 
 
-ID=`next_id`
+ID=$(next_id)
 if [ "${NAME}" = "network" ]; then
   cat "${SCRIPT_DIR}/../templates/network-jail.conf" >>/etc/jail.conf
 else
-  if [ -z "${DEPENDS}" ]; then
-    echo "${NAME} { \$id = ${ID}; }" >>/etc/jail.conf
-  else
-    echo "${NAME} { \$id = ${ID}; depend = ${DEPENDS}; }" >>/etc/jail.conf
-  fi
+  MOUNTS=$(get_mounts)
+  DEPENDS=$(get_dependencies)
+  OPTIONS="${MOUNTS}${DEPENDS}"
+  echo "${NAME} { \$id = ${ID};${OPTIONS}}" >>/etc/jail.conf
   if [ "${USE_IPV4}" = "yes" ]; then
     echo "ifconfig_eth0=\"DHCP\"" >>"${BSDINSTALL_CHROOT}/etc/rc.conf"
   fi

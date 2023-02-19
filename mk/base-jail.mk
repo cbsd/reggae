@@ -73,7 +73,11 @@ setup:
 	@${MAKE} ${MAKEFLAGS} post_setup
 .endif
 .if !exists(${BASE_WORKDIR}/${SERVICE})
+.if exists(${EXTRA_FSTAB})
+	@sudo reggae mkjail -f ${EXTRA_FSTAB} ${SERVICE}
+.else
 	@sudo reggae mkjail ${SERVICE}
+.endif
 .endif
 .if ${DEVEL_MODE} == "YES"
 	-@sudo mount -t nullfs ${PWD} ${BASE_WORKDIR}/${SERVICE}/usr/src >/dev/null 2>&1
