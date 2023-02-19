@@ -5,7 +5,7 @@ if [ -f "/usr/local/etc/reggae.conf" ]; then
 fi
 
 ALL=${1}
-SCRIPT_DIR=`dirname $0`
+SCRIPT_DIR=$(dirname $0)
 PROJECT_DIR="${SCRIPT_DIR}/.."
 . "${SCRIPT_DIR}/default.conf"
 

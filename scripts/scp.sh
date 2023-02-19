@@ -4,13 +4,13 @@ if [ -f "/usr/local/etc/reggae.conf" ]; then
   . "/usr/local/etc/reggae.conf"
 fi
 
-SCRIPT_DIR=`dirname $0`
-PROJECT_ROOT=`readlink -f ${SCRIPT_DIR}/..`
+SCRIPT_DIR=$(dirname $0)
+PROJECT_ROOT=$(readlink -f ${SCRIPT_DIR}/..)
 USER="${1}"
 SERVICE="${2}"
 FILE="${3}"
 VERBOSE=${VERBOSE:="no"}
-IP=${IP:=`reggae get-ip ${SERVICE}`}
+IP=${IP:=$(reggae get-ip ${SERVICE})}
 
 help() {
   echo "Usage: $0 <user> <service> <file>"

@@ -4,15 +4,15 @@ if [ -f "/usr/local/etc/reggae.conf" ]; then
     . "/usr/local/etc/reggae.conf"
 fi
 
-SCRIPT_DIR=`dirname $0`
+SCRIPT_DIR=$(dirname $0)
 . "${SCRIPT_DIR}/default.conf"
 
-SHORT_HOSTNAME=`hostname -s`
-HOSTNAME=`hostname`
-NATIP=`netstat -rn4 | awk '/^default/{print $2}' | grep '\.'`
-EGRESS=`netstat -rn4 | awk '/^default/{print $4}' | sort | uniq`
-NODEIP=`ifconfig ${EGRESS} | awk '/inet /{print $2}' | head -n 1`
-TEMP_INITENV_CONF=`mktemp`
+SHORT_HOSTNAME=$(hostname -s)
+HOSTNAME=$(hostname)
+NATIP=$(netstat -rn4 | awk '/^default/{print $2}' | grep '\.')
+EGRESS=$(netstat -rn4 | awk '/^default/{print $4}' | sort | uniq)
+NODEIP=$(ifconfig ${EGRESS} | awk '/inet /{print $2}' | head -n 1)
+TEMP_INITENV_CONF=$(mktemp)
 ZFSFEAT=1
 
 
@@ -44,7 +44,7 @@ setup_file_system() {
 
 
 setup_devfs() {
-  if [ ! -e "/etc/devfs.rules" -o -z `grep -o 'vnet=8' /etc/devfs.rules` ]; then
+  if [ ! -e "/etc/devfs.rules" -o -z $(grep -o 'vnet=8' /etc/devfs.rules) ]; then
     cat ${SCRIPT_DIR}/../templates/devfs.rules >>/etc/devfs.rules
   fi
   service devd restart
@@ -53,7 +53,7 @@ setup_devfs() {
 
 
 setup_cbsd() {
-  RESOLVER_BASE=`echo ${JAIL_INTERFACE_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
+  RESOLVER_BASE=$(echo ${JAIL_INTERFACE_IP} | awk -F '.' '{print $1 "." $2 "." $3}')
   JAIL_IP_POOL="${RESOLVER_BASE}.0/24"
   JAIL_IP6_POOL="${IPV6_PREFIX}:/64"
   sed \
@@ -72,7 +72,7 @@ setup_cbsd() {
   service cbsdrsyncd start
   sed \
     -e "s/DOMAIN/${DOMAIN}/g" \
-    -e "s/JAIL_INTERFACE/${JAIL_INTERFACE}/g" \
+    -e "s/JAIL_INTERFACE/${INTERFACE}/g" \
     "${SCRIPT_DIR}/../cbsd-profile/jail-freebsd-reggae.conf" >"${CBSD_WORKDIR}/etc/defaults/jail-freebsd-reggae.conf"
   rm -rf "${CBSD_WORKDIR}/share/FreeBSD-jail-reggae-skel" "${CBSD_WORKDIR}/share/jail-system-reggae"
   cp -r "${SCRIPT_DIR}/../cbsd-profile/skel" "${CBSD_WORKDIR}/share/FreeBSD-jail-reggae-skel"

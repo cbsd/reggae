@@ -4,19 +4,19 @@ if [ -f "/usr/local/etc/reggae.conf" ]; then
   . "/usr/local/etc/reggae.conf"
 fi
 
-SCRIPT_DIR=`dirname $0`
+SCRIPT_DIR=$(dirname $0)
 . "${SCRIPT_DIR}/default.conf"
 . "${SCRIPT_DIR}/../templates/reggae-register.sh"
 
-SHORT_HOSTNAME=`hostname -s`
-HOSTNAME=`hostname`
-CLONED_INTERFACES=`sysrc -n cloned_interfaces`
-NATIP=`netstat -rn4 | awk '/^default/{print $2}'`
-EGRESS=`netstat -rn4 | awk '/^default/{print $4}'`
-EGRESS_CONFIG=`sysrc -n ifconfig_${EGRESS} 2>/dev/null`
-DHCP_CONFIG=`echo ${EGRESS_CONFIG} | grep -io dhcp`
+SHORT_HOSTNAME=$(hostname -s)
+HOSTNAME=$(hostname)
+CLONED_INTERFACES=$(sysrc -n cloned_interfaces)
+NATIP=$(netstat -rn4 | awk '/^default/{print $2}')
+EGRESS=$(netstat -rn4 | awk '/^default/{print $4}')
+EGRESS_CONFIG=$(sysrc -n ifconfig_${EGRESS} 2>/dev/null)
+DHCP_CONFIG=$(echo ${EGRESS_CONFIG} | grep -io dhcp)
 STATIC=NO
-NETWORK=`echo ${MASTER_IP} | awk -F '.' '{print $1 "." $2 "." $3 ".0/24"}'`
+NETWORK=$(echo ${MASTER_IP} | awk -F '.' '{print $1 "." $2 "." $3 ".0/24"}')
 
 
 if [ -z "${DHCP_CONFIG}" ]; then
@@ -29,7 +29,7 @@ check_config() {
     echo "PROJECTS_DIR must be set in /usr/local/etc/reggae.conf" >&2
     exit 1
   fi
-  if [ `hostname` = `hostname -s` ]; then
+  if [ $(hostname) = $(hostname -s) ]; then
     echo "Hostname must be FQDN. Please set hostname to something like 'myhost.example.com'" >&2
     exit 1
   fi
@@ -38,7 +38,6 @@ check_config() {
 
 setup_network() {
   interface_config="inet ${INTERFACE_IP} netmask 255.255.255.0"
-  interface_alias_config="inet ${JAIL_INTERFACE_IP} netmask 255.255.255.0"
   interface_ipv6_config="inet6 -ifdisabled auto_linklocal ${IPV6_PREFIX}${INTERFACE_IP6}"
 
   BRIDGE_MEMBERS_CONFIG=""
@@ -82,9 +81,6 @@ setup_pf() {
       -e "s;EGRESS;${EGRESS};g" \
       -e "s;IPV6_PREFIX;${IPV6_PREFIX};g" \
       -e "s;MASTER_IP6;${MASTER_IP6};g" \
-      -e "s;INTERFACE_IP6;${INTERFACE_IP6};g" \
-      -e "s;JAIL_INTERFACE_IP;${JAIL_INTERFACE_IP};g" \
-      -e "s;INTERFACE_IP;${INTERFACE_IP};g" \
       -e "s;INTERFACE;${INTERFACE};g" \
       -e "s;MASTER_IP;${MASTER_IP};g" \
       "${SCRIPT_DIR}/../templates/pf.conf" >/etc/pf.conf
@@ -118,7 +114,7 @@ setup_rtadvd() {
 
 
 setup_nfs() {
-  TMP_EXPORTS=`mktemp`
+  TMP_EXPORTS=$(mktemp)
   sysrc mountd_enable="YES"
   sysrc mountd_flags="-r"
   sysrc nfs_server_enable="YES"
@@ -140,8 +136,8 @@ setup_nfs() {
 
 
 setup_unbound() {
-  REVERSE_ZONE=`get_zone ipv4 ${INTERFACE_IP}`
-  REVERSEV6=`get_zone ipv6 ${IPV6_PREFIX}${MASTER_IP6}`
+  REVERSE_ZONE=$(get_zone ipv4 ${INTERFACE_IP})
+  REVERSEV6=$(get_zone ipv6 ${IPV6_PREFIX}${MASTER_IP6})
 
   sysrc local_unbound_enable="YES"
   sysrc local_unbound_tls="NO"
@@ -149,7 +145,6 @@ setup_unbound() {
   resolvconf -u
   service local_unbound restart
   sed \
-    -e "s;JAIL_INTERFACE_IP;${JAIL_INTERFACE_IP};g" \
     -e "s;IPV6_PREFIX;${IPV6_PREFIX};g" \
     -e "s;INTERFACE_IP6;${INTERFACE_IP6};g" \
     -e "s;INTERFACE_IP;${INTERFACE_IP};g" \
@@ -165,6 +160,7 @@ setup_unbound() {
   cp "${SCRIPT_DIR}/../templates/unbound_control.conf" /var/unbound/control.conf
   cp "${SCRIPT_DIR}/../templates/resolvconf.conf" /etc/resolvconf.conf
 
+  mkdir /var/unbound/conf.d /var/unbound/zones
   chown -R unbound:unbound /var/unbound
   service local_unbound restart
   resolvconf -u

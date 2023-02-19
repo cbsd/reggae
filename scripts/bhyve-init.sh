@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TEMPFILE=`mktemp`
+TEMPFILE=$(mktemp)
 
 reggae init ${@}
 echo "TYPE = bhyve" >"${TEMPFILE}"

@@ -4,7 +4,7 @@ if [ -f "/usr/local/etc/reggae.conf" ]; then
   . "/usr/local/etc/reggae.conf"
 fi
 
-SCRIPT_DIR=`dirname $0`
+SCRIPT_DIR=$(dirname $0)
 . "${SCRIPT_DIR}/default.conf"
 
 SERVICE="network"
@@ -22,7 +22,7 @@ setup() {
   mkdir -p "${BASE_WORKDIR}/${SERVICE}/usr/local/etc/pkg/repos"
   echo -e "FreeBSD: {\n    url: \"pkg+http://${PKG_MIRROR}/\${ABI}/${PKG_REPO}\",\n}">"${BASE_WORKDIR}/${SERVICE}/usr/local/etc/pkg/repos/FreeBSD.conf"
   echo 'sendmail_enable="NONE"' >"${BASE_WORKDIR}/${SERVICE}/etc/rc.conf.d/sendmail"
-  echo "search `hostname`" >"${BASE_WORKDIR}/${SERVICE}/etc/resolv.conf"
+  echo "search $(hostname)" >"${BASE_WORKDIR}/${SERVICE}/etc/resolv.conf"
   if [ "${USE_IPV4}" = "yes" ]; then
     echo "ifconfig_eth0=\"inet ${MASTER_IP}/24\"" >>"${BASE_WORKDIR}/${SERVICE}/etc/rc.conf"
     echo "defaultrouter=\"${INTERFACE_IP}\"" >>"${BASE_WORKDIR}/${SERVICE}/etc/rc.conf"
@@ -50,7 +50,7 @@ dhcp() {
   jexec ${SERVICE} pwd_mkdb /etc/master.passwd
 
   if [ "${USE_IPV4}" = "yes" ]; then
-    DHCP_BASE=`echo ${MASTER_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
+    DHCP_BASE=$(echo ${MASTER_IP} | awk -F '.' '{print $1 "." $2 "." $3}')
     DHCP_SUBNET_FIRST="${DHCP_BASE}.1"
     DHCP_SUBNET_LAST="${DHCP_BASE}.200"
     sed \

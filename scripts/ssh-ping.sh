@@ -1,7 +1,7 @@
 #!/bin/sh
 
-SCRIPT_DIR=`dirname $0`
-PROJECT_ROOT=`readlink -f ${SCRIPT_DIR}/..`
+SCRIPT_DIR=$(dirname $0)
+PROJECT_ROOT=$(readlink -f ${SCRIPT_DIR}/..)
 SERVICE="${1}"
 shift
 COMMAND="${@}"

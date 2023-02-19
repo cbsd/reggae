@@ -1,12 +1,12 @@
 #!/bin/sh
 
-SCRIPT_DIR=`dirname $0`
-PROJECT_ROOT=`readlink -f ${SCRIPT_DIR}/..`
+SCRIPT_DIR=$(dirname $0)
+PROJECT_ROOT=$(readlink -f ${SCRIPT_DIR}/..)
 USER="${1}"
 SERVICE="${2}"
 shift
 shift
-IP=${IP:=`reggae get-ip ${SERVICE}`}
+IP=${IP:=$(reggae get-ip ${SERVICE})}
 
 
 help() {
