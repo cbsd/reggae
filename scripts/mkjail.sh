@@ -105,7 +105,7 @@ get_mounts() {
   if [ -f "${FSTAB}" ]; then
     cat "${FSTAB}" | while read mountpoint; do
       mount_dest=$(eval echo ${mountpoint} | awk '{print $2}')
-      mkdir "${BSDINSTALL_CHROOT}${mount_dest}"
+      mkdir -p "${BSDINSTALL_CHROOT}${mount_dest}"
       echo -n " mount += \"${mountpoint}\";"
     done
   fi
