@@ -44,7 +44,7 @@ setup_file_system() {
 
 
 setup_devfs() {
-  if [ ! -e "/etc/devfs.rules" -o -z `grep -o 'vnet=8' /etc/devfs.rules` ]; then
+  if [ ! -e "/etc/devfs.rules" -o -z $(grep -o 'vnet=8' /etc/devfs.rules) ]; then
     cat ${SCRIPT_DIR}/../templates/devfs.rules >>/etc/devfs.rules
   fi
   service devd restart
@@ -53,7 +53,7 @@ setup_devfs() {
 
 
 setup_cbsd() {
-  RESOLVER_BASE=`echo ${JAIL_INTERFACE_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
+  RESOLVER_BASE=$(echo ${JAIL_INTERFACE_IP} | awk -F '.' '{print $1 "." $2 "." $3}')
   JAIL_IP_POOL="${RESOLVER_BASE}.0/24"
   JAIL_IP6_POOL="${IPV6_PREFIX}:/64"
   sed \

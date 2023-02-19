@@ -1,10 +1,10 @@
 #!/bin/sh
 
-CBSD_WORKDIR=`sysrc -s cbsdd -n cbsd_workdir`
+CBSD_WORKDIR=$(sysrc -s cbsdd -n cbsd_workdir)
 IMAGE_PATH="${1}"
 HYPERVISOR="${2:-jail}"
-DOMAIN=`reggae get-config DOMAIN`
-PKG_PROXY=`reggae get-config PKG_PROXY`
+DOMAIN=$(reggae get-config DOMAIN)
+PKG_PROXY=$(reggae get-config PKG_PROXY)
 
 if [ -z "${IMAGE_PATH}" ]; then
   echo "Usage: ${0} <image>" 2>&1
@@ -16,8 +16,8 @@ if [ ! -e "${IMAGE_PATH}" ]; then
   exit 1
 fi
 
-IMAGE=`basename ${IMAGE_PATH}`
-JAIL=`echo ${IMAGE} | sed 's;\.img$;;'`
+IMAGE=$(basename ${IMAGE_PATH})
+JAIL=$(echo ${IMAGE} | sed 's;\.img$;;')
 
 trap "rm -rf ${CBSD_WORKDIR}/import/${IMAGE}" HUP INT ABRT BUS TERM  EXIT
 
@@ -29,7 +29,7 @@ if [ "${HYPERVISOR}" = "jail" ]; then
     sed -i "" \
       -e "s;pkg_env : { http_proxy: \".*\" };pkg_env : { http_proxy: \"http://${PKG_PROXY}\" };g" \
       ${CBSD_WORKDIR}/jails-data/${JAIL}-data/usr/local/etc/pkg.conf
-    written=`grep -o '^pkg_env :' ${CBSD_WORKDIR}/jails-data/${JAIL}-data/usr/local/etc/pkg.conf`
+    written=$(grep -o '^pkg_env :' ${CBSD_WORKDIR}/jails-data/${JAIL}-data/usr/local/etc/pkg.conf)
     if [ -z "${written}" ]; then
       echo "pkg_env : { http_proxy: \"http://${PKG_PROXY}\" }" >>${CBSD_WORKDIR}/jails-data/${JAIL}-data/usr/local/etc/pkg.conf
     fi

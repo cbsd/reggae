@@ -4,20 +4,20 @@ if [ -f "/usr/local/etc/reggae.conf" ]; then
   . "/usr/local/etc/reggae.conf"
 fi
 
-SCRIPT_DIR=`dirname $0`
+SCRIPT_DIR=$(dirname $0)
 . "${SCRIPT_DIR}/default.conf"
 
-HOSTNAME=`hostname`
-EGRESS=`netstat -rn4 | awk '/^default/{print $4}'`
-EGRESS_CONFIG=`sysrc -n ifconfig_${EGRESS}`
-DHCP_CONFIG=`echo ${EGRESS_CONFIG} | grep -io dhcp`
-NODEIP=`ifconfig ${EGRESS} | awk '/inet /{print $2}'`
-TEMP_MASTER_CONF=`mktemp`
-TEMP_DHCP_CONF=`mktemp`
+HOSTNAME=$(hostname)
+EGRESS=$(netstat -rn4 | awk '/^default/{print $4}')
+EGRESS_CONFIG=$(sysrc -n ifconfig_${EGRESS})
+DHCP_CONFIG=$(echo ${EGRESS_CONFIG} | grep -io dhcp)
+NODEIP=$(ifconfig ${EGRESS} | awk '/inet /{print $2}')
+TEMP_MASTER_CONF=$(mktemp)
+TEMP_DHCP_CONF=$(mktemp)
 export VER=${VER:="native"}
 SERVICE="network"
-export ARCH=${ARCH:="`uname -m`"}
-export TARGET_ARCH=${TARGET_ARCH:="`uname -p`"}
+export ARCH=${ARCH:="$(uname -m)"}
+export TARGET_ARCH=${TARGET_ARCH:="$(uname -p)"}
 
 setup() {
   if [ "${USE_IPV4}" != "yes" -a "${USE_IPV6}" != "yes" ]; then
@@ -59,7 +59,7 @@ dhcp() {
   chmod 755 "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/dhcpd-hook.sh"
   cp ${SCRIPT_DIR}/../templates/reggae-register.sh "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/"
   chmod 755 "${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/bin/reggae-register.sh"
-  DHCP_BASE=`echo ${MASTER_IP} | awk -F '.' '{print $1 "." $2 "." $3}'`
+  DHCP_BASE=$(echo ${MASTER_IP} | awk -F '.' '{print $1 "." $2 "." $3}')
   DHCP_SUBNET_FIRST="${DHCP_BASE}.1"
   DHCP_SUBNET_LAST="${DHCP_BASE}.200"
   if [ "${USE_IPV4}" = "yes" ]; then

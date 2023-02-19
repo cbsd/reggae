@@ -4,22 +4,22 @@ if [ -f "/usr/local/etc/reggae.conf" ]; then
   . "/usr/local/etc/reggae.conf"
 fi
 
-SCRIPT_DIR=`dirname $0`
+SCRIPT_DIR=$(dirname $0)
 . "${SCRIPT_DIR}/default.conf"
 
 
-PROJECT_ROOT=`readlink -f ${SCRIPT_DIR}/..`
+PROJECT_ROOT=$(readlink -f ${SCRIPT_DIR}/..)
 MAKEFILE="Makefile.service"
 PROVISIONERS=$@
-SERVICE_NAME=`basename ${PWD}`
+SERVICE_NAME=$(basename ${PWD})
 case ${SERVICE_NAME} in
   jail*)
-    SERVICE_NAME=`echo ${SERVICE_NAME} | cut -b 5-`
+    SERVICE_NAME=$(echo ${SERVICE_NAME} | cut -b 5-)
     ;;
 esac
 case ${SERVICE_NAME} in
   -*)
-    SERVICE_NAME=`echo ${SERVICE_NAME} | cut -b 2-`
+    SERVICE_NAME=$(echo ${SERVICE_NAME} | cut -b 2-)
     ;;
 esac
 

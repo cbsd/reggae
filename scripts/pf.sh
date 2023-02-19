@@ -8,7 +8,7 @@ if [ -z "${DIRECTORY}" ]; then
 fi
 
 cd "${DIRECTORY}"
-for anchor_file in `find . -type f`; do
-  anchor=`echo ${anchor_file} | cut -b 3- | sed s/\.conf$//`
+for anchor_file in $(find . -type f); do
+  anchor=$(echo ${anchor_file} | cut -b 3- | sed s/\.conf$//)
   pfctl -a ${anchor} -f ${anchor_file}
 done

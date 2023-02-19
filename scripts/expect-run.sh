@@ -1,12 +1,12 @@
 #!/bin/sh
 
-TEMP_FILE=`mktemp`
+TEMP_FILE=$(mktemp)
 
 passwd_file=$1
 shift
 prompt_string=$1
 shift
-passwd=`cat ${passwd_file}`
+passwd=$(cat ${passwd_file})
 
 echo "#!/usr/local/bin/expect -f" >"${TEMP_FILE}"
 echo "spawn $@" >>"${TEMP_FILE}"
