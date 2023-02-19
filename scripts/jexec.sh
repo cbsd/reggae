@@ -1,11 +1,11 @@
 #!/bin/sh
 
 help() {
-  echo "Usage: ${0} [options] <jail name> <command" >&2
-  echo "" >&2
-  echo "options:" >&2
-  echo "  -U <user>" >&2
-  echo "    Jail user to execute command as." >&2
+  echo "Usage: ${0} [options] <jail name> <command>"
+  echo ""
+  echo "options:"
+  echo "  -U <user>"
+  echo "    Jail user to execute command as."
 }
 
 JAIL_USER="root"
