@@ -102,11 +102,13 @@ get_mounts() {
   if [ -z "${FSTAB}" ]; then
     return
   fi
-  cat "${FSTAB}" | while read mountpoint; do
-    mount_dest=$(eval echo ${mountpoint} | awk '{print $2}')
-    mkdir "${BSDINSTALL_CHROOT}${mount_dest}"
-    echo -n " mount += \"${mountpoint}\";"
-  done
+  if [ -f "${FSTAB}" ]; then
+    cat "${FSTAB}" | while read mountpoint; do
+      mount_dest=$(eval echo ${mountpoint} | awk '{print $2}')
+      mkdir "${BSDINSTALL_CHROOT}${mount_dest}"
+      echo -n " mount += \"${mountpoint}\";"
+    done
+  fi
 }
 
 
@@ -143,8 +145,20 @@ if [ "${NAME}" = "network" ]; then
 else
   MOUNTS=$(get_mounts)
   DEPENDS=$(get_dependencies)
-  OPTIONS="${MOUNTS}${DEPENDS}"
-  echo "${NAME} { \$id = ${ID};${OPTIONS}}" >>/etc/jail.conf
+  if [ ! -z "${PRESTART}" ]; then
+    PRESTART=" exec.prestart += \"${PRESTART}\";"
+  fi
+  if [ ! -z "${POSTSTART}" ]; then
+    POSTSTART=" exec.poststart += \"${POSTSTART}\";"
+  fi
+  if [ ! -z "${PRESTOP}" ]; then
+    PRESTOP=" exec.prestop += \"${PRESTOP}\";"
+  fi
+  if [ ! -z "${POSTSTOP}" ]; then
+    POSTSTOP=" exec.poststop += \"${POSTSTOP}\";"
+  fi
+  OPTIONS="${MOUNTS}${DEPENDS}${PRESTART}${POSTSTART}${PRESTOP}${PRESTOP}"
+  echo "${NAME} { \$id = ${ID};${OPTIONS} }" >>/etc/jail.conf
   if [ "${USE_IPV4}" = "yes" ]; then
     echo "ifconfig_eth0=\"DHCP\"" >>"${BSDINSTALL_CHROOT}/etc/rc.conf"
   fi
