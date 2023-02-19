@@ -6,6 +6,7 @@ fi
 
 SCRIPT_DIR=$(dirname $0)
 . "${SCRIPT_DIR}/default.conf"
+. "${SCRIPT_DIR}/utils.sh"
 
 help() {
   echo "Usage: ${0} [options] <jail>"
@@ -68,36 +69,6 @@ export BSDINSTALL_CHROOT="${BASE_WORKDIR}/${NAME}"
 export BSDINSTALL_DISTDIR="/usr/freebsd-dist/${OS_VERSION}"
 
 
-next_id() {
-  NEXT_ID=$(grep -s '$id = ' /etc/jail.conf)
-  if [ -z "${NEXT_ID}" ]; then
-    echo 1
-  else
-    expr $(grep '$id' /etc/jail.conf | \
-      cut -f 2 -d '{' | \
-      cut -f 1 -d ';' | \
-      awk -F '= ' '{print $2}' | \
-      sort -n | \
-      tail -n 1 \
-    ) + 1
-  fi
-}
-
-
-check() {
-  if [ -e "${BSDINSTALL_CHROOT}" ]; then
-    echo "${BSDINSTALL_CHROOT} already exists" >&2
-    exit 1
-  fi
-  EXISTING=$(grep "^${NAME} {" /etc/jail.conf)
-  if [ ! -z "${EXISTING}" ]; then
-    echo "${NAME} already defined in /etc/jail.conf as" >&2
-    echo "${EXISTING}" >&2
-    exit 1
-  fi
-}
-
-
 get_mounts() {
   if [ -z "${FSTAB}" ]; then
     return
@@ -120,7 +91,7 @@ get_dependencies() {
 }
 
 
-check
+check "${NAME}" "${BSDINSTALL_CHROOT}"
 
 if [ ! -d "${BSDINSTALL_DISTDIR}" ]; then
   mkdir -p "${BSDINSTALL_DISTDIR}"

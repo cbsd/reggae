@@ -113,15 +113,13 @@ exec:
 	@sudo jexec ${SERVICE} ${command}
 
 .if target(pre_export)
-export: down pre_export export
+export: pre_export
 .else
-export: down
+export:
 .if !exists(build)
 	@mkdir build
 .endif
-	@echo -n "Compressing ${SERVICE} ... "
-	@sudo tar cfJp ${PWD}/build/${SERVICE}.tar.xz --cd ${BASE_WORKDIR}/${SERVICE} .
-	@echo "done"
+	@sudo reggae export ${SERVICE}
 	@echo "Chowning ${SERVICE}.img to ${UID}:${GID} ..."
 	@sudo chown ${UID}:${GID} build/${SERVICE}.img
 .if target(post_export)
