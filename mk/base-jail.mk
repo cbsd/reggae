@@ -1,6 +1,10 @@
 BASE_WORKDIR != reggae get-config BASE_WORKDIR
 PKG_PROXY != reggae get-config PKG_PROXY
+MKJAIL_OPTIONS =
 
+.if exists(${EXTRA_FSTAB})
+MKJAIL_OPTIONS += -f ${EXTRA_FSTAB}
+.endif
 
 .if target(pre_up)
 up: setup pre_up
@@ -73,11 +77,7 @@ setup:
 	@${MAKE} ${MAKEFLAGS} post_setup
 .endif
 .if !exists(${BASE_WORKDIR}/${SERVICE})
-.if exists(${EXTRA_FSTAB})
-	@sudo reggae mkjail -f ${EXTRA_FSTAB} ${SERVICE}
-.else
-	@sudo reggae mkjail ${SERVICE}
-.endif
+	@sudo env PRESTART="${PRESTART}" POSTSTART="${POSTSTART}" PRESTOP="${PRESTOP}" POSTSTOP="${POSTSTOP}" reggae mkjail ${MKJAIL_OPTIONS} ${SERVICE}
 .endif
 .if ${DEVEL_MODE} == "YES"
 	-@sudo mount -t nullfs ${PWD} ${BASE_WORKDIR}/${SERVICE}/usr/src >/dev/null 2>&1
