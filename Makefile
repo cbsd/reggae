@@ -77,6 +77,7 @@ SCRIPTS = apply-proxy.sh \
 	  cbsd-network-init.sh \
 	  chef-provision.sh \
 	  expect-run.sh \
+	  export.sh \
 	  get-config.sh \
 	  get-ip.sh \
 	  host-init.sh \
@@ -97,8 +98,9 @@ SCRIPTS = apply-proxy.sh \
 	  shell-provision.sh \
 	  ssh-ping.sh \
 	  ssh.sh \
-	  version.sh \
-	  update-profiles.sh
+	  update-profiles.sh \
+	  utils.sh \
+	  version.sh
 MAN_FILES = reggae.1 \
 	    reggae-project.1 \
 	    reggae-provision.1
