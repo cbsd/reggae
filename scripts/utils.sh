@@ -2,12 +2,12 @@
 
 
 next_id() {
-  NEXT_ID=$(grep -s '$id = ' /etc/jail.conf)
+  NEXT_ID=$(cat /etc/jail.conf.d/*.conf 2>/dev/null || echo "" | grep -s '$id = ')
   if [ -z "${NEXT_ID}" ]; then
     echo 1
   else
-    expr $(grep '$id' /etc/jail.conf | \
-      cut -f 2 -d '{' | \
+    expr $(cat /etc/jail.conf.d/*.conf | \
+      grep '$id' | \
       cut -f 1 -d ';' | \
       awk -F '= ' '{print $2}' | \
       sort -n | \
@@ -21,13 +21,11 @@ check() {
   NAME="${1}"
   CHROOT="${2}"
   if [ -e "${CHROOT}" ]; then
-    echo "${CHROOT} already exists" >&2
+    echo "${CHROOT} already exists!" >&2
     exit 1
   fi
-  EXISTING=$(grep "^${NAME} {" /etc/jail.conf)
-  if [ ! -z "${EXISTING}" ]; then
-    echo "${NAME} already defined in /etc/jail.conf as" >&2
-    echo "${EXISTING}" >&2
+  if [ -e "/etc/jail.conf.d/${NAME}.conf" ]; then
+    echo "${NAME}.conf already defined in /etc/jail.conf.d!" >&2
     exit 1
   fi
 }

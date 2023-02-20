@@ -77,7 +77,7 @@ get_mounts() {
     cat "${FSTAB}" | while read mountpoint; do
       mount_dest=$(eval echo ${mountpoint} | awk '{print $2}')
       mkdir -p "${BSDINSTALL_CHROOT}${mount_dest}"
-      echo -n " mount += \"${mountpoint}\";"
+      echo -n "\n mount += \"${mountpoint}\";"
     done
   fi
 }
@@ -110,26 +110,36 @@ mkdir -p "${BSDINSTALL_CHROOT}/home/provision/.ssh"
 chmod 700 "${BSDINSTALL_CHROOT}/home/provision/.ssh"
 
 
+HOST=$(hostname)
 ID=$(next_id)
 if [ "${NAME}" = "network" ]; then
-  cat "${SCRIPT_DIR}/../templates/network-jail.conf" >>/etc/jail.conf
+  sed -e "s;HOST;${HOST};g" \
+      -e "s;BASE_WORKDIR;${BASE_WORKDIR};g" \
+    "${SCRIPT_DIR}/../templates/network-jail.conf" >"/etc/jail.conf.d/${NAME}.conf"
 else
   MOUNTS=$(get_mounts)
   DEPENDS=$(get_dependencies)
   if [ ! -z "${PRESTART}" ]; then
-    PRESTART=" exec.prestart += \"${PRESTART}\";"
+    PRESTART="\n exec.prestart += \"${PRESTART}\";"
   fi
   if [ ! -z "${POSTSTART}" ]; then
-    POSTSTART=" exec.poststart += \"${POSTSTART}\";"
+    POSTSTART="\n exec.poststart += \"${POSTSTART}\";"
   fi
   if [ ! -z "${PRESTOP}" ]; then
-    PRESTOP=" exec.prestop += \"${PRESTOP}\";"
+    PRESTOP="\n exec.prestop += \"${PRESTOP}\";"
   fi
   if [ ! -z "${POSTSTOP}" ]; then
-    POSTSTOP=" exec.poststop += \"${POSTSTOP}\";"
+    POSTSTOP="\n exec.poststop += \"${POSTSTOP}\";"
   fi
   OPTIONS="${MOUNTS}${DEPENDS}${PRESTART}${POSTSTART}${PRESTOP}${PRESTOP}"
-  echo "${NAME} { \$id = ${ID};${OPTIONS} }" >>/etc/jail.conf
+  cat << EOF >"/etc/jail.conf.d/${NAME}.conf"
+${NAME} {
+  \$id = ${ID};
+EOF
+  sed -e "s;HOST;${HOST};g" \
+      -e "s;BASE_WORKDIR;${BASE_WORKDIR};g" \
+    "${SCRIPT_DIR}/../templates/base-jail.conf" >>"/etc/jail.conf.d/${NAME}.conf"
+  echo -e "${OPTIONS}\n}" >>"/etc/jail.conf.d/${NAME}.conf"
   if [ "${USE_IPV4}" = "yes" ]; then
     echo "ifconfig_eth0=\"DHCP\"" >>"${BSDINSTALL_CHROOT}/etc/rc.conf"
   fi
