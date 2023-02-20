@@ -68,5 +68,5 @@ else
     mkdir -p "${BASE_WORKDIR}/${JAIL}"
   fi
   tar -x -p -f "${IMAGE_PATH}" --cd "${BASE_WORKDIR}/${JAIL}"
-  echo "${JAIL_CONFIG}" >>/etc/jail.conf
+  echo "${JAIL_CONFIG}" >"/etc/jail.conf.d/${IMAGE}.conf"
 fi

@@ -6,7 +6,7 @@ set -e
 SERVICE="${1}"
 BASE_WORKDIR="$(reggae get-config BASE_WORKDIR)"
 JAIL_PATH="${BASE_WORKDIR}/${SERVICE}"
-CONFIG="$(egrep '^letsencrypt \{' /etc/jail.conf)"
+CONFIG="$(cat "/etc/jail.conf.d/${SERVICE}.conf")"
 
 
 service jail stop "${SERVICE}"
