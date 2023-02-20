@@ -6,7 +6,7 @@ help() {
   echo "Usage: $0 <action>"
   echo "where action is one of:"
   cd "${SCRIPT_ROOT}"
-  for script_file in $(ls -1 *.sh); do
+  for script_file in $(find . -name '*.sh' -perm 755 | cut -f 2 -d '/' | sort); do
     if [ -x "${script_file}" ]; then
       echo -n "  "
       echo "${script_file}" | sed 's/\.sh$//'
