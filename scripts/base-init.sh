@@ -9,7 +9,9 @@ SCRIPT_DIR=$(dirname $0)
 
 setup_base() {
   HOST=$(hostname)
-  sed "s/HOST/${HOST}/g" "${SCRIPT_DIR}/../templates/base-jail.conf" >/etc/jail.conf
+  sed -e "s/HOST/${HOST}/g" \
+      -e "s/BASE_WORKDIR/${BASE_WORKDIR}" \
+    "${SCRIPT_DIR}/../templates/base-jail.conf" >/etc/jail.conf
   echo "reggae_enable=\"YES\"" >/etc/rc.conf.d/reggae
   service reggae start
   echo "jail_enable=\"YES\"" >/etc/rc.conf.d/jail
