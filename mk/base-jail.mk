@@ -119,7 +119,7 @@ export:
 .if !exists(build)
 	@mkdir build
 .endif
-	@sudo reggae export ${SERVICE}
+	@sudo reggae export ${SERVICE} build
 	@echo "Chowning ${SERVICE}.img to ${UID}:${GID} ..."
 	@sudo chown ${UID}:${GID} build/${SERVICE}.img
 .if target(post_export)
