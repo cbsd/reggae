@@ -23,11 +23,11 @@ SCRIPT_DIR=$(dirname $0)
 IMAGE_ABSOLUTE_PATH="$(readlink -f "${IMAGE_PATH}")"
 DOMAIN=$(reggae get-config DOMAIN)
 PKG_PROXY=$(reggae get-config PKG_PROXY)
-IMAGE=$(basename ${IMAGE_PATH})
-JAIL=$(echo ${IMAGE} | sed 's;\.img$;;')
-CONFIG="$(getextattr -q system config ${IMAGE_PATH})"
+IMAGE=$(basename "${IMAGE_PATH}")
+JAIL=$(echo "${IMAGE}" | sed 's;\.img$;;')
+FILE_TYPE=$(file -b "${IMAGE}")
 
-if [ -z "${CONFIG}" ]; then
+if [ "${FILE_TYPE}" = "data" ]; then
   HYPERVISOR="${2:-jail}"
   CBSD_WORKDIR=$(sysrc -s cbsdd -n cbsd_workdir)
 
@@ -55,6 +55,7 @@ if [ -z "${CONFIG}" ]; then
   fi
 else
   ID=$(next_id)
+  CONFIG="$(getextattr -q system config "${IMAGE_PATH}")"
   JAIL_CONFIG="$(echo ${CONFIG} | sed -e "s/\$id = [[:digit:]]*;/\$id = ${ID};/")"
   USE_ZFS=$(reggae get-config USE_ZFS)
   ZFS_POOL=$(reggae get-config ZFS_POOL)
