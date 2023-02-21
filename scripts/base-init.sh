@@ -8,6 +8,9 @@ SCRIPT_DIR=$(dirname $0)
 . "${SCRIPT_DIR}/default.conf"
 
 setup_base() {
+  if [ ! -d /var/log/jails ]; then
+    mkdir /var/log/jails
+  fi
   touch /etc/jail.conf
   echo "reggae_enable=\"YES\"" >/etc/rc.conf.d/reggae
   service reggae start

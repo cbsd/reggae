@@ -24,9 +24,7 @@ up: setup
 .endif
 .else
 	@sudo sysrc -s jail jail_list+="${SERVICE}"
-	@echo 'Deleting user "devel"'
-	-@sudo jexec ${SERVICE} pw user del devel -r >/dev/null 2>&1
-	@echo 'User "devel" deleted'
+	@sudo jexec ${SERVICE} pw user del devel -r >/dev/null 2>&1 || true
 .endif
 	@sudo jexec ${SERVICE} pwd_mkdb /etc/master.passwd
 .if target(post_up)
@@ -104,9 +102,9 @@ setup:
 
 login:
 .if defined(user)
-	@sudo jexec -U ${user} ${SERVICE} /bin/sh
+	@sudo jexec ${SERVICE} login -f ${user}
 .else
-	@sudo jexec ${SERVICE} /bin/sh
+	@sudo jexec ${SERVICE} login -f root
 .endif
 
 exec:
