@@ -98,6 +98,7 @@ SCRIPTS = apply-proxy.sh \
 	  shell-provision.sh \
 	  ssh-ping.sh \
 	  ssh.sh \
+	  update-base.sh \
 	  update-profiles.sh \
 	  utils.sh \
 	  version.sh
