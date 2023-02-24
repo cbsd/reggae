@@ -103,6 +103,7 @@ else
   mkdir -p "${BSDINSTALL_CHROOT}"
 fi
 bsdinstall distextract
+sed -i "" -e "s/^Components .*/Components world/" "${BSDINSTALL_CHROOT}/etc/freebsd-update.conf"
 chroot "${BSDINSTALL_CHROOT}" pw group add provision -g 2001
 chroot "${BSDINSTALL_CHROOT}" pw user add provision -u 2001 -g provision -s /bin/tcsh -G wheel -m
 chroot "${BSDINSTALL_CHROOT}" chpass -p '$6$61V0w0dRFFiEcnm2$o8CLPIdRBVHP13LQizdp12NEGD91RfHSB.c6uKnr9m2m3ZCg7ASeGENMaDt0tffmo5RalKGjWiHCtScCtjYfs/' provision

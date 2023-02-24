@@ -55,8 +55,7 @@ if [ "${FILE_TYPE}" = "data" ]; then
   fi
 else
   ID=$(next_id)
-  CONFIG="$(getextattr -q system config "${IMAGE_PATH}")"
-  JAIL_CONFIG="$(echo ${CONFIG} | sed -e "s/\$id = [[:digit:]]*;/\$id = ${ID};/")"
+  CONFIG="/etc/jail.conf.d/${JAIL}.conf"
   USE_ZFS=$(reggae get-config USE_ZFS)
   ZFS_POOL=$(reggae get-config ZFS_POOL)
   BASE_WORKDIR=$(reggae get-config BASE_WORKDIR)
@@ -69,5 +68,7 @@ else
     mkdir -p "${BASE_WORKDIR}/${JAIL}"
   fi
   tar -x -p -f "${IMAGE_PATH}" --cd "${BASE_WORKDIR}/${JAIL}"
-  echo "${JAIL_CONFIG}" >"/etc/jail.conf.d/${IMAGE}.conf"
+  JAIL_CONFIG="$(sed -e "s/\$id = [[:digit:]]*;/\$id = ${ID};/" "${BASE_WORKDIR}/${JAIL}${CONFIG}")"
+  echo "${JAIL_CONFIG}" >"/etc/jail.conf.d/${JAIL}.conf"
+  rm -rf "${BASE_WORKDIR}/${JAIL}/etc/jail.conf.d"
 fi
