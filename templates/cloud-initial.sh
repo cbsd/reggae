@@ -1,7 +1,7 @@
 #!/bin/sh
 
-pw group add provision -g 2001
-pw user add provision -u 2001 -g provision -s /bin/tcsh -G wheel -m
+pw group add provision -g 666
+pw user add provision -u 666 -g provision -s /bin/tcsh -G wheel -m
 sysrc ifconfig_vtnet0="SYNCDHCP"
 service cloudinit disable
 service nfsclient enable
