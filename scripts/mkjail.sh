@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 if [ -f "/usr/local/etc/reggae.conf" ]; then
   . "/usr/local/etc/reggae.conf"
 fi
@@ -173,9 +175,8 @@ EOF
     -e "s;MAC;${MAC};g" \
     "${SCRIPT_DIR}/../templates/base-jail.conf" >>"/etc/jail.conf.d/${NAME}.conf"
   echo -e "${OPTIONS}\n}" >>"/etc/jail.conf.d/${NAME}.conf"
-  sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0="ether ${MAC}"
   if [ "${USE_IPV4}" = "yes" ]; then
-    sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0+="DHCP"
+    sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0="DHCP"
   fi
   if [ "${USE_IPV6}" = "yes" ]; then
     sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0_ipv6="inet6 -ifdisabled accept_rtadv auto_linklocal"
