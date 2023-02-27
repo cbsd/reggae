@@ -88,14 +88,6 @@ setup:
 .if !exists(${BASE_WORKDIR}/${SERVICE}/usr/local/etc)
 	@sudo mkdir ${BASE_WORKDIR}/${SERVICE}/usr/local/etc
 .endif
-.if !exists(${BASE_WORKDIR}/${SERVICE}/usr/local/etc/pkg.conf)
-.if ${PKG_PROXY} != no
-	@sudo cp ${REGGAE_PATH}/templates/pkg.conf ${BASE_WORKDIR}/${SERVICE}/usr/local/etc/
-	@sudo sed -i "" \
-		-e 's;PKG_PROXY;pkg_env : { http_proxy: "http://${PKG_PROXY}" };g' \
-		${BASE_WORKDIR}/${SERVICE}/usr/local/etc/pkg.conf
-.endif
-.endif
 .if target(post_create)
 	@${MAKE} ${MAKEFLAGS} post_create
 .endif

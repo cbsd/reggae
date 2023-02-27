@@ -128,9 +128,12 @@ chmod 700 "${BSDINSTALL_CHROOT}/home/provision/.ssh"
 cp ~/.ssh/id_rsa.pub "${BSDINSTALL_CHROOT}/usr/home/provision/.ssh/authorized_keys"
 chmod 600 "${BSDINSTALL_CHROOT}/usr/home/provision/.ssh/authorized_keys"
 chown -R 666:666 "${BSDINSTALL_CHROOT}/usr/home/provision/.ssh"
-echo -n 'ifconfig_eth0="ether ' >>"${BSDINSTALL_CHROOT}/etc/rc.conf"
-generate_mac  >>"${BSDINSTALL_CHROOT}/etc/rc.conf"
-echo '"' >>"${BSDINSTALL_CHROOT}/etc/rc.conf"
+env ASSUME_ALWAYS_YES=yes pkg -c "${BSDINSTALL_CHROOT}" bootstrap -f
+sed -i "" \
+  -e 's;PKG_PROXY;pkg_env : { http_proxy: "http://${PKG_PROXY}" };g' \
+  "${SCRIPT_DIR}/../templates/pkg.conf" >"${BSDINSTALL_CHROOT}/usr/local/etc/pkg.conf"
+pkg -c "${BSDINSTALL_CHROOT}" install -y sudo
+echo "provision ALL=(ALL) NOPASSWD: ALL" >"${BSDINSTALL_CHROOT}/usr/local/etc/sudoers.d/reggae"
 
 
 HOST=$(hostname)
