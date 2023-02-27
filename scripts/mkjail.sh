@@ -91,6 +91,21 @@ get_dependencies() {
 }
 
 
+generate_mac() {
+  hexdump -n 6 -ve '1/1 "%.2x "' /dev/random |\
+    awk -v a="2,6,a,e" -v r="$RANDOM" '
+        BEGIN {
+            srand(r);
+        }
+        NR==1 {
+            split(a, b, ",");
+            r=int(rand() * 4 + 1);
+            printf("%s%s:%s:%s:%s:%s:%s", substr($1, 0, 1), b[r], $2, $3, $4, $5, $6);
+        }
+    '
+}
+
+
 check "${NAME}" "${BSDINSTALL_CHROOT}"
 
 if [ ! -d "${BSDINSTALL_DISTDIR}" ]; then
@@ -113,6 +128,9 @@ chmod 700 "${BSDINSTALL_CHROOT}/home/provision/.ssh"
 cp ~/.ssh/id_rsa.pub "${BSDINSTALL_CHROOT}/usr/home/provision/.ssh/authorized_keys"
 chmod 600 "${BSDINSTALL_CHROOT}/usr/home/provision/.ssh/authorized_keys"
 chown -R 666:666 "${BSDINSTALL_CHROOT}/usr/home/provision/.ssh"
+echo -n 'ifconfig_eth0="ether ' >>"${BSDINSTALL_CHROOT}/etc/rc.conf"
+generate_mac  >>"${BSDINSTALL_CHROOT}/etc/rc.conf"
+echo '"' >>"${BSDINSTALL_CHROOT}/etc/rc.conf"
 
 
 HOST=$(hostname)
@@ -147,10 +165,12 @@ EOF
       -e "s;INTERFACE;${INTERFACE};g" \
     "${SCRIPT_DIR}/../templates/base-jail.conf" >>"/etc/jail.conf.d/${NAME}.conf"
   echo -e "${OPTIONS}\n}" >>"/etc/jail.conf.d/${NAME}.conf"
+  MAC=$(generate_mac)
+  sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0="ether ${MAC}"
   if [ "${USE_IPV4}" = "yes" ]; then
-    echo "ifconfig_eth0=\"DHCP\"" >>"${BSDINSTALL_CHROOT}/etc/rc.conf"
+    sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0+="DHCP"
   fi
   if [ "${USE_IPV6}" = "yes" ]; then
-    echo "ifconfig_eth0_ipv6=\"inet6 -ifdisabled accept_rtadv auto_linklocal\"" >>"${BSDINSTALL_CHROOT}/etc/rc.conf"
+    sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0_ipv6="inet6 -ifdisabled accept_rtadv auto_linklocal"
   fi
 fi
