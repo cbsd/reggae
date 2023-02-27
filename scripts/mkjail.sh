@@ -120,6 +120,7 @@ ID=$(next_id)
 if [ "${NAME}" = "network" ]; then
   sed -e "s;HOST;${HOST};g" \
       -e "s;BASE_WORKDIR;${BASE_WORKDIR};g" \
+      -e "s;INTERFACE;${INTERFACE};g" \
     "${SCRIPT_DIR}/../templates/network-jail.conf" >"/etc/jail.conf.d/${NAME}.conf"
 else
   MOUNTS=$(get_mounts)
@@ -143,6 +144,7 @@ ${NAME} {
 EOF
   sed -e "s;HOST;${HOST};g" \
       -e "s;BASE_WORKDIR;${BASE_WORKDIR};g" \
+      -e "s;INTERFACE;${INTERFACE};g" \
     "${SCRIPT_DIR}/../templates/base-jail.conf" >>"/etc/jail.conf.d/${NAME}.conf"
   echo -e "${OPTIONS}\n}" >>"/etc/jail.conf.d/${NAME}.conf"
   if [ "${USE_IPV4}" = "yes" ]; then
