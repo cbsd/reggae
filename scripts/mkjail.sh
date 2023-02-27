@@ -92,15 +92,16 @@ get_dependencies() {
 
 
 generate_mac() {
-  hexdump -n 6 -ve '1/1 "%.2x "' /dev/random |\
-    awk -v a="2,6,a,e" -v r="$RANDOM" '
+  echo -n "58:9c:fc:"
+  hexdump -n 3 -ve '1/1 "%.2x "' /dev/random |\
+    awk -v a="2,3,a,e" -v r="$RANDOM" '
         BEGIN {
             srand(r);
         }
         NR==1 {
             split(a, b, ",");
             r=int(rand() * 4 + 1);
-            printf("%s%s:%s:%s:%s:%s:%s", substr($1, 0, 1), b[r], $2, $3, $4, $5, $6);
+            printf("%s%s:%s:%s", substr($1, 0, 1), b[r], $2, $3);
         }
     '
 }
@@ -136,8 +137,10 @@ pkg -c "${BSDINSTALL_CHROOT}" install -y sudo
 echo "provision ALL=(ALL) NOPASSWD: ALL" >"${BSDINSTALL_CHROOT}/usr/local/etc/sudoers.d/reggae"
 
 
-HOST=$(hostname)
 ID=$(next_id)
+MAC=$(generate_mac)
+HOST=$(hostname)
+
 if [ "${NAME}" = "network" ]; then
   sed -e "s;HOST;${HOST};g" \
       -e "s;BASE_WORKDIR;${BASE_WORKDIR};g" \
@@ -163,12 +166,13 @@ else
 ${NAME} {
   \$id = ${ID};
 EOF
-  sed -e "s;HOST;${HOST};g" \
-      -e "s;BASE_WORKDIR;${BASE_WORKDIR};g" \
-      -e "s;INTERFACE;${INTERFACE};g" \
+  sed \
+    -e "s;HOST;${HOST};g" \
+    -e "s;BASE_WORKDIR;${BASE_WORKDIR};g" \
+    -e "s;INTERFACE;${INTERFACE};g" \
+    -e "s;MAC;${MAC};g" \
     "${SCRIPT_DIR}/../templates/base-jail.conf" >>"/etc/jail.conf.d/${NAME}.conf"
   echo -e "${OPTIONS}\n}" >>"/etc/jail.conf.d/${NAME}.conf"
-  MAC=$(generate_mac)
   sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0="ether ${MAC}"
   if [ "${USE_IPV4}" = "yes" ]; then
     sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0+="DHCP"
