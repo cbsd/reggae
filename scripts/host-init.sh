@@ -104,7 +104,7 @@ setup_hostname() {
 setup_rtadvd() {
   if [ "${USE_IPV6}" = "yes" ]; then
     sysrc rtadvd_enable="YES"
-    sysrc rtadvd_interfaces="cbsd0"
+    sysrc rtadvd_interfaces="${INTERFACE}"
     sed \
       -e "s;INTERFACE;${INTERFACE};g" \
       -e "s;IPV6_PREFIX;${IPV6_PREFIX};g" \
