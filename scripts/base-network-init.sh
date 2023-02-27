@@ -38,7 +38,7 @@ setup() {
   service jail start network
   jexec ${SERVICE} env ASSUME_ALWAYS_YES=YES pkg bootstrap
   jexec ${SERVICE} pkg install -y isc-dhcp44-server nsd sudo
-  echo "dhcpd ALL=(ALL) NOPASSWD: ALL" >"${BASE_WORKDIR}/${SERVICE}/usr/local/etc/sudoers.d/reggae"
+  echo "dhcpd ALL=(ALL) NOPASSWD: ALL" >>"${BASE_WORKDIR}/${SERVICE}/usr/local/etc/sudoers.d/reggae"
   sysrc -s jail jail_list+="${SERVICE}"
 }
 
