@@ -1,5 +1,6 @@
 #!/bin/sh
 
+set -e
 
 BACKEND=$(reggae get-config BACKEND)
 PKG_PROXY=$(reggae get-config PKG_PROXY)

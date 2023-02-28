@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 help() {
   echo "Usage: ${0} [options] <jail name> <command>"
   echo ""

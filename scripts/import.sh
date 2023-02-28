@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 IMAGE_PATH="${1}"
 
 if [ -z "${IMAGE_PATH}" ]; then

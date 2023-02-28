@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 SERVICE="${1}"
 TYPE="${2}"
 

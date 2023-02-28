@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 if [ -f "/usr/local/etc/reggae.conf" ]; then
   . "/usr/local/etc/reggae.conf"
 fi
