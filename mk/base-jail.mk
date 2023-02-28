@@ -85,9 +85,6 @@ setup:
 	@sudo chmod 600 ${BASE_WORKDIR}/${SERVICE}/usr/home/provision/.ssh/authorized_keys
 	@sudo chown -R 666:666 ${BASE_WORKDIR}/${SERVICE}/usr/home/provision/.ssh
 .endif
-.if !exists(${BASE_WORKDIR}/${SERVICE}/usr/local/etc)
-	@sudo mkdir ${BASE_WORKDIR}/${SERVICE}/usr/local/etc
-.endif
 .if target(post_create)
 	@${MAKE} ${MAKEFLAGS} post_create
 .endif

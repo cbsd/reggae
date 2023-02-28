@@ -57,13 +57,14 @@ fi
 POOL="${POOL:=zroot}"
 export OS_VERSION_FLAVOR=${OS_VERSION_FLAVOR:="releases"}
 export OS_VERSION_NAME=${OS_VERSION_NAME:="RELEASE"}
-if [ -z "${OS_VERSION}" ]; then
+if [ -z "${OS_VERSION}" -o "${OS_VERSION}" = "native" ]; then
   OS_VERSION=$(freebsd-version -k | cut -f 1 -d '-')
   RAW_VERSION_NAME=$(freebsd-version -k | cut -f 2 -d '-')
   if [ "${RAW_VERSION_NAME}" = "CURRENT" ]; then
     export OS_VERSION_NAME="CURRENT"
     export OS_VERSION_FLAVOR="snapshots"
   fi
+
 fi
 export DISTRIBUTIONS="base.txz"
 export BSDINSTALL_DISTSITE="http://download.freebsd.org/${OS_VERSION_FLAVOR}/amd64/${OS_VERSION}-${OS_VERSION_NAME}"
