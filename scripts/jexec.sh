@@ -45,7 +45,7 @@ get_backend() {
   JAIL_PATH=$(jls -j ${JNAME} path)
   if [ "${JAIL_PATH}" = "${BASE_WORKDIR}/${JNAME}" ]; then
     echo "base"
-  elif [ "${JAIL_PATH}" = "${CBSD_WORKDIR}/${JNAME}" ]; then
+  elif [ "${JAIL_PATH}" = "${CBSD_WORKDIR}/jails/${JNAME}" ]; then
     echo "cbsd"
   else
     echo "Unsupported jail backend" >&2
