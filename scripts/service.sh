@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 SOCKET_DIR=${1}
 PID_FILE=${2}
 

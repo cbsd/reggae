@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 SCRIPT_DIR=$(dirname $0)
 PROJECT_ROOT=$(readlink -f ${SCRIPT_DIR}/..)
 SERVICE="${1}"

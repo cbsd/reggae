@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 BACKEND=$(reggae get-config BACKEND)
 SERVICE="${1}"
 TYPE="${2}"

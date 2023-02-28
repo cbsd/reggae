@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 NAME="${1}"
 if [ -z "${NAME}" ]; then
   echo "Usage: $0 <jail>" >&2
