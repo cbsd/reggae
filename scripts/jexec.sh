@@ -43,11 +43,11 @@ fi
 
 get_backend() {
   BASE_WORKDIR=$(reggae get-config BASE_WORKDIR)
-  CBSD_WORKDIR=$(sysrc -s cbsd -n cbsd_workdir)
+  CBSD_WORKDIR=$(sysrc -s cbsd -n cbsd_workdir || true)
   JAIL_PATH=$(jls -j ${JNAME} path)
   if [ "${JAIL_PATH}" = "${BASE_WORKDIR}/${JNAME}" ]; then
     echo "base"
-  elif [ "${JAIL_PATH}" = "${CBSD_WORKDIR}/jails/${JNAME}" ]; then
+  elif [ ! -z "${CBSD_WORKDIR}" -a "${JAIL_PATH}" = "${CBSD_WORKDIR}/jails/${JNAME}" ]; then
     echo "cbsd"
   else
     echo "Unsupported jail backend" >&2
