@@ -14,12 +14,10 @@ SOCKET="${SOCKET_DIR}/reggae.sock"
 MYPID=""
 
 
-
 cleanup() {
   pkill -P ${MYPID}
   rm -rf ${SOCKET}
 }
-
 
 trap cleanup HUP INT ABRT BUS TERM  EXIT
 
@@ -60,7 +58,10 @@ run() {
         unregister_v6 ${ip}
       fi
     fi
-    /usr/sbin/local-unbound-control flush ${fqdn}
+    first=$(echo ${fqdn} | cut -f 1 -d '.')
+    if [ ! -z "${first}" ]; then
+      /usr/sbin/local-unbound-control flush ${fqdn}
+    fi
   done
 }
 
