@@ -1,8 +1,10 @@
 #!/bin/sh
 
+set -e
+
 
 next_id() {
-  NEXT_ID=$(cat /etc/jail.conf.d/*.conf 2>/dev/null || echo "" | grep -s '$id = ')
+  NEXT_ID=$(cat /etc/jail.conf.d/*.conf 2>/dev/null || true | grep -s '$id = ' || true)
   if [ -z "${NEXT_ID}" ]; then
     echo 1
   else

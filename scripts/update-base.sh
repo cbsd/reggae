@@ -34,7 +34,7 @@ elif [ "${BACKEND}" = "base" ]; then
   elif [ -x "${BASE_WORKDIR}/${JAIL}/bin/freebsd-version" ]; then
     echo "=== ${JAIL} ==="
     export CURRENTLY_RUNNING="$(jexec "${JAIL}" freebsd-version -u)"
-    jexec "${jail_name}" \
+    jexec "${JAIL}" \
       freebsd-update \
       --not-running-from-cron \
       --currently-running "${CURRENTLY_RUNNING}" \
