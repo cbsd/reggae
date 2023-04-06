@@ -43,7 +43,7 @@ fi
 
 get_backend() {
   BASE_WORKDIR=$(reggae get-config BASE_WORKDIR)
-  CBSD_WORKDIR=$(sysrc -s cbsd -n cbsd_workdir || true)
+  CBSD_WORKDIR=$(sysrc -s cbsd -n cbsd_workdir 2>/dev/null || true)
   JAIL_PATH=$(jls -j ${JNAME} path)
   if [ "${JAIL_PATH}" = "${BASE_WORKDIR}/${JNAME}" ]; then
     echo "base"
