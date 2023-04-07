@@ -15,7 +15,9 @@ if [ "${BACKEND}" = "cbsd" ]; then
 elif [ "${BACKEND}" = "base" ]; then
   JAIL="${1}"
   export PAGER=cat
-  export HTTP_PROXY="${PKG_PROXY}"
+  if [ "${PKG_PROXY}" != "no" ]; then
+    export HTTP_PROXY="${PKG_PROXY}"
+  fi
   if [ -z "${JAIL}" ]; then
     cd "${BASE_WORKDIR}"
     jls -N | egrep -v ' *JID' | awk '{print $1}' | while read jail_name; do
