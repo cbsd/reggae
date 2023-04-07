@@ -14,7 +14,6 @@ up: setup
 	@echo -n "Booting ..."
 	@sudo service jail start ${SERVICE} >/dev/null 2>&1
 	@echo " done"
-	@sudo jexec ${SERVICE} env ASSUME_ALWAYS_YES=YES pkg bootstrap
 .if ${DEVEL_MODE} == "YES"
 	@sudo sysrc -s jail jail_list-="${SERVICE}"
 .if !exists(${BASE_WORKDIR}/${SERVICE}/usr/home/devel)

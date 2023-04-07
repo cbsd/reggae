@@ -130,9 +130,9 @@ setup_nfs() {
   sort "${TMP_EXPORTS}" | uniq > /etc/exports
   echo "V4: /" >>/etc/exports
 
-  service rpcbind start
-  service nfsd start
-  service mountd start
+  service rpcbind restart
+  service nfsd restart
+  service mountd restart
   rm "${TMP_EXPORTS}"
 }
 
@@ -141,7 +141,7 @@ setup_unbound() {
   REVERSE_ZONE=$(get_zone ipv4 ${INTERFACE_IP})
   REVERSEV6=$(get_zone ipv6 ${IPV6_PREFIX}${MASTER_IP6})
 
-  sysrc local_unbound_enable="YES"
+  service local_unbound enable
   sysrc local_unbound_tls="NO"
   fetch -o /var/unbound/root.hints https://www.internic.net/domain/named.cache
   resolvconf -u
@@ -162,7 +162,12 @@ setup_unbound() {
   cp "${SCRIPT_DIR}/../templates/unbound_control.conf" /var/unbound/control.conf
   cp "${SCRIPT_DIR}/../templates/resolvconf.conf" /etc/resolvconf.conf
 
-  mkdir /var/unbound/conf.d /var/unbound/zones
+  if [ ! -d /var/unbound/conf.d ]; then
+    mkdir /var/unbound/conf.d
+  fi
+  if [ ! -d /var/unbound/zones ]; then
+    mkdir /var/unbound/zones
+  fi
   chown -R unbound:unbound /var/unbound
   service local_unbound restart
   resolvconf -u

@@ -21,22 +21,16 @@ setup() {
   else
     env VERSION=${VER} reggae mkjail network
   fi
-  mkdir -p "${BASE_WORKDIR}/${SERVICE}/usr/local/etc/pkg/repos"
-  echo -e "FreeBSD: {\n    url: \"pkg+http://${PKG_MIRROR}/\${ABI}/${PKG_REPO}\",\n}">"${BASE_WORKDIR}/${SERVICE}/usr/local/etc/pkg/repos/FreeBSD.conf"
   echo 'sendmail_enable="NONE"' >"${BASE_WORKDIR}/${SERVICE}/etc/rc.conf.d/sendmail"
-  echo "search $(hostname)" >"${BASE_WORKDIR}/${SERVICE}/etc/resolv.conf"
   if [ "${USE_IPV4}" = "yes" ]; then
     echo "ifconfig_eth0=\"inet ${MASTER_IP}/24\"" >>"${BASE_WORKDIR}/${SERVICE}/etc/rc.conf"
     echo "defaultrouter=\"${INTERFACE_IP}\"" >>"${BASE_WORKDIR}/${SERVICE}/etc/rc.conf"
-    echo "nameserver ${INTERFACE_IP}" >>"${BASE_WORKDIR}/${SERVICE}/etc/resolv.conf"
   fi
   if [ "${USE_IPV6}" = "yes" ]; then
     echo "ifconfig_eth0_ipv6=\"inet6 ${IPV6_PREFIX}${MASTER_IP6}/64\"" >>"${BASE_WORKDIR}/${SERVICE}/etc/rc.conf"
     echo "ipv6_defaultrouter=\"${IPV6_PREFIX}${INTERFACE_IP6}\"" >>"${BASE_WORKDIR}/${SERVICE}/etc/rc.conf"
-    echo "nameserver ${IPV6_PREFIX}${INTERFACE_IP6}" >>"${BASE_WORKDIR}/${SERVICE}/etc/resolv.conf"
   fi
   service jail start network
-  jexec ${SERVICE} env ASSUME_ALWAYS_YES=YES pkg bootstrap
   jexec ${SERVICE} pkg install -y isc-dhcp44-server nsd sudo
   echo "dhcpd ALL=(ALL) NOPASSWD: ALL" >>"${BASE_WORKDIR}/${SERVICE}/usr/local/etc/sudoers.d/reggae"
   sysrc -s jail jail_list+="${SERVICE}"

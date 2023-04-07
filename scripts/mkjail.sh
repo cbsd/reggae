@@ -10,6 +10,11 @@ SCRIPT_DIR=$(dirname $0)
 . "${SCRIPT_DIR}/default.conf"
 . "${SCRIPT_DIR}/utils.sh"
 
+if [ "${USE_IPV4}" != "yes" -a "${USE_IPV6}" != "yes" ]; then
+  echo "IPv4 and/or IPv6 has to be enable, check USE_IPV{4,6} in config!" >&2
+  exit 1
+fi
+
 help() {
   echo "Usage: ${0} [options] <jail>"
   echo ""
@@ -123,6 +128,15 @@ else
 fi
 bsdinstall distextract
 sed -i "" -e "s/^Components .*/Components world/" "${BSDINSTALL_CHROOT}/etc/freebsd-update.conf"
+mkdir -p "${BSDINSTALL_CHROOT}/usr/local/etc/pkg/repos"
+echo -e "FreeBSD: {\n    url: \"pkg+http://${PKG_MIRROR}/\${ABI}/${PKG_REPO}\",\n}">"${BSDINSTALL_CHROOT}/usr/local/etc/pkg/repos/FreeBSD.conf"
+echo "search $(hostname)" >"${BSDINSTALL_CHROOT}/etc/resolv.conf"
+if [ "${USE_IPV4}" = "yes" ]; then
+  echo "nameserver ${INTERFACE_IP}" >>"${BSDINSTALL_CHROOT}/etc/resolv.conf"
+fi
+if [ "${USE_IPV6}" = "yes" ]; then
+  echo "nameserver ${IPV6_PREFIX}${INTERFACE_IP6}" >>"${BSDINSTALL_CHROOT}/etc/resolv.conf"
+fi
 chroot "${BSDINSTALL_CHROOT}" pw group add provision -g 666
 chroot "${BSDINSTALL_CHROOT}" pw user add provision -u 666 -g provision -s /bin/tcsh -G wheel -m
 chroot "${BSDINSTALL_CHROOT}" chpass -p '$6$61V0w0dRFFiEcnm2$o8CLPIdRBVHP13LQizdp12NEGD91RfHSB.c6uKnr9m2m3ZCg7ASeGENMaDt0tffmo5RalKGjWiHCtScCtjYfs/' provision
