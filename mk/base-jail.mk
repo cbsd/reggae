@@ -1,6 +1,7 @@
 BASE_WORKDIR != reggae get-config BASE_WORKDIR
 PKG_PROXY != reggae get-config PKG_PROXY
 DHCP ?= dhclient
+UPDATE ?= yes
 MKJAIL_OPTIONS =
 
 .if exists(${EXTRA_FSTAB})
@@ -75,7 +76,7 @@ setup:
 	@${MAKE} ${MAKEFLAGS} post_setup
 .endif
 .if !exists(${BASE_WORKDIR}/${SERVICE})
-	@sudo env PRESTART="${PRESTART}" POSTSTART="${POSTSTART}" PRESTOP="${PRESTOP}" POSTSTOP="${POSTSTOP}" OS_VERSION="${VERSION}" reggae mkjail ${MKJAIL_OPTIONS} ${SERVICE}
+	@sudo env PRESTART="${PRESTART}" POSTSTART="${POSTSTART}" PRESTOP="${PRESTOP}" POSTSTOP="${POSTSTOP}" OS_VERSION="${VERSION}" UPDATE="${UPDATE}" reggae mkjail ${MKJAIL_OPTIONS} ${SERVICE}
 .if ${DHCP} == "dhcpcd"
 	@sudo chroot ${BASE_WORKDIR}/${SERVICE} pkg install -y dhcpcd
 	@echo dhclient_program="/usr/local/sbin/dhcpcd" | sudo tee -a ${BASE_WORKDIR}/${SERVICE}/etc/rc.conf >/dev/null

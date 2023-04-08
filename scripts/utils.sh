@@ -34,6 +34,7 @@ check() {
 
 
 get_backend() {
+  JNAME="${1}"
   BASE_WORKDIR=$(reggae get-config BASE_WORKDIR)
   CBSD_WORKDIR=$(sysrc -s cbsd -n cbsd_workdir 2>/dev/null || true)
   JAIL_PATH=$(jls -j ${JNAME} path)
@@ -51,7 +52,7 @@ get_backend() {
 execute_command() {
   JNAME="${1}"
   COMMAND="${2}"
-  BACKEND=$(get_backend)
+  BACKEND=$(get_backend "${JNAME}")
   if [ "${BACKEND}" = "base" ]; then
     jexec -U "${JAIL_USER}" "${JNAME}" ${COMMAND}
   elif [ "${BACKEND}" = "cbsd" ]; then
