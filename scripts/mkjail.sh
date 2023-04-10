@@ -142,7 +142,7 @@ fi
 if [ "${USE_IPV6}" = "yes" ]; then
   echo "nameserver ${IPV6_PREFIX}${INTERFACE_IP6}" >>"${BSDINSTALL_CHROOT}/etc/resolv.conf"
 fi
-if [ "${UPDATE}" != "no" ]; then
+if [ "${UPDATE}" != "no" -a "${OS_VERSION_NAME}" = "RELEASE" ]; then
   chroot "${BSDINSTALL_CHROOT}" freebsd-update fetch install
 fi
 chroot "${BSDINSTALL_CHROOT}" pw group add provision -g 666
