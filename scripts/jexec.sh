@@ -45,4 +45,4 @@ if [ -z "${JNAME}" -o -z "${COMMAND}" ]; then
 fi
 
 
-execute_command "${JAIL}" "${COMMAND}"
+execute_command "${JNAME}" "${COMMAND}"
