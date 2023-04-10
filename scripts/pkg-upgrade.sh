@@ -23,7 +23,7 @@ done
 
 if [ "${ALL}" = "all" ]; then
   if [ "${BACKEND}" = "base" ]; then
-    for jail_version in $(ls -1d "${BASE_WORKDIR}"/*/bin/freebsd-version); do
+    for jail_version in $(ls -1d "${BASE_WORKDIR}"/*/bin/freebsd-version 2>/dev/null); do
       jail_name=$(echo "${jail_version}" | sed "s;${BASE_WORKDIR}/;;g" | cut -f 1 -d '/')
       skip="NO"
       for running in ${RUNNING_JAILS}; do
