@@ -22,14 +22,17 @@ elif [ "${BACKEND}" = "base" ]; then
     cd "${BASE_WORKDIR}"
     jls -N | egrep -v ' *JID' | awk '{print $1}' | while read jail_name; do
       if [ -x "${jail_name}/bin/freebsd-version" ]; then
-        echo "=== ${jail_name} ==="
         export CURRENTLY_RUNNING="$(jexec "${jail_name}" freebsd-version -u)"
-        jexec "${jail_name}" \
-          freebsd-update \
-          --not-running-from-cron \
-          --currently-running "${CURRENTLY_RUNNING}" \
-          fetch install
-        echo
+        CURRENTLY_RUNNING_FLAVOR="$(echo "${CURRENTLY_RUNNING}" | cut -f 2 -d '-')"
+        if [ "${CURRENTLY_RUNNING_FLAVOR}" = "RELEASE" ]; then
+          echo "=== ${jail_name} ==="
+          jexec "${jail_name}" \
+            freebsd-update \
+            --not-running-from-cron \
+            --currently-running "${CURRENTLY_RUNNING}" \
+            fetch install
+          echo
+        fi
       fi
     done
     cd -
