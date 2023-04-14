@@ -164,14 +164,7 @@ if [ "${NAME}" = "network" ]; then
   sed -e "s;HOST;${HOST};g" \
       -e "s;BASE_WORKDIR;${BASE_WORKDIR};g" \
       -e "s;INTERFACE;${INTERFACE};g" \
-    "${SCRIPT_DIR}/../templates/network-jail.conf" >"/etc/jail.conf.d/${NAME}.conf"
-  echo "search $(hostname)" >"${BSDINSTALL_CHROOT}/etc/resolv.conf"
-  if [ "${USE_IPV4}" = "yes" ]; then
-    echo "nameserver ${INTERFACE_IP}" >>"${BSDINSTALL_CHROOT}/etc/resolv.conf"
-  fi
-  if [ "${USE_IPV6}" = "yes" ]; then
-    echo "nameserver ${IPV6_PREFIX}${INTERFACE_IP6}" >>"${BSDINSTALL_CHROOT}/etc/resolv.conf"
-  fi
+      "${SCRIPT_DIR}/../templates/network-jail.conf" >"/etc/jail.conf.d/${NAME}.conf"
 else
   MOUNTS=$(get_mounts)
   DEPENDS=$(get_dependencies)
