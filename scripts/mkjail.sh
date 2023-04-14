@@ -135,13 +135,7 @@ bsdinstall distextract
 sed -i "" -e "s/^Components .*/Components world/" "${BSDINSTALL_CHROOT}/etc/freebsd-update.conf"
 mkdir -p "${BSDINSTALL_CHROOT}/usr/local/etc/pkg/repos"
 echo -e "FreeBSD: {\n    url: \"pkg+http://${PKG_MIRROR}/\${ABI}/${PKG_REPO}\",\n}">"${BSDINSTALL_CHROOT}/usr/local/etc/pkg/repos/FreeBSD.conf"
-echo "search $(hostname)" >"${BSDINSTALL_CHROOT}/etc/resolv.conf"
-if [ "${USE_IPV4}" = "yes" ]; then
-  echo "nameserver ${INTERFACE_IP}" >>"${BSDINSTALL_CHROOT}/etc/resolv.conf"
-fi
-if [ "${USE_IPV6}" = "yes" ]; then
-  echo "nameserver ${IPV6_PREFIX}${INTERFACE_IP6}" >>"${BSDINSTALL_CHROOT}/etc/resolv.conf"
-fi
+cp /etc/resolv.conf "${BSDINSTALL_CHROOT}/etc/resolv.conf"
 if [ "${UPDATE}" != "no" -a "${OS_VERSION_NAME}" = "RELEASE" ]; then
   chroot "${BSDINSTALL_CHROOT}" freebsd-update fetch install
 fi
@@ -171,6 +165,13 @@ if [ "${NAME}" = "network" ]; then
       -e "s;BASE_WORKDIR;${BASE_WORKDIR};g" \
       -e "s;INTERFACE;${INTERFACE};g" \
     "${SCRIPT_DIR}/../templates/network-jail.conf" >"/etc/jail.conf.d/${NAME}.conf"
+  echo "search $(hostname)" >"${BSDINSTALL_CHROOT}/etc/resolv.conf"
+  if [ "${USE_IPV4}" = "yes" ]; then
+    echo "nameserver ${INTERFACE_IP}" >>"${BSDINSTALL_CHROOT}/etc/resolv.conf"
+  fi
+  if [ "${USE_IPV6}" = "yes" ]; then
+    echo "nameserver ${IPV6_PREFIX}${INTERFACE_IP6}" >>"${BSDINSTALL_CHROOT}/etc/resolv.conf"
+  fi
 else
   MOUNTS=$(get_mounts)
   DEPENDS=$(get_dependencies)
