@@ -137,7 +137,7 @@ mkdir -p "${BSDINSTALL_CHROOT}/usr/local/etc/pkg/repos"
 echo -e "FreeBSD: {\n    url: \"pkg+http://${PKG_MIRROR}/\${ABI}/${PKG_REPO}\",\n}">"${BSDINSTALL_CHROOT}/usr/local/etc/pkg/repos/FreeBSD.conf"
 cp /etc/resolv.conf "${BSDINSTALL_CHROOT}/etc/resolv.conf"
 if [ "${UPDATE}" != "no" -a "${OS_VERSION_NAME}" = "RELEASE" ]; then
-  chroot "${BSDINSTALL_CHROOT}" freebsd-update fetch install
+  chroot "${BSDINSTALL_CHROOT}" freebsd-update --currently-running "${OS_VERSION}-${OS_VERSION_NAME}" fetch install
 fi
 chroot "${BSDINSTALL_CHROOT}" pw group add provision -g 666
 chroot "${BSDINSTALL_CHROOT}" pw user add provision -u 666 -g provision -s /bin/tcsh -G wheel -m
