@@ -19,7 +19,6 @@ TEMPLATES = Makefile.project \
 	    dhcpd-hook.sh \
 	    dhcpd.conf \
 	    dhcpd6.conf \
-	    dhcpcd.conf \
 	    export-ports.sh \
 	    freebsd-update.conf \
 	    gitignore \
