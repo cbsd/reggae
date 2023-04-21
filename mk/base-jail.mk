@@ -1,6 +1,6 @@
 BASE_WORKDIR != reggae get-config BASE_WORKDIR
 PKG_PROXY != reggae get-config PKG_PROXY
-DHCP ?= dhclient
+DHCP ?= dhcpcd
 UPDATE ?= yes
 MKJAIL_OPTIONS =
 
@@ -80,6 +80,9 @@ setup:
 .if ${DHCP} == "dhcpcd"
 	@sudo chroot ${BASE_WORKDIR}/${SERVICE} pkg install -y dhcpcd
 	@echo dhclient_program="/usr/local/sbin/dhcpcd" | sudo tee -a ${BASE_WORKDIR}/${SERVICE}/etc/rc.conf >/dev/null
+	@sudo sed -i "" -e \
+		"s/^#hostname/hostname/" \
+		${BASE_WORKDIR}/${SERVICE}/usr/local/etc/dhcpcd.conf
 .endif
 .endif
 .if ${DEVEL_MODE} == "YES"

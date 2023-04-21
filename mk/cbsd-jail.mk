@@ -1,5 +1,5 @@
 SUBTYPE ?= vnet
-DHCP ?= dhclient
+DHCP ?= dhcpcd
 CBSD_WORKDIR != sysrc -s cbsdd -n cbsd_workdir
 INTERFACE != reggae get-config INTERFACE
 PKG_MIRROR_CONFIG != reggae get-config PKG_MIRROR
@@ -29,10 +29,12 @@ up: setup
 	@sudo cp ${REGGAE_PATH}/templates/network ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/network
 .if ${DHCP} == "dhcpcd"
 	@sudo cbsd jexec jname=${SERVICE} cmd="pkg install -y dhcpcd"
+	@sudo sed -i "" -e \
+		"s/^#hostname/hostname/" \
+		${BASE_WORKDIR}/${SERVICE}/usr/local/etc/dhcpcd.conf
 	@sudo sed -i "" \
 		-e "s:DHCP:/usr/local/sbin/dhcpcd:g" \
 		${CBSD_WORKDIR}/jails-data/${SERVICE}-data/etc/rc.conf.d/network
-	@sudo cp ${REGGAE_PATH}/templates/dhcpcd.conf ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/dhcpcd.conf
 	@sudo cbsd jexec jname=${SERVICE} cmd="/bin/pkill -9 dhclient"
 	@sudo cbsd jexec jname=${SERVICE} cmd="/sbin/ifconfig eth0 delete"
 	@sudo cbsd jexec jname=${SERVICE} cmd="dhcpcd eth0"
