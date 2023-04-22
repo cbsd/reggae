@@ -153,6 +153,14 @@ sed -i "" \
   -e 's;PKG_PROXY;pkg_env : { http_proxy: "http://${PKG_PROXY}" };g' \
   "${SCRIPT_DIR}/../templates/pkg.conf" >"${BSDINSTALL_CHROOT}/usr/local/etc/pkg.conf"
 pkg -c "${BSDINSTALL_CHROOT}" install -y sudo
+if [ "${DHCP}" = "dhcpcd" ]; then
+  pkg -c "${BSDINSTALL_CHROOT}" install -y dhcpcd
+	echo dhclient_program=\"/usr/local/sbin/dhcpcd\" >>${BSDINSTALL_CHROOT}/etc/rc.conf
+	sed -i "" -e \
+		"s/^#hostname/hostname/" \
+		${BSDINSTALL_CHROOT}/usr/local/etc/dhcpcd.conf
+fi
+chroot "${BSDINSTALL_CHROOT}" sysrc sendmail_enable="NONE"
 echo "provision ALL=(ALL) NOPASSWD: ALL" >"${BSDINSTALL_CHROOT}/usr/local/etc/sudoers.d/reggae"
 
 
