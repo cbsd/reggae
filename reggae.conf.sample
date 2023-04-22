@@ -20,3 +20,4 @@
 # USE_IPV4="yes"
 # USE_IPV6="yes"
 # BRIDGE_MEMBERS=""
+# DHCP="dhcpcd" # can be 'dhcpcd' or 'dhclient'

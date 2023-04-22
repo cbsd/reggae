@@ -76,14 +76,7 @@ setup:
 	@${MAKE} ${MAKEFLAGS} post_setup
 .endif
 .if !exists(${BASE_WORKDIR}/${SERVICE})
-	@sudo env PRESTART="${PRESTART}" POSTSTART="${POSTSTART}" PRESTOP="${PRESTOP}" POSTSTOP="${POSTSTOP}" OS_VERSION="${VERSION}" UPDATE="${UPDATE}" reggae mkjail ${MKJAIL_OPTIONS} ${SERVICE}
-.if ${DHCP} == "dhcpcd"
-	@sudo chroot ${BASE_WORKDIR}/${SERVICE} pkg install -y dhcpcd
-	@echo dhclient_program="/usr/local/sbin/dhcpcd" | sudo tee -a ${BASE_WORKDIR}/${SERVICE}/etc/rc.conf >/dev/null
-	@sudo sed -i "" -e \
-		"s/^#hostname/hostname/" \
-		${BASE_WORKDIR}/${SERVICE}/usr/local/etc/dhcpcd.conf
-.endif
+	@sudo env PRESTART="${PRESTART}" POSTSTART="${POSTSTART}" PRESTOP="${PRESTOP}" POSTSTOP="${POSTSTOP}" OS_VERSION="${VERSION}" UPDATE="${UPDATE}" DHCP="${DHCP}" reggae mkjail ${MKJAIL_OPTIONS} ${SERVICE}
 .endif
 .if ${DEVEL_MODE} == "YES"
 	-@sudo mount -t nullfs ${PWD} ${BASE_WORKDIR}/${SERVICE}/usr/src >/dev/null 2>&1
