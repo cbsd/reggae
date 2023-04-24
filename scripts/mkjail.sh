@@ -177,18 +177,21 @@ else
   MOUNTS=$(get_mounts)
   DEPENDS=$(get_dependencies)
   if [ ! -z "${PRESTART}" ]; then
-    PRESTART="\n exec.prestart += \"${PRESTART}\";"
+    PRESTART="\n  exec.prestart += \"${PRESTART}\";"
   fi
   if [ ! -z "${POSTSTART}" ]; then
-    POSTSTART="\n exec.poststart += \"${POSTSTART}\";"
+    POSTSTART="\n  exec.poststart += \"${POSTSTART}\";"
   fi
   if [ ! -z "${PRESTOP}" ]; then
-    PRESTOP="\n exec.prestop += \"${PRESTOP}\";"
+    PRESTOP="\n  exec.prestop += \"${PRESTOP}\";"
   fi
   if [ ! -z "${POSTSTOP}" ]; then
-    POSTSTOP="\n exec.poststop += \"${POSTSTOP}\";"
+    POSTSTOP="\n  exec.poststop += \"${POSTSTOP}\";"
   fi
-  OPTIONS="${MOUNTS}${DEPENDS}${PRESTART}${POSTSTART}${PRESTOP}${PRESTOP}"
+  for option in ${ALLOW}; do
+    JAIL_ALLOW="\n  allow.${option};${JAIL_ALLOW}"
+  done
+  OPTIONS="${JAIL_ALLOW}${MOUNTS}${DEPENDS}${PRESTART}${POSTSTART}${PRESTOP}${POSTSTOP}"
   cat << EOF >"/etc/jail.conf.d/${NAME}.conf"
 ${NAME} {
   \$id = ${ID};
