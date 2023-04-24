@@ -149,9 +149,9 @@ cp ~/.ssh/id_rsa.pub "${BSDINSTALL_CHROOT}/usr/home/provision/.ssh/authorized_ke
 chmod 600 "${BSDINSTALL_CHROOT}/usr/home/provision/.ssh/authorized_keys"
 chown -R 666:666 "${BSDINSTALL_CHROOT}/usr/home/provision/.ssh"
 env ASSUME_ALWAYS_YES=yes pkg -c "${BSDINSTALL_CHROOT}" bootstrap -f
-sed -i "" \
-  -e 's;PKG_PROXY;pkg_env : { http_proxy: "http://${PKG_PROXY}" };g' \
-  "${SCRIPT_DIR}/../templates/pkg.conf" >"${BSDINSTALL_CHROOT}/usr/local/etc/pkg.conf"
+if [ "${PKG_PROXY}" != "no" ]; then
+  echo "pkg_env : { http_proxy: \"http://${PKG_PROXY}/\" }" >>"${BSDINSTALL_CHROOT}/usr/local/etc/pkg.conf"
+fi
 pkg -c "${BSDINSTALL_CHROOT}" install -y sudo
 if [ "${DHCP}" = "dhcpcd" ]; then
   pkg -c "${BSDINSTALL_CHROOT}" install -y dhcpcd
