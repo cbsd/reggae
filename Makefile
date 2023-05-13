@@ -103,9 +103,7 @@ SCRIPTS = apply-proxy.sh \
 	  update-profiles.sh \
 	  utils.sh \
 	  version.sh
-MAN_FILES = reggae.1 \
-	    reggae-project.1 \
-	    reggae-provision.1
+MAN_FILES = reggae.1
 CBSD_PROFILE_ITEMS = skel \
 		     system \
 		     reggae-jail.conf
