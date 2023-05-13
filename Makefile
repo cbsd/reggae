@@ -34,6 +34,7 @@ TEMPLATES = Makefile.project \
 	    network \
 	    network-jail.conf \
 	    nsd.conf \
+	    pf-jail.conf \
 	    pf.conf \
 	    pkg.conf \
 	    reggae-register.sh \
