@@ -160,6 +160,23 @@ if [ "${DHCP}" = "dhcpcd" ]; then
 		"s/^#hostname/hostname/" \
 		${BSDINSTALL_CHROOT}/usr/local/etc/dhcpcd.conf
 fi
+echo pf_enable=\"YES\" >>${BSDINSTALL_CHROOT}/etc/rc.conf
+echo pflog_enable=\"YES\" >>${BSDINSTALL_CHROOT}/etc/rc.conf
+cp "${SCRIPT_DIR}/../templates/pf-jail.conf" "${BSDINSTALL_CHROOT}/etc/pf.conf"
+touch "${BSDINSTALL_CHROOT}/etc/pf.services"
+if [ -n "${PORTS}" ]; then
+  ports=""
+  for port in ${PORTS}; do
+    if [ -z "${ports}" ]; then
+      ports="${port}"
+    else
+      ports="${ports}, ${port}"
+    fi
+  done
+  echo "pass in proto { tcp, udp } to <self> port { $ports }" >"${BSDINSTALL_CHROOT}/etc/pf.services"
+fi
+
+
 chroot "${BSDINSTALL_CHROOT}" sysrc sendmail_enable="NONE"
 echo "provision ALL=(ALL) NOPASSWD: ALL" >"${BSDINSTALL_CHROOT}/usr/local/etc/sudoers.d/reggae"
 
