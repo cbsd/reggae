@@ -76,7 +76,7 @@ setup:
 	@${MAKE} ${MAKEFLAGS} post_setup
 .endif
 .if !exists(${BASE_WORKDIR}/${SERVICE})
-	@sudo env PRESTART="${PRESTART}" POSTSTART="${POSTSTART}" PRESTOP="${PRESTOP}" POSTSTOP="${POSTSTOP}" OS_VERSION="${VERSION}" UPDATE="${UPDATE}" DHCP="${DHCP}" ALLOW="${ALLOW}" reggae mkjail ${MKJAIL_OPTIONS} ${SERVICE}
+	sudo env PRESTART="${PRESTART}" POSTSTART="${POSTSTART}" PRESTOP="${PRESTOP}" POSTSTOP="${POSTSTOP}" OS_VERSION="${VERSION}" UPDATE="${UPDATE}" DHCP="${DHCP}" ALLOW="${ALLOW}" PORTS="${PORTS}" reggae mkjail ${MKJAIL_OPTIONS} ${SERVICE}
 .endif
 .if ${DEVEL_MODE} == "YES"
 	-@sudo mount -t nullfs ${PWD} ${BASE_WORKDIR}/${SERVICE}/usr/src >/dev/null 2>&1
