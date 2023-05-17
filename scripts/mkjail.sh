@@ -135,7 +135,13 @@ bsdinstall distextract
 sed -i "" -e "s/^Components .*/Components world/" "${BSDINSTALL_CHROOT}/etc/freebsd-update.conf"
 mkdir -p "${BSDINSTALL_CHROOT}/usr/local/etc/pkg/repos"
 echo -e "FreeBSD: {\n    url: \"pkg+http://${PKG_MIRROR}/\${ABI}/${PKG_REPO}\",\n}">"${BSDINSTALL_CHROOT}/usr/local/etc/pkg/repos/FreeBSD.conf"
-cp /etc/resolv.conf "${BSDINSTALL_CHROOT}/etc/resolv.conf"
+echo "domain ${DOMAIN}" >"${BSDINSTALL_CHROOT}/etc/resolv.conf"
+if [ "${USE_IPV4}" = "yes" ]; then
+  echo "nameserver ${INTERFACE_IP}" >>"${BSDINSTALL_CHROOT}/etc/resolv.conf"
+fi
+if [ "${USE_IPV6}" = "yes" ]; then
+  echo "nameserver ${IPV6_PREFIX}${INTERFACE_IP6}" >>"${BSDINSTALL_CHROOT}/etc/resolv.conf"
+fi
 if [ "${UPDATE}" != "no" -a "${OS_VERSION_NAME}" = "RELEASE" ]; then
   chroot "${BSDINSTALL_CHROOT}" freebsd-update --currently-running "${OS_VERSION}-${OS_VERSION_NAME}" fetch install
 fi
