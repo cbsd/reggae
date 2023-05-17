@@ -100,13 +100,6 @@ dns() {
     jexec ${SERVICE} usr/local/bin/reggae-register.sh ipv6 add ${IPV6_PREFIX}${MASTER_IP6} @ ${DOMAIN}
     jexec ${SERVICE} /usr/local/bin/reggae-register.sh ipv6 add ${IPV6_PREFIX}${MASTER_IP6} network ${DOMAIN}
   fi
-  echo "search $(hostname)" >"${BASE_WORKDIR}/${SERVICE}/etc/resolv.conf"
-  if [ "${USE_IPV4}" = "yes" ]; then
-    echo "nameserver 127.0.01" >>"${BASE_WORKDIR}/${SERVICE}/etc/resolv.conf"
-  fi
-  if [ "${USE_IPV6}" = "yes" ]; then
-    echo "nameserver ::1" >>"${BASE_WORKDIR}/${SERVICE}/etc/resolv.conf"
-  fi
 }
 
 
