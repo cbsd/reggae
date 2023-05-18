@@ -21,3 +21,4 @@
 # USE_IPV6="yes"
 # BRIDGE_MEMBERS=""
 # DHCP="dhcpcd" # can be 'dhcpcd' or 'dhclient'
+# DNS_OVERRIDE="" # space separated list of IP addresses
