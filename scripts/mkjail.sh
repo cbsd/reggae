@@ -157,9 +157,9 @@ chroot "${BSDINSTALL_CHROOT}" chpass -p '$6$61V0w0dRFFiEcnm2$o8CLPIdRBVHP13LQizd
 chroot "${BSDINSTALL_CHROOT}" service sshd enable
 mkdir -p "${BSDINSTALL_CHROOT}/home/provision/.ssh"
 chmod 700 "${BSDINSTALL_CHROOT}/home/provision/.ssh"
-cp ~/.ssh/id_rsa.pub "${BSDINSTALL_CHROOT}/usr/home/provision/.ssh/authorized_keys"
-chmod 600 "${BSDINSTALL_CHROOT}/usr/home/provision/.ssh/authorized_keys"
-chown -R 666:666 "${BSDINSTALL_CHROOT}/usr/home/provision/.ssh"
+cp ~/.ssh/id_rsa.pub "${BSDINSTALL_CHROOT}/home/provision/.ssh/authorized_keys"
+chmod 600 "${BSDINSTALL_CHROOT}/home/provision/.ssh/authorized_keys"
+chown -R 666:666 "${BSDINSTALL_CHROOT}/home/provision/.ssh"
 env ASSUME_ALWAYS_YES=yes pkg -c "${BSDINSTALL_CHROOT}" bootstrap -f
 if [ "${PKG_PROXY}" != "no" ]; then
   echo "pkg_env : { http_proxy: \"http://${PKG_PROXY}/\" }" >>"${BSDINSTALL_CHROOT}/usr/local/etc/pkg.conf"

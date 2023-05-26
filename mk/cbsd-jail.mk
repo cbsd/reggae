@@ -47,7 +47,7 @@ up: setup
 .endif
 .endif
 .if ${DEVEL_MODE} == "YES"
-.if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/devel)
+.if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/home/devel)
 	@sudo cbsd jexec jname=${SERVICE} cmd="pw groupadd devel -g ${GID}"
 	@sudo cbsd jexec jname=${SERVICE} cmd="pw useradd devel -u ${UID} -g devel -s /bin/tcsh -G wheel,operator -m"
 	@sudo cbsd jexec jname=${SERVICE} cmd="chpass -p '$6$MIv4IXAika7jqFH2$GkYSBax0G9CIBG0DcgQMP5gG7Qt.CojExDcU7YOQy0K.pouAd.edvo/MaQPhVO0fISxjOD4J1nzRsGVXUAxGp1' devel"
@@ -147,14 +147,14 @@ setup:
 	@sudo cbsd jset jname=${SERVICE} astart=1
 .endif
 .if ${SUBTYPE} != "linux"
-.if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys)
-.if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh)
-	-@sudo mkdir ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh
+.if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/home/provision/.ssh/authorized_keys)
+.if !exists(${CBSD_WORKDIR}/jails-data/${SERVICE}-data/home/provision/.ssh)
+	-@sudo mkdir ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/home/provision/.ssh
 .endif
-	@sudo chmod 700 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh
-	@sudo cp ~/.ssh/id_rsa.pub ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys
-	@sudo chmod 600 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh/authorized_keys
-	@sudo chown -R 666:666 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/home/provision/.ssh
+	@sudo chmod 700 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/home/provision/.ssh
+	@sudo cp ~/.ssh/id_rsa.pub ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/home/provision/.ssh/authorized_keys
+	@sudo chmod 600 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/home/provision/.ssh/authorized_keys
+	@sudo chown -R 666:666 ${CBSD_WORKDIR}/jails-data/${SERVICE}-data/home/provision/.ssh
 .endif
 .endif
 	@sudo cp ${REGGAE_PATH}/templates/export-ports.sh ${CBSD_WORKDIR}/jails-system/${SERVICE}/master_poststart.d
