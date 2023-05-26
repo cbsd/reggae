@@ -18,7 +18,7 @@ up: setup
 	@echo " done"
 .if ${DEVEL_MODE} == "YES"
 	@sudo sysrc -s jail jail_list-="${SERVICE}"
-.if !exists(${BASE_WORKDIR}/${SERVICE}/usr/home/devel)
+.if !exists(${BASE_WORKDIR}/${SERVICE}/home/devel)
 	@sudo jexec ${SERVICE} pw groupadd devel -g ${GID}
 	@sudo jexec ${SERVICE} pw useradd devel -u ${UID} -g devel -s /bin/tcsh -G wheel,operator -m
 	@sudo jexec ${SERVICE} chpass -p '$6$MIv4IXAika7jqFH2$GkYSBax0G9CIBG0DcgQMP5gG7Qt.CojExDcU7YOQy0K.pouAd.edvo/MaQPhVO0fISxjOD4J1nzRsGVXUAxGp1' devel
@@ -76,15 +76,15 @@ setup:
 	@${MAKE} ${MAKEFLAGS} post_setup
 .endif
 .if !exists(${BASE_WORKDIR}/${SERVICE})
-	sudo env PRESTART="${PRESTART}" POSTSTART="${POSTSTART}" PRESTOP="${PRESTOP}" POSTSTOP="${POSTSTOP}" OS_VERSION="${VERSION}" UPDATE="${UPDATE}" DHCP="${DHCP}" ALLOW="${ALLOW}" PORTS="${PORTS}" reggae mkjail ${MKJAIL_OPTIONS} ${SERVICE}
+	@sudo env PRESTART="${PRESTART}" POSTSTART="${POSTSTART}" PRESTOP="${PRESTOP}" POSTSTOP="${POSTSTOP}" OS_VERSION="${VERSION}" UPDATE="${UPDATE}" DHCP="${DHCP}" ALLOW="${ALLOW}" PORTS="${PORTS}" reggae mkjail ${MKJAIL_OPTIONS} ${SERVICE}
 .endif
 .if ${DEVEL_MODE} == "YES"
 	-@sudo mount -t nullfs ${PWD} ${BASE_WORKDIR}/${SERVICE}/usr/src >/dev/null 2>&1
 .endif
-.if !exists(${BASE_WORKDIR}/${SERVICE}/usr/home/provision/.ssh/authorized_keys)
-	@sudo cp ~/.ssh/id_rsa.pub ${BASE_WORKDIR}/${SERVICE}/usr/home/provision/.ssh/authorized_keys
-	@sudo chmod 600 ${BASE_WORKDIR}/${SERVICE}/usr/home/provision/.ssh/authorized_keys
-	@sudo chown -R 666:666 ${BASE_WORKDIR}/${SERVICE}/usr/home/provision/.ssh
+.if !exists(${BASE_WORKDIR}/${SERVICE}/home/provision/.ssh/authorized_keys)
+	@sudo cp ~/.ssh/id_rsa.pub ${BASE_WORKDIR}/${SERVICE}/home/provision/.ssh/authorized_keys
+	@sudo chmod 600 ${BASE_WORKDIR}/${SERVICE}/home/provision/.ssh/authorized_keys
+	@sudo chown -R 666:666 ${BASE_WORKDIR}/${SERVICE}/home/provision/.ssh
 .endif
 .if target(post_create)
 	@${MAKE} ${MAKEFLAGS} post_create
