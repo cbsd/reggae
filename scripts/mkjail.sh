@@ -66,11 +66,16 @@ export OS_VERSION_NAME=${OS_VERSION_NAME:="RELEASE"}
 if [ -z "${OS_VERSION}" -o "${OS_VERSION}" = "native" ]; then
   OS_VERSION=$(freebsd-version -k | cut -f 1 -d '-')
   RAW_VERSION_NAME=$(freebsd-version -k | cut -f 2 -d '-')
-  if [ "${RAW_VERSION_NAME}" = "CURRENT" ]; then
-    export OS_VERSION_NAME="CURRENT"
-    export OS_VERSION_FLAVOR="snapshots"
-  fi
-
+  case "${RAW_VERSION_NAME}" in
+    CURRENT)
+      export OS_VERSION_NAME="CURRENT"
+      export OS_VERSION_FLAVOR="snapshots"
+      ;;
+    ALPHA*|BETA*|RC*|STABLE*)
+      export OS_VERSION_NAME="${RAW_VERSION_NAME}"
+      export OS_VERSION_FLAVOR="snapshots"
+      ;;
+  esac
 fi
 export DISTRIBUTIONS="base.txz"
 export BSDINSTALL_DISTSITE="http://download.freebsd.org/${OS_VERSION_FLAVOR}/amd64/${OS_VERSION}-${OS_VERSION_NAME}"
@@ -157,6 +162,7 @@ chroot "${BSDINSTALL_CHROOT}" chpass -p '$6$61V0w0dRFFiEcnm2$o8CLPIdRBVHP13LQizd
 chroot "${BSDINSTALL_CHROOT}" service sshd enable
 mkdir -p "${BSDINSTALL_CHROOT}/home/provision/.ssh"
 chmod 700 "${BSDINSTALL_CHROOT}/home/provision/.ssh"
+# TODO: specify key
 cp ~/.ssh/id_rsa.pub "${BSDINSTALL_CHROOT}/home/provision/.ssh/authorized_keys"
 chmod 600 "${BSDINSTALL_CHROOT}/home/provision/.ssh/authorized_keys"
 chown -R 666:666 "${BSDINSTALL_CHROOT}/home/provision/.ssh"
@@ -167,10 +173,19 @@ fi
 pkg -c "${BSDINSTALL_CHROOT}" install -y sudo
 if [ "${DHCP}" = "dhcpcd" ]; then
   pkg -c "${BSDINSTALL_CHROOT}" install -y dhcpcd
-	echo dhclient_program=\"/usr/local/sbin/dhcpcd\" >>${BSDINSTALL_CHROOT}/etc/rc.conf
-	sed -i "" -e \
-		"s/^#hostname/hostname/" \
-		${BSDINSTALL_CHROOT}/usr/local/etc/dhcpcd.conf
+  echo dhclient_program=\"/usr/local/sbin/dhcpcd\" >>${BSDINSTALL_CHROOT}/etc/rc.conf
+  sed -i "" -e \
+    "s/^#hostname/hostname/" \
+    "${BSDINSTALL_CHROOT}/usr/local/etc/dhcpcd.conf"
+  echo ipv6ra_noautoconf >>"${BSDINSTALL_CHROOT}/usr/local/etc/dhcpcd.conf"
+  sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0="SYNCDHCP"
+else
+  if [ "${USE_IPV4}" = "yes" ]; then
+    sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0="SYNCDHCP"
+  fi
+  if [ "${USE_IPV6}" = "yes" ]; then
+    sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0_ipv6="inet6 -ifdisabled accept_rtadv auto_linklocal"
+  fi
 fi
 echo pf_enable=\"YES\" >>${BSDINSTALL_CHROOT}/etc/rc.conf
 echo pflog_enable=\"YES\" >>${BSDINSTALL_CHROOT}/etc/rc.conf
@@ -232,10 +247,4 @@ EOF
     -e "s;MAC;${MAC};g" \
     "${SCRIPT_DIR}/../templates/base-jail.conf" >>"/etc/jail.conf.d/${NAME}.conf"
   echo -e "${OPTIONS}\n}" >>"/etc/jail.conf.d/${NAME}.conf"
-  if [ "${USE_IPV4}" = "yes" ]; then
-    sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0="DHCP"
-  fi
-  if [ "${USE_IPV6}" = "yes" ]; then
-    sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0_ipv6="inet6 -ifdisabled accept_rtadv auto_linklocal"
-  fi
 fi
