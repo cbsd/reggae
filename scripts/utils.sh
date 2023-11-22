@@ -6,7 +6,7 @@ set -e
 next_id() {
   NEXT_ID=$(cat /etc/jail.conf.d/*.conf 2>/dev/null || true | grep -s '$id = ' || true)
   if [ -z "${NEXT_ID}" ]; then
-    echo 1
+    echo 0
   else
     expr $(cat /etc/jail.conf.d/*.conf | \
       grep '$id' | \

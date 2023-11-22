@@ -171,20 +171,22 @@ if [ "${PKG_PROXY}" != "no" ]; then
   echo "pkg_env : { http_proxy: \"http://${PKG_PROXY}/\" }" >>"${BSDINSTALL_CHROOT}/usr/local/etc/pkg.conf"
 fi
 pkg -c "${BSDINSTALL_CHROOT}" install -y sudo
-if [ "${DHCP}" = "dhcpcd" ]; then
-  pkg -c "${BSDINSTALL_CHROOT}" install -y dhcpcd
-  echo dhclient_program=\"/usr/local/sbin/dhcpcd\" >>${BSDINSTALL_CHROOT}/etc/rc.conf
-  sed -i "" -e \
-    "s/^#hostname/hostname/" \
-    "${BSDINSTALL_CHROOT}/usr/local/etc/dhcpcd.conf"
-  echo ipv6ra_noautoconf >>"${BSDINSTALL_CHROOT}/usr/local/etc/dhcpcd.conf"
-  sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0="SYNCDHCP"
-else
-  if [ "${USE_IPV4}" = "yes" ]; then
+if [ "${NAME}" != "network" ]; then
+  if [ "${DHCP}" = "dhcpcd" ]; then
+    pkg -c "${BSDINSTALL_CHROOT}" install -y dhcpcd
+    echo dhclient_program=\"/usr/local/sbin/dhcpcd\" >>${BSDINSTALL_CHROOT}/etc/rc.conf
+    sed -i "" -e \
+      "s/^#hostname/hostname/" \
+      "${BSDINSTALL_CHROOT}/usr/local/etc/dhcpcd.conf"
+    echo ipv6ra_noautoconf >>"${BSDINSTALL_CHROOT}/usr/local/etc/dhcpcd.conf"
     sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0="SYNCDHCP"
-  fi
-  if [ "${USE_IPV6}" = "yes" ]; then
-    sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0_ipv6="inet6 -ifdisabled accept_rtadv auto_linklocal"
+  else
+    if [ "${USE_IPV4}" = "yes" ]; then
+      sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0="SYNCDHCP"
+    fi
+    if [ "${USE_IPV6}" = "yes" ]; then
+      sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0_ipv6="inet6 -ifdisabled accept_rtadv auto_linklocal"
+    fi
   fi
 fi
 echo pf_enable=\"YES\" >>${BSDINSTALL_CHROOT}/etc/rc.conf
@@ -204,22 +206,32 @@ if [ -n "${PORTS}" ]; then
 fi
 
 
-chroot "${BSDINSTALL_CHROOT}" sysrc sendmail_enable="NONE"
 echo "provision ALL=(ALL) NOPASSWD: ALL" >"${BSDINSTALL_CHROOT}/usr/local/etc/sudoers.d/reggae"
 
 
 ID=$(next_id)
-MAC=$(generate_mac)
 HOST=$(hostname)
 
+if [ ! -e "/etc/jail.conf.d/reggae.inc" ]; then
+  sed \
+    -e "s;HOST;${HOST};g" \
+    -e "s;BASE_WORKDIR;${BASE_WORKDIR};g" \
+    -e "s;INTERFACE;${INTERFACE};g" \
+    "${SCRIPT_DIR}/../templates/base-jail.conf" >>"/etc/jail.conf.d/reggae.inc"
+fi
+cat << EOF >"/etc/jail.conf.d/${NAME}.conf"
+${NAME} {
+  \$id = ${ID};
+  .include "/etc/jail.conf.d/reggae.inc";
+EOF
 if [ "${NAME}" = "network" ]; then
-  sed -e "s;HOST;${HOST};g" \
-      -e "s;BASE_WORKDIR;${BASE_WORKDIR};g" \
-      -e "s;INTERFACE;${INTERFACE};g" \
-      "${SCRIPT_DIR}/../templates/network-jail.conf" >"/etc/jail.conf.d/${NAME}.conf"
+  sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0_alias0="ether 58:9c:fc:00:00:00"
+  echo -e "}" >>"/etc/jail.conf.d/${NAME}.conf"
 else
+  MAC=$(generate_mac)
   MOUNTS=$(get_mounts)
   DEPENDS=$(get_dependencies)
+  sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0_alias0="ether ${MAC}"
   if [ ! -z "${PRESTART}" ]; then
     PRESTART="\n  exec.prestart += \"${PRESTART}\";"
   fi
@@ -236,15 +248,5 @@ else
     JAIL_ALLOW="\n  allow.${option};${JAIL_ALLOW}"
   done
   OPTIONS="${JAIL_ALLOW}${MOUNTS}${DEPENDS}${PRESTART}${POSTSTART}${PRESTOP}${POSTSTOP}"
-  cat << EOF >"/etc/jail.conf.d/${NAME}.conf"
-${NAME} {
-  \$id = ${ID};
-EOF
-  sed \
-    -e "s;HOST;${HOST};g" \
-    -e "s;BASE_WORKDIR;${BASE_WORKDIR};g" \
-    -e "s;INTERFACE;${INTERFACE};g" \
-    -e "s;MAC;${MAC};g" \
-    "${SCRIPT_DIR}/../templates/base-jail.conf" >>"/etc/jail.conf.d/${NAME}.conf"
   echo -e "${OPTIONS}\n}" >>"/etc/jail.conf.d/${NAME}.conf"
 fi
