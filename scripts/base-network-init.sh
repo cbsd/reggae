@@ -30,10 +30,10 @@ setup() {
     echo "ifconfig_eth0_ipv6=\"inet6 ${IPV6_PREFIX}${MASTER_IP6}/64\"" >>"${BASE_WORKDIR}/${SERVICE}/etc/rc.conf"
     echo "ipv6_defaultrouter=\"${IPV6_PREFIX}${INTERFACE_IP6}\"" >>"${BASE_WORKDIR}/${SERVICE}/etc/rc.conf"
   fi
-  service jail start network
-  jexec ${SERVICE} pkg install -y isc-dhcp44-server nsd sudo
+  pkg --chroot "${BASE_WORKDIR}/${SERVICE}" install -y isc-dhcp44-server nsd sudo
   echo "dhcpd ALL=(ALL) NOPASSWD: ALL" >>"${BASE_WORKDIR}/${SERVICE}/usr/local/etc/sudoers.d/reggae"
   sysrc -s jail jail_list+="${SERVICE}"
+  service jail start network
 }
 
 

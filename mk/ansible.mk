@@ -3,7 +3,7 @@
 PROVISIONERS += ansible
 ANSIBLE != sh -c "which ansible || true"
 PYTHON_MAJOR = 3
-PYTHON_MINOR = 9
+PYTHON_MINOR = 11
 
 provision-ansible: setup-ansible
 .if !exists(${CBSD_WORKDIR}/jails/${SERVICE}/usr/local/bin/python)
@@ -44,7 +44,7 @@ setup-ansible:
 	@echo "!!! Trying to install one         !!!"
 	@echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 	@echo
-	@sudo pkg install py${PYTHON_MAJOR}${PYTHON_MINOR}-ansible
+	@sudo pkg install -Uy py${PYTHON_MAJOR}${PYTHON_MINOR}-ansible
 .endif
 .if target(post_setup_ansible)
 	@${MAKE} ${MAKEFLAGS} post_setup_ansible
