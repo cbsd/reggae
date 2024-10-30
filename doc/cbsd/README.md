@@ -40,7 +40,7 @@ antispoof quick log for ($ext_if) # comment out if adding ext_if to bridge
 anchor "blacklistd/*" in on $ext_if
 
 # Rules
-block in log from any to <self>
+block in log from any to (self)
 pass in inet proto udp to any port bootpc
 pass in inet6 proto udp from fe80::/10 port dhcpv6-server to fe80::/10 port dhcpv6-client
 pass in proto tcp to any port ssh

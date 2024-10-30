@@ -202,7 +202,7 @@ if [ -n "${PORTS}" ]; then
       ports="${ports}, ${port}"
     fi
   done
-  echo "pass in proto { tcp, udp } to self port { $ports }" >"${BSDINSTALL_CHROOT}/etc/pf.services"
+  echo "pass in proto { tcp, udp } to (self) port { $ports }" >"${BSDINSTALL_CHROOT}/etc/pf.services"
 fi
 
 
