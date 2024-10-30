@@ -27,7 +27,7 @@ elif [ "${BACKEND}" = "base" ]; then
         if [ "${CURRENTLY_RUNNING_FLAVOR}" = "RELEASE" ]; then
           echo "=== ${jail_name} ==="
           if [ "${RUST}" = "YES" ]; then
-            rustdate=$(jexec "${jail_name}" which freebsd-rustdate)
+            rustdate=$(jexec "${jail_name}" which freebsd-rustdate || true)
             if [ -z "${rustdate}" ]; then
               jexec "${jail_name}" pkg install -y freebsd-rustdate
             fi
