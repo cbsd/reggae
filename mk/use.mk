@@ -10,6 +10,7 @@ USE_PRE_postgresql ?= https://github.com/mekanix/jail-postgresql
 USE_PRE_redis ?= https://github.com/mekanix/jail-redis
 
 USE_USED_ejabberd ?= https://github.com/mekanix/jail-ejabberd
+USE_USED_forgejo ?= https://github.com/mekanix/jail-forgejo
 USE_USED_gitolite ?= https://github.com/mekanix/jail-gitolite
 USE_USED_mail ?= https://github.com/mekanix/jail-mail
 USE_USED_moodle ?= https://github.com/mekanix/jail-moodle

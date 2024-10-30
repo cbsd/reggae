@@ -26,12 +26,21 @@ elif [ "${BACKEND}" = "base" ]; then
         CURRENTLY_RUNNING_FLAVOR="$(echo "${CURRENTLY_RUNNING}" | cut -f 2 -d '-')"
         if [ "${CURRENTLY_RUNNING_FLAVOR}" = "RELEASE" ]; then
           echo "=== ${jail_name} ==="
-          jexec "${jail_name}" \
-            freebsd-update \
-            --not-running-from-cron \
-            --currently-running "${CURRENTLY_RUNNING}" \
-            fetch install
-          echo
+          if [ "${RUST}" = "YES" ]; then
+            rustdate=$(jexec "${jail_name}" which freebsd-rustdate)
+            if [ -z "${rustdate}" ]; then
+              jexec "${jail_name}" pkg install -y freebsd-rustdate
+            fi
+            jexec "${jail_name}" freebsd-rustdate fetch
+            jexec "${jail_name}" freebsd-rustdate install
+          else
+            jexec "${jail_name}" \
+              freebsd-update \
+              --not-running-from-cron \
+              --currently-running "${CURRENTLY_RUNNING}" \
+              fetch install
+            echo
+          fi
         fi
       fi
     done
