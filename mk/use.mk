@@ -19,6 +19,7 @@ USE_USED_opigno ?= https://github.com/mekanix/jail-opigno
 USE_USED_peertube ?= https://github.com/mekanix/jail-peertube
 USE_USED_polipo ?= https://github.com/mekanix/jail-polipo
 USE_USED_prosody ?= https://github.com/mekanix/jail-prosody
+USE_USED_radicale ?= https://github.com/mekanix/jail-radicale
 USE_USED_turn ?= https://github.com/mekanix/jail-turn
 USE_USED_webmail ?= https://github.com/mekanix/jail-webmail
 USE_USED_wordpress ?= https://github.com/mekanix/jail-wordpress
