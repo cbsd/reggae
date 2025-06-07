@@ -12,7 +12,15 @@ PROJECT_DIR="${SCRIPT_DIR}/.."
 . "${SCRIPT_DIR}/default.conf"
 
 
-RUNNING_JAILS=$(jls host.hostname | cut -f 1 -d '.')
+RUNNING_JAILS=""
+ALL_RUNNING_JAILS=$(jls host.hostname | cut -f 1 -d '.')
+
+for jname in ${ALL_RUNNING_JAILS}; do
+  if [ -f "/etc/jail.conf.d/${jname}.conf" ]; then
+    RUNNING_JAILS="${RUNNING_JAILS} ${jname}"
+  fi
+done
+
 for jname in ${RUNNING_JAILS}; do
   echo "=== ${jname} ===="
   reggae jexec ${jname} pkg upgrade
