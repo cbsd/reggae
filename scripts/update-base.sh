@@ -36,7 +36,7 @@ elif [ "${BACKEND}" = "base" ]; then
           if [ "${RUST}" = "YES" ]; then
             JAIL_ROOT="$(jls -N -j network path)"
             ${rustdate} -b "${JAIL_ROOT}" fetch
-            ${rustdate} -b "${JAIL_ROOT}" install
+            ${rustdate} -b "${JAIL_ROOT}" install -as
           else
             freebsd-update -j "${jail_name}" --not-running-from-cron fetch install
             echo
@@ -51,7 +51,7 @@ elif [ "${BACKEND}" = "base" ]; then
       unset HTTP_PROXY
       JAIL_ROOT="$(jls -N -j network path)"
       ${rustdate} -b "${JAIL_ROOT}" fetch
-      ${rustdate} -b "${JAIL_ROOT}" install
+      ${rustdate} -b "${JAIL_ROOT}" install -as
     else
       freebsd-update -j "${jail_name}" --not-running-from-cron fetch install
     fi
