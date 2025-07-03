@@ -32,9 +32,9 @@ elif [ "${BACKEND}" = "base" ]; then
         export CURRENTLY_RUNNING="$(jexec "${jail_name}" freebsd-version -u)"
         CURRENTLY_RUNNING_FLAVOR="$(echo "${CURRENTLY_RUNNING}" | cut -f 2 -d '-')"
         if [ "${CURRENTLY_RUNNING_FLAVOR}" = "RELEASE" ]; then
-          echo "=== ${jail_name} cvrc ==="
+          echo "=== ${jail_name} ==="
           if [ "${RUST}" = "YES" ]; then
-            JAIL_ROOT="$(jls -N -j network path)"
+            JAIL_ROOT="$(jls -N -j ${jail_name} path)"
             ${rustdate} -b "${JAIL_ROOT}" fetch
             ${rustdate} -b "${JAIL_ROOT}" install -as
           else
@@ -49,7 +49,7 @@ elif [ "${BACKEND}" = "base" ]; then
     echo "=== ${JAIL} ==="
     if [ "${RUST}" = "YES" ]; then
       unset HTTP_PROXY
-      JAIL_ROOT="$(jls -N -j network path)"
+      JAIL_ROOT="$(jls -N -j ${jail_name} path)"
       ${rustdate} -b "${JAIL_ROOT}" fetch
       ${rustdate} -b "${JAIL_ROOT}" install -as
     else
