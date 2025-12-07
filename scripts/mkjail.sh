@@ -61,27 +61,7 @@ fi
 
 
 POOL="${POOL:=zroot}"
-export OS_VERSION_FLAVOR=${OS_VERSION_FLAVOR:="releases"}
-export OS_VERSION_NAME=${OS_VERSION_NAME:="RELEASE"}
-if [ -z "${OS_VERSION}" -o "${OS_VERSION}" = "native" ]; then
-  OS_VERSION=$(freebsd-version -k | cut -f 1 -d '-')
-  RAW_VERSION_NAME=$(freebsd-version -k | cut -f 2 -d '-')
-  case "${RAW_VERSION_NAME}" in
-    CURRENT)
-      export OS_VERSION_NAME="CURRENT"
-      export OS_VERSION_FLAVOR="snapshots"
-      ;;
-    ALPHA*|BETA*|RC*|STABLE*)
-      export OS_VERSION_NAME="${RAW_VERSION_NAME}"
-      export OS_VERSION_FLAVOR="snapshots"
-      ;;
-  esac
-fi
-export DISTRIBUTIONS="base.txz"
-export BSDINSTALL_DISTSITE="http://download.freebsd.org/${OS_VERSION_FLAVOR}/amd64/${OS_VERSION}-${OS_VERSION_NAME}"
 export BSDINSTALL_CHROOT="${BASE_WORKDIR}/${NAME}"
-export BSDINSTALL_DISTDIR="/usr/freebsd-dist/${OS_VERSION}"
-export PAGER=cat
 if [ "${PKG_PROXY}" != "no" ]; then
   export HTTP_PROXY="${PKG_PROXY}"
 fi
@@ -124,22 +104,43 @@ generate_mac() {
     '
 }
 
-
 check "${NAME}" "${BSDINSTALL_CHROOT}"
 
-if [ ! -d "${BSDINSTALL_DISTDIR}" ]; then
-  mkdir -p "${BSDINSTALL_DISTDIR}"
-  bsdinstall distfetch
-fi
 if [ "${USE_ZFS}" = "yes" ]; then
   zfs create -p "${POOL}${BSDINSTALL_CHROOT}"
 else
   mkdir -p "${BSDINSTALL_CHROOT}"
 fi
-bsdinstall distextract
-sed -i "" -e "s/^Components .*/Components world/" "${BSDINSTALL_CHROOT}/etc/freebsd-update.conf"
+
 mkdir -p "${BSDINSTALL_CHROOT}/usr/local/etc/pkg/repos"
-echo -e "FreeBSD: {\n    url: \"pkg+http://${PKG_MIRROR}/\${ABI}/${PKG_REPO}\",\n}">"${BSDINSTALL_CHROOT}/usr/local/etc/pkg/repos/FreeBSD.conf"
+cat <<EOF >"${BSDINSTALL_CHROOT}/usr/local/etc/pkg/repos/FreeBSD.conf"
+FreeBSD-ports: { url: "pkg+https://pkg.FreeBSD.org/\${ABI}/latest" }
+FreeBSD-base: {
+  url: "pkg+https://pkg.FreeBSD.org/\${ABI}/base_release_\${VERSION_MINOR}",
+  enabled: yes
+}
+EOF
+
+mkdir -p "${BSDINSTALL_CHROOT}/usr/share/keys"
+cp -r /usr/share/keys/* "${BSDINSTALL_CHROOT}/usr/share/keys"
+
+mkdir "${BSDINSTALL_CHROOT}/dev"
+mount -t devfs devfs "${BSDINSTALL_CHROOT}/dev"
+
+pkg -r "${BSDINSTALL_CHROOT}" install -y FreeBSD-set-minimal-jail
+cp /etc/resolv.conf "${BSDINSTALL_CHROOT}/etc"
+env ASSUME_ALWAYS_YES=YES pkg -c "${BSDINSTALL_CHROOT}" bootstrap -f
+if [ "${PKG_PROXY}" != "no" ]; then
+  echo "pkg_env : { http_proxy: \"http://${PKG_PROXY}/\" }" >>"${BSDINSTALL_CHROOT}/usr/local/etc/pkg.conf"
+fi
+pkg -r "${BSDINSTALL_CHROOT}" install -y FreeBSD-ssh sudo
+
+sysrc -R "${BSDINSTALL_CHROOT}" hostname="${NAME}.${DOMAIN}"
+sysrc -R "${BSDINSTALL_CHROOT}" sshd_enable="YES"
+sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0="SYNCDHCP"
+
+umount "${BSDINSTALL_CHROOT}/dev"
+
 echo "domain ${DOMAIN}" >"${BSDINSTALL_CHROOT}/etc/resolv.conf"
 if [ -n "${DNS_OVERRIDE}" ]; then
   for nameserver in ${DNS_OVERRIDE}; do
@@ -153,9 +154,6 @@ else
     echo "nameserver ${IPV6_PREFIX}${INTERFACE_IP6}" >>"${BSDINSTALL_CHROOT}/etc/resolv.conf"
   fi
 fi
-if [ "${UPDATE}" != "no" -a "${OS_VERSION_NAME}" = "RELEASE" ]; then
-  chroot "${BSDINSTALL_CHROOT}" freebsd-update --currently-running "${OS_VERSION}-${OS_VERSION_NAME}" fetch install
-fi
 chroot "${BSDINSTALL_CHROOT}" pw group add provision -g 666
 chroot "${BSDINSTALL_CHROOT}" pw user add provision -u 666 -g provision -s /bin/tcsh -G wheel -m
 chroot "${BSDINSTALL_CHROOT}" chpass -p '$6$61V0w0dRFFiEcnm2$o8CLPIdRBVHP13LQizdp12NEGD91RfHSB.c6uKnr9m2m3ZCg7ASeGENMaDt0tffmo5RalKGjWiHCtScCtjYfs/' provision
@@ -166,11 +164,6 @@ chmod 700 "${BSDINSTALL_CHROOT}/home/provision/.ssh"
 cp ~/.ssh/id_rsa.pub "${BSDINSTALL_CHROOT}/home/provision/.ssh/authorized_keys"
 chmod 600 "${BSDINSTALL_CHROOT}/home/provision/.ssh/authorized_keys"
 chown -R 666:666 "${BSDINSTALL_CHROOT}/home/provision/.ssh"
-env ASSUME_ALWAYS_YES=yes pkg -c "${BSDINSTALL_CHROOT}" bootstrap -f
-if [ "${PKG_PROXY}" != "no" ]; then
-  echo "pkg_env : { http_proxy: \"http://${PKG_PROXY}/\" }" >>"${BSDINSTALL_CHROOT}/usr/local/etc/pkg.conf"
-fi
-pkg -c "${BSDINSTALL_CHROOT}" install -y sudo
 if [ "${NAME}" != "network" ]; then
   if [ "${DHCP}" = "dhcpcd" ]; then
     pkg -c "${BSDINSTALL_CHROOT}" install -y dhcpcd
@@ -231,7 +224,9 @@ else
   MAC=$(generate_mac)
   MOUNTS=$(get_mounts)
   DEPENDS=$(get_dependencies)
+  pkg -r "${BSDINSTALL_CHROOT}" install -y dhcpcd
   sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0_alias0="ether ${MAC}"
+  sysrc -R "${BSDINSTALL_CHROOT}" dhclient_program="/usr/local/sbin/dhcpcd"
   if [ ! -z "${PRESTART}" ]; then
     PRESTART="\n  exec.prestart += \"${PRESTART}\";"
   fi
