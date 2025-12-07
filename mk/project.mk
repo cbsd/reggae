@@ -67,7 +67,7 @@ setup: pre_setup
 .else
 setup:
 .endif
-	@sudo rm -f services/*/cbsd.conf
+	@mdo rm -f services/*/cbsd.conf
 .for service url in ${ALL_SERVICES}
 	@rm -f services/${service}/project.mk
 	@echo "DEVEL_MODE ?= ${DEVEL_MODE}" >>services/${service}/project.mk
@@ -131,7 +131,7 @@ login:
 .if defined(service)
 	@${MAKE} ${MAKEFLAGS} -C services/${service} login
 .else
-	@sudo cbsd jlogin
+	@mdo cbsd jlogin
 .endif
 
 down: setup

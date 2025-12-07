@@ -3,7 +3,7 @@
 PROVISIONERS += shell
 
 provision-shell:
-	@sudo ${REGGAE_PATH}/scripts/shell-provision.sh ${SERVICE} ${TYPE}
+	@mdo ${REGGAE_PATH}/scripts/shell-provision.sh ${SERVICE} ${TYPE}
 
 clean-shell:
 

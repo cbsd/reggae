@@ -133,11 +133,12 @@ env ASSUME_ALWAYS_YES=YES pkg -c "${BSDINSTALL_CHROOT}" bootstrap -f
 if [ "${PKG_PROXY}" != "no" ]; then
   echo "pkg_env : { http_proxy: \"http://${PKG_PROXY}/\" }" >>"${BSDINSTALL_CHROOT}/usr/local/etc/pkg.conf"
 fi
-pkg -r "${BSDINSTALL_CHROOT}" install -y FreeBSD-ssh sudo
+pkg -r "${BSDINSTALL_CHROOT}" install -y FreeBSD-ssh
 
 sysrc -R "${BSDINSTALL_CHROOT}" hostname="${NAME}.${DOMAIN}"
 sysrc -R "${BSDINSTALL_CHROOT}" sshd_enable="YES"
 sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0="SYNCDHCP"
+echo "security.mac.do.rules=gid=0:any" >>"${BSDINSTALL_CHROOT}/etc/sysctl.conf"
 
 umount "${BSDINSTALL_CHROOT}/dev"
 
@@ -155,7 +156,7 @@ else
   fi
 fi
 chroot "${BSDINSTALL_CHROOT}" pw group add provision -g 666
-chroot "${BSDINSTALL_CHROOT}" pw user add provision -u 666 -g provision -s /bin/tcsh -G wheel -m
+chroot "${BSDINSTALL_CHROOT}" pw user add provision -u 666 -g provision -s /bin/sh -G wheel -m
 chroot "${BSDINSTALL_CHROOT}" chpass -p '$6$61V0w0dRFFiEcnm2$o8CLPIdRBVHP13LQizdp12NEGD91RfHSB.c6uKnr9m2m3ZCg7ASeGENMaDt0tffmo5RalKGjWiHCtScCtjYfs/' provision
 chroot "${BSDINSTALL_CHROOT}" service sshd enable
 mkdir -p "${BSDINSTALL_CHROOT}/home/provision/.ssh"
@@ -197,10 +198,6 @@ if [ -n "${PORTS}" ]; then
   done
   echo "pass in proto { tcp, udp } to (self) port { $ports }" >"${BSDINSTALL_CHROOT}/etc/pf.services"
 fi
-
-
-echo "provision ALL=(ALL) NOPASSWD: ALL" >"${BSDINSTALL_CHROOT}/usr/local/etc/sudoers.d/reggae"
-
 
 ID=$(next_id)
 HOST=$(hostname)

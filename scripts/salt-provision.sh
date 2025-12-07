@@ -23,12 +23,12 @@ init() {
     mount_nullfs "${PWD}/salt/states" "${JAIL_PATH}/usr/local/etc/salt/states"
     echo 'file_client: local' >"${JAIL_PATH}/usr/local/etc/salt/minion.d/reggae.conf"
   elif [ "${TYPE}" = "bhyve" ]; then
-    reggae ssh provision ${SERVICE} sudo pkg install -y "${PY_PREFIX}-salt"
-    reggae ssh provision ${SERVICE} sudo mkdir -p /usr/local/etc/salt/minion.d >/dev/null 2>&1 || true
-    reggae ssh provision ${SERVICE} sudo mkdir -p /usr/local/etc/salt/states >/dev/null 2>&1 || true
-    reggae ssh provision ${SERVICE} sudo mount_nullfs /usr/src/salt/states /usr/local/etc/salt/states
+    reggae ssh provision ${SERVICE} mdo pkg install -y "${PY_PREFIX}-salt"
+    reggae ssh provision ${SERVICE} mdo mkdir -p /usr/local/etc/salt/minion.d >/dev/null 2>&1 || true
+    reggae ssh provision ${SERVICE} mdo mkdir -p /usr/local/etc/salt/states >/dev/null 2>&1 || true
+    reggae ssh provision ${SERVICE} mdo mount_nullfs /usr/src/salt/states /usr/local/etc/salt/states
     reggae ssh provision ${SERVICE} 'echo file_client: local >reggae.conf'
-    reggae ssh provision ${SERVICE} sudo mv reggae.conf /usr/local/etc/salt/minion.d/
+    reggae ssh provision ${SERVICE} mdo mv reggae.conf /usr/local/etc/salt/minion.d/
   fi
 }
 
@@ -38,8 +38,8 @@ cleanup() {
     rm -rf "${JAIL_PATH}/usr/local/etc/salt/minion.d/reggae.conf"
     umount "${JAIL_PATH}/usr/local/etc/salt/states"
   elif [ "${TYPE}" = "bhyve" ]; then
-    reggae ssh provision ${SERVICE} sudo rm -rf /usr/local/etc/salt/minion.d/reggae.conf
-    reggae ssh provision ${SERVICE} sudo umount /usr/local/etc/salt/states
+    reggae ssh provision ${SERVICE} mdo rm -rf /usr/local/etc/salt/minion.d/reggae.conf
+    reggae ssh provision ${SERVICE} mdo umount /usr/local/etc/salt/states
   fi
 }
 
@@ -49,7 +49,7 @@ init
 if [ "${TYPE}" = "jail" ]; then
   reggae jexec ${SERVICE} salt-call --local state.apply
 elif [ "${TYPE}" = "bhyve" ]; then
-  reggae ssh provision ${SERVICE} sudo salt-call --local state.apply
+  reggae ssh provision ${SERVICE} mdo salt-call --local state.apply
 else
   echo "Type ${TYPE} unknown!" >&2
   exit 1

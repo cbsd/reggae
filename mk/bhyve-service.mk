@@ -18,10 +18,10 @@ up: ${DATA_DIR} pre_up
 .else
 up: ${DATA_DIR}
 .endif
-	@sudo cbsd bset jname=${SERVICE} vm_cpus=${CPU} vm_ram=${MEM}
-	@sudo cbsd bstart jname=${SERVICE} || true
+	@mdo cbsd bset jname=${SERVICE} vm_cpus=${CPU} vm_ram=${MEM}
+	@mdo cbsd bstart jname=${SERVICE} || true
 	@echo "Waiting for VM to boot"
-	@sudo reggae ssh-ping ${SERVICE}
+	@mdo reggae ssh-ping ${SERVICE}
 .if !exists(${CBSD_WORKDIR}/jails-system/${SERVICE}/.provisioned)
 	@${MAKE} ${MAKEFLAGS} provision
 .endif
@@ -30,17 +30,17 @@ up: ${DATA_DIR}
 .endif
 
 provision:
-	-@sudo touch ${CBSD_WORKDIR}/jails-system/${SERVICE}/.provisioned
+	-@mdo touch ${CBSD_WORKDIR}/jails-system/${SERVICE}/.provisioned
 .for provisioner in ${PROVISIONERS}
 	@${MAKE} ${MAKEFLAGS} provision-${provisioner}
 .endfor
 
 down:
-	@sudo cbsd bstop ${SERVICE} || true
+	@mdo cbsd bstop ${SERVICE} || true
 
 destroy:
 	@rm -f .provisioned
-	@sudo cbsd bremove ${SERVICE}
+	@mdo cbsd bremove ${SERVICE}
 .for provisioner in ${PROVISIONERS}
 	@${MAKE} ${MAKEFLAGS} clean-${provisioner}
 .endfor
@@ -57,73 +57,73 @@ ${DATA_DIR}:
 		-e "s:DISTRIBUTION:${DISTRIBUTION}:g" \
 		-e "s:VERSION:${VERSION}:g" \
 		${REGGAE_PATH}/templates/cbsd-bhyve.${OS}.conf.tpl >cbsd.conf
-	@sudo cbsd bcreate jconf=${PWD}/cbsd.conf
-	@sudo cp ${REGGAE_PATH}/templates/cloud-init/user-data ${CBSD_WORKDIR}/jails-system/${SERVICE}/cloud-init
+	@mdo cbsd bcreate jconf=${PWD}/cbsd.conf
+	@mdo cp ${REGGAE_PATH}/templates/cloud-init/user-data ${CBSD_WORKDIR}/jails-system/${SERVICE}/cloud-init
 	@sed \
 		-e "s:SERVICE:${SERVICE}:g" \
 		-e "s:DOMAIN:${DOMAIN}:g" \
 		${REGGAE_PATH}/templates/cloud-init/meta-data >/tmp/${SERVICE}-meta-data
-	@sudo mv /tmp/${SERVICE}-meta-data ${CBSD_WORKDIR}/jails-system/${SERVICE}/cloud-init/meta-data
+	@mdo mv /tmp/${SERVICE}-meta-data ${CBSD_WORKDIR}/jails-system/${SERVICE}/cloud-init/meta-data
 .for provisioner in ${PROVISIONERS}
 	@${MAKE} ${MAKEFLAGS} setup-${provisioner}
 .endfor
-	@sudo cbsd bstart jname=${SERVICE}
-	@${MAKE} ${MAKEFLAGS} init ip=`sudo cbsd bget jname=${SERVICE} ip4_addr | cut -f 2 -d ':' | cut -b 2-`
-	@sudo cbsd bstop ${SERVICE}
+	@mdo cbsd bstart jname=${SERVICE}
+	@${MAKE} ${MAKEFLAGS} init ip=`mdo cbsd bget jname=${SERVICE} ip4_addr | cut -f 2 -d ':' | cut -b 2-`
+	@mdo cbsd bstop ${SERVICE}
 
 init:
 	@echo "Waiting for VM to boot for the first time"
-	@sudo env IP=${ip} SSH_USER=cbsd reggae ssh-ping ${SERVICE}
-	@sudo env IP=${ip} reggae scp cbsd ${SERVICE} ${REGGAE_PATH}/templates/cloud-initial.sh
-	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} chmod +x cloud-initial.sh
-	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo ./cloud-initial.sh
-	@sudo env IP=${ip} reggae scp cbsd ${SERVICE} ${REGGAE_PATH}/id_rsa.pub
-	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo mv /home/cbsd/id_rsa.pub /home/provision/.ssh/authorized_keys
-	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo chmod 600 /home/provision/.ssh/authorized_keys
-	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo chown -R provision:provision /home/provision
-	@sudo env IP=${ip} reggae scp cbsd ${SERVICE} ${REGGAE_PATH}/templates/sudoers
-	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo chown root:wheel sudoers
-	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo mv sudoers /usr/local/etc/
+	@mdo env IP=${ip} SSH_USER=cbsd reggae ssh-ping ${SERVICE}
+	@mdo env IP=${ip} reggae scp cbsd ${SERVICE} ${REGGAE_PATH}/templates/cloud-initial.sh
+	@mdo env IP=${ip} reggae ssh cbsd ${SERVICE} chmod +x cloud-initial.sh
+	@mdo env IP=${ip} reggae ssh cbsd ${SERVICE} mdo ./cloud-initial.sh
+	@mdo env IP=${ip} reggae scp cbsd ${SERVICE} ${REGGAE_PATH}/id_rsa.pub
+	@mdo env IP=${ip} reggae ssh cbsd ${SERVICE} mdo mv /home/cbsd/id_rsa.pub /home/provision/.ssh/authorized_keys
+	@mdo env IP=${ip} reggae ssh cbsd ${SERVICE} mdo chmod 600 /home/provision/.ssh/authorized_keys
+	@mdo env IP=${ip} reggae ssh cbsd ${SERVICE} mdo chown -R provision:provision /home/provision
+	@mdo env IP=${ip} reggae scp cbsd ${SERVICE} ${REGGAE_PATH}/templates/mdoers
+	@mdo env IP=${ip} reggae ssh cbsd ${SERVICE} mdo chown root:wheel mdoers
+	@mdo env IP=${ip} reggae ssh cbsd ${SERVICE} mdo mv mdoers /usr/local/etc/
 .if defined(EXTRA_SCRIPT)
-	@sudo env IP=${ip} reggae scp cbsd ${SERVICE} ${EXTRA_SCRIPT}
-	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo chown root:wheel `basename ${EXTRA_SCRIPT}`
-	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo chmod +x `basename ${EXTRA_SCRIPT}`
-	@sudo env IP=${ip} reggae ssh cbsd ${SERVICE} sudo mv /home/cbsd/`basename ${EXTRA_SCRIPT}` /usr/local/bin/
+	@mdo env IP=${ip} reggae scp cbsd ${SERVICE} ${EXTRA_SCRIPT}
+	@mdo env IP=${ip} reggae ssh cbsd ${SERVICE} mdo chown root:wheel `basename ${EXTRA_SCRIPT}`
+	@mdo env IP=${ip} reggae ssh cbsd ${SERVICE} mdo chmod +x `basename ${EXTRA_SCRIPT}`
+	@mdo env IP=${ip} reggae ssh cbsd ${SERVICE} mdo mv /home/cbsd/`basename ${EXTRA_SCRIPT}` /usr/local/bin/
 .endif
-	@sudo env IP=${ip} reggae scp provision ${SERVICE} ${REGGAE_PATH}/templates/cloud-devops.sh
-	@sudo env IP=${ip} reggae scp provision ${SERVICE} ${REGGAE_PATH}/id_rsa.pub
+	@mdo env IP=${ip} reggae scp provision ${SERVICE} ${REGGAE_PATH}/templates/cloud-devops.sh
+	@mdo env IP=${ip} reggae scp provision ${SERVICE} ${REGGAE_PATH}/id_rsa.pub
 .if target(post_setup)
 	@@${MAKE} ${MAKEFLAGS} post_setup ip=${ip}
 .endif
-	@sudo env IP=${ip} reggae ssh provision ${SERVICE} sudo pw user del cbsd -r
+	@mdo env IP=${ip} reggae ssh provision ${SERVICE} mdo pw user del cbsd -r
 
 login:
 .if defined(user)
-	@sudo env VERBOSE="yes" reggae ssh ${user} ${SERVICE}
+	@mdo env VERBOSE="yes" reggae ssh ${user} ${SERVICE}
 .else
-	@sudo env VERBOSE="yes" reggae ssh provision ${SERVICE}
+	@mdo env VERBOSE="yes" reggae ssh provision ${SERVICE}
 .endif
 
 exec:
-	@sudo env VERBOSE="yes" reggae ssh provision ${SERVICE} ${command}
+	@mdo env VERBOSE="yes" reggae ssh provision ${SERVICE} ${command}
 
 export: down
 .if !exists(build)
 	@mkdir build
 .endif
-	@sudo cbsd bexport jname=${SERVICE}
+	@mdo cbsd bexport jname=${SERVICE}
 	@echo "Moving ${SERVICE}.img to build dir ..."
-	@sudo mv ${CBSD_WORKDIR}/export/${SERVICE}.img build/
+	@mdo mv ${CBSD_WORKDIR}/export/${SERVICE}.img build/
 	@echo "Chowning ${SERVICE}.img to ${UID}:${GID} ..."
-	@sudo chown ${UID}:${GID} build/${SERVICE}.img
+	@mdo chown ${UID}:${GID} build/${SERVICE}.img
 
 .if target(do_devel)
 devel: up do_devel
 .else
 devel: up
 .if ${DEVEL_MODE} == "YES"
-	@sudo reggae ssh provision ${SERVICE} sudo env UID=${UID} GID=${GID} sh cloud-devops.sh ${INTERFACE_IP} ${PWD} /usr/src ${EXTRA_SCRIPT}
-	@sudo env VERBOSE="yes" reggae ssh devel ${SERVICE} /usr/src/bin/devel.sh
+	@mdo reggae ssh provision ${SERVICE} mdo env UID=${UID} GID=${GID} sh cloud-devops.sh ${INTERFACE_IP} ${PWD} /usr/src ${EXTRA_SCRIPT}
+	@mdo env VERBOSE="yes" reggae ssh devel ${SERVICE} /usr/src/bin/devel.sh
 .else
 	@echo "DEVEL_MODE is not enabled" >&2
 	@false
@@ -131,7 +131,7 @@ devel: up
 .endif
 
 test: up
-	@sudo env VERBOSE="yes" reggae ssh devel ${SERVICE} /usr/src/bin/test.sh
+	@mdo env VERBOSE="yes" reggae ssh devel ${SERVICE} /usr/src/bin/test.sh
 
 upgrade: up
-	@sudo env VERBOSE="yes" reggae ssh provision ${SERVICE} pkg upgrade -y
+	@mdo env VERBOSE="yes" reggae ssh provision ${SERVICE} pkg upgrade -y

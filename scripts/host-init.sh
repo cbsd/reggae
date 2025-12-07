@@ -38,6 +38,17 @@ check_config() {
 }
 
 
+setup_mdo() {
+  EXISTING="$(egrep -o '^security.mac.do.rules=' /etc/sysctl.conf)"
+  if [ -z "${EXISTING}" ]; then
+    kldload mac_do
+    sysctl "security.mac.do.rules=gid=0:any"
+    echo "security.mac.do.rules=gid=0:any" >>/etc/sysctl.conf
+  fi
+  sysrc kld_list+="mac_do"
+}
+
+
 setup_network() {
   interface_config="inet ${INTERFACE_IP} netmask 255.255.255.0"
   interface_ipv6_config="inet6 -ifdisabled auto_linklocal ${IPV6_PREFIX}${INTERFACE_IP6}"
@@ -175,6 +186,7 @@ setup_unbound() {
 
 
 check_config
+setup_mdo
 setup_network
 setup_pf
 setup_hostname

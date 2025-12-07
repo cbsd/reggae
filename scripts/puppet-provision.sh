@@ -17,8 +17,8 @@ init() {
     mount_nullfs "${PWD}/puppet/manifests" "${JAIL_PATH}/usr/local/etc/puppet/manifests"
     reggae jexec ${SERVICE} pkg install -y puppet5
   elif [ "${TYPE}" = "bhyve" ]; then
-    reggae ssh provision ${SERVICE} sudo mount_nullfs /usr/src/puppet/manifests /usr/local/etc/puppet/manifests
-    reggae ssh provision ${SERVICE} sudo pkg install -y puppet5
+    reggae ssh provision ${SERVICE} mdo mount_nullfs /usr/src/puppet/manifests /usr/local/etc/puppet/manifests
+    reggae ssh provision ${SERVICE} mdo pkg install -y puppet5
   fi
 }
 
@@ -26,7 +26,7 @@ cleanup() {
   if [ "${TYPE}" = "jail" ]; then
     umount "${JAIL_PATH}/usr/local/etc/puppet/manifests"
   elif [ "${TYPE}" = "bhyve" ]; then
-    reggae ssh provision ${SERVICE} sudo umount /usr/local/etc/puppet/manifests
+    reggae ssh provision ${SERVICE} mdo umount /usr/local/etc/puppet/manifests
   fi
 }
 
@@ -41,7 +41,7 @@ init
 if [ "${TYPE}" = "jail" ]; then
   reggae jexec ${SERVICE} puppet apply /usr/local/etc/puppet/manifests/site.pp
 elif [ "${TYPE}" = "bhyve" ]; then
-  reggae ssh provision ${SERVICE} sudo puppet apply /usr/local/etc/puppet/manifests/site.pp
+  reggae ssh provision ${SERVICE} mdo puppet apply /usr/local/etc/puppet/manifests/site.pp
 else
   echo "Type ${TYPE} unknown!" >&2
   exit 1

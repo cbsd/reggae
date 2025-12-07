@@ -10,8 +10,8 @@ available:
 * base
 * cbsd
 
-By default Reggae will use `base` which means only FreeBSD base tools and sudo
-are used. To initialize base, run `reggae base-init` and to initialize CBSD run
+By default Reggae will use `base` which means only FreeBSD base tools are used.
+To initialize base, run `reggae base-init` and to initialize CBSD run
 `reggae cbsd-init`. It is perfectly valid to initialize both, but using jails
 from different backends can be tricky. Usually, you will need only one backend.
 
