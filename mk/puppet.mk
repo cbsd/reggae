@@ -3,7 +3,7 @@
 PROVISIONERS += puppet
 
 provision-puppet:
-	@sudo ${REGGAE_PATH}/scripts/puppet-provision.sh ${SERVICE} ${TYPE}
+	@mdo ${REGGAE_PATH}/scripts/puppet-provision.sh ${SERVICE} ${TYPE}
 
 clean-puppet:
 

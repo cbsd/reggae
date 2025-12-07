@@ -50,9 +50,9 @@ setup() {
   chmod +x "${CBSD_WORKDIR}/jails-system/network/master_poststart.d/reggae.sh"
   mkdir /var/run/reggae &>/dev/null
   cbsd jstart ${SERVICE}
-  cbsd jexec jname=${SERVICE} cmd="env ASSUME_ALWAYS_YES=YES pkg bootstrap"
-  cbsd jexec jname=${SERVICE} cmd="pkg install -y isc-dhcp44-server nsd sudo"
-  echo "dhcpd ALL=(ALL) NOPASSWD: ALL" >"${CBSD_WORKDIR}/jails-data/${SERVICE}-data/usr/local/etc/sudoers.d/reggae"
+  cbsd jexec jname=${SERVICE} cmd="env ASSUME_ALWAYS_YES=YES pkg bootstrap -f"
+  cbsd jexec jname=${SERVICE} cmd="pkg install -y isc-dhcp44-server nsd"
+  chroot "${BASE_WORKDIR}/${SERVICE}" pw group mod wheel -m dhcpd
 }
 
 

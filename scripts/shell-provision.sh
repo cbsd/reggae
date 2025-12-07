@@ -24,7 +24,7 @@ if [ "${TYPE}" = "jail" ]; then
   reggae jexec ${SERVICE} /root/shell/provision.sh
 elif [ "${TYPE}" = "bhyve" ]; then
   reggae scp provision ${SERVICE} shell
-  env VERBOSE="yes" reggae ssh provision ${SERVICE} sudo shell/provision.sh
+  env VERBOSE="yes" reggae ssh provision ${SERVICE} mdo shell/provision.sh
 else
   echo "Type ${TYPE} unknown!" >&2
   exit 1

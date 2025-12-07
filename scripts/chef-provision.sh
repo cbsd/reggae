@@ -20,8 +20,8 @@ init() {
     mkdir ${JAIL_PATH}/root/chef >/dev/null 2>&1 || true
     mount_nullfs "${PWD}/chef" "${JAIL_PATH}/root/chef"
   elif [ "${TYPE}" = "bhyve" ]; then
-    reggae ssh provision ${SERVICE} sudo mkdir /etc/chef >/dev/null 2>&1 || true
-    reggae ssh provision ${SERVICE} sudo pkg install -y rubygem-chef
+    reggae ssh provision ${SERVICE} mdo mkdir /etc/chef >/dev/null 2>&1 || true
+    reggae ssh provision ${SERVICE} mdo pkg install -y rubygem-chef
   fi
 }
 
@@ -30,7 +30,7 @@ cleanup() {
     rm -rf "${JAIL_PATH}/root/chef/nodes"
     umount "${JAIL_PATH}/root/chef"
   elif [ "${TYPE}" = "bhyve" ]; then
-    reggae ssh provision ${SERVICE} sudo rm -rf /usr/src/chef/nodes
+    reggae ssh provision ${SERVICE} mdo rm -rf /usr/src/chef/nodes
   fi
 }
 
@@ -40,7 +40,7 @@ init
 if [ "${TYPE}" = "jail" ]; then
   reggae jexec ${SERVICE} "cd /root/chef && chef-client --local-mode --override-runlist core"
 elif [ "${TYPE}" = "bhyve" ]; then
-	reggae ssh provision ${SERVICE} "cd /usr/src/chef && sudo chef-client --local-mode --override-runlist core"
+	reggae ssh provision ${SERVICE} "cd /usr/src/chef && mdo chef-client --local-mode --override-runlist core"
 else
   echo "Type ${TYPE} unknown!" >&2
   exit 1

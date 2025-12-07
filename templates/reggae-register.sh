@@ -109,7 +109,7 @@ zone:
 	zonefile: "master/${DOMAIN}"
 EOF
 
-    /usr/local/bin/sudo /usr/local/sbin/nsd-control reconfig
+    /usr/bin/mdo /usr/local/sbin/nsd-control reconfig
   fi
 }
 
@@ -140,7 +140,7 @@ zone:
 	zonefile: "master/${REVERSE_ZONE}"
 EOF
 
-    /usr/local/bin/sudo /usr/local/sbin/nsd-control reconfig
+    /usr/bin/mdo /usr/local/sbin/nsd-control reconfig
   fi
 }
 
@@ -202,8 +202,8 @@ alter_host() {
       echo "unregister ipv6 ${IP} ${NAME}.${DOMAIN}" | /usr/bin/nc -U "${SOCKET}" -w 0
     fi
   fi
-  /usr/local/bin/sudo /usr/local/sbin/nsd-control reload ${DOMAIN}
-  /usr/local/bin/sudo /usr/local/sbin/nsd-control reload ${REVERSE_ZONE}
+  /usr/bin/mdo /usr/local/sbin/nsd-control reload ${DOMAIN}
+  /usr/bin/mdo /usr/local/sbin/nsd-control reload ${REVERSE_ZONE}
 }
 
 

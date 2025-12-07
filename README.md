@@ -6,8 +6,8 @@ alternative to those. It enables you easy development inside jail while code
 editing is done on the host. It makes transition from development to production
 easier by using provisioners. It makes host clean of all requirements of
 development environment and puts them inside jail which is easily stopped,
-started, provisioned, and destroyed. Using only `make` and `sh` on the system
-and `cbsd` and `sudo` from packages, makes it really small and easy to extend.
+started, provisioned, and destroyed. Using only `make`, `mdo` and `sh` on the
+system and `cbsd` from packages, makes it really small and easy to extend.
 
 ## Installation
 

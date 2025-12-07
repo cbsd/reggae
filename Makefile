@@ -42,7 +42,6 @@ TEMPLATES = Makefile.project \
 	    rtadvd.conf \
 	    rtsold \
 	    setup-vm.sh \
-	    sudoers \
 	    unbound.conf \
 	    unbound_control.conf \
 	    unbound_reggae.conf \
