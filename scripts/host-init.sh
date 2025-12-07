@@ -154,7 +154,6 @@ setup_unbound() {
 
   service local_unbound enable
   sysrc local_unbound_tls="NO"
-  sysrc local_unbound_svcj="YES"
   fetch -o /var/unbound/root.hints https://www.internic.net/domain/named.cache
   resolvconf -u
   service local_unbound restart
