@@ -138,6 +138,7 @@ pkg -r "${BSDINSTALL_CHROOT}" install -y FreeBSD-ssh
 sysrc -R "${BSDINSTALL_CHROOT}" hostname="${NAME}.${DOMAIN}"
 sysrc -R "${BSDINSTALL_CHROOT}" sshd_enable="YES"
 sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0="SYNCDHCP"
+sysrc -R "${BSDINSTALL_CHROOT}" clear_tmp_enable="YES"
 echo "security.mac.do.rules=gid=0:any" >>"${BSDINSTALL_CHROOT}/etc/sysctl.conf"
 
 umount "${BSDINSTALL_CHROOT}/dev"
