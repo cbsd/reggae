@@ -29,6 +29,7 @@ USE_USED_webmail ?= https://github.com/mekanix/jail-webmail
 USE_USED_wordpress ?= https://github.com/mekanix/jail-wordpress
 USE_USED_znc ?= https://github.com/mekanix/jail-znc
 
+USE_POST_haproxy ?= https://github.com/mekanix/jail-haproxy
 USE_POST_nginx ?= https://github.com/mekanix/jail-nginx
 
 .for use in ${USE}
