@@ -134,12 +134,19 @@ if [ "${PKG_PROXY}" != "no" ]; then
   echo "pkg_env : { http_proxy: \"http://${PKG_PROXY}/\" }" >>"${BSDINSTALL_CHROOT}/usr/local/etc/pkg.conf"
 fi
 pkg -r "${BSDINSTALL_CHROOT}" install -y FreeBSD-ssh
+if [ "${NAME}" = "network" ]; then
+  pkg -r "${BSDINSTALL_CHROOT}" install -y FreeBSD-local-unbound
+fi
 
 sysrc -R "${BSDINSTALL_CHROOT}" hostname="${NAME}.${DOMAIN}"
 sysrc -R "${BSDINSTALL_CHROOT}" sshd_enable="YES"
 sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0="SYNCDHCP"
 sysrc -R "${BSDINSTALL_CHROOT}" clear_tmp_enable="YES"
-echo "security.mac.do.rules=gid=0:any" >>"${BSDINSTALL_CHROOT}/etc/sysctl.conf"
+if [ "${NAME}" = "network" ]; then
+  echo "security.mac.do.rules=uid=136:any;gid=0:any" >>"${BSDINSTALL_CHROOT}/etc/sysctl.conf"
+else
+  echo "security.mac.do.rules=gid=0:any" >>"${BSDINSTALL_CHROOT}/etc/sysctl.conf"
+fi
 
 umount "${BSDINSTALL_CHROOT}/dev"
 

@@ -16,12 +16,14 @@ setup() {
     echo "IPv4 and/or IPv6 has to be enable, check USE_IPV{4,6} in config!" >&2
     exit 1
   fi
+  fstab_file="$(mktemp)"
+  echo "/var/unbound ${path}/var/unbound nullfs rw 0 0" >"${fstab_file}"
   if [ -z "${VER}" ]; then
-    reggae mkjail network
+    reggae mkjail -f "${fstab_file}" network
   else
-    env VERSION=${VER} reggae mkjail network
+    env VERSION=${VER} reggae mkjail -f "${fstab_file}" network
   fi
-  echo 'sendmail_enable="NONE"' >"${BASE_WORKDIR}/${SERVICE}/etc/rc.conf.d/sendmail"
+  rm -rf "${fstab_file}"
   if [ "${USE_IPV4}" = "yes" ]; then
     echo "ifconfig_eth0=\"inet ${MASTER_IP}/24\"" >>"${BASE_WORKDIR}/${SERVICE}/etc/rc.conf"
     echo "defaultrouter=\"${INTERFACE_IP}\"" >>"${BASE_WORKDIR}/${SERVICE}/etc/rc.conf"
