@@ -204,8 +204,8 @@ alter_host() {
   fi
   /usr/bin/mdo /usr/local/sbin/nsd-control reload ${DOMAIN}
   /usr/bin/mdo /usr/local/sbin/nsd-control reload ${REVERSE_ZONE}
-  /usr/bin/mdo /usr/sbin/local-unbound-control flush_zone ${DOMAIN}
-  /usr/bin/mdo /usr/sbin/local-unbound-control flush_zone ${REVERSE_ZONE}
+  /usr/bin/mdo /usr/sbin/local-unbound-control flush ${NAME}.${DOMAIN}
+  /usr/bin/mdo /usr/sbin/local-unbound-control flush ${IP_REVERSE}
 }
 
 
