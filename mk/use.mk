@@ -9,7 +9,7 @@ USE_PRE_mysql ?= https://github.com/mekanix/jail-mysql
 USE_PRE_postgresql ?= https://github.com/mekanix/jail-postgresql
 USE_PRE_redis ?= https://github.com/mekanix/jail-redis
 
-USE_USED_cyrus ?= https://github.com/mekanix/jail-cyrys
+USE_USED_cyrus ?= https://github.com/mekanix/jail-cyrus
 USE_USED_dovecot ?= https://github.com/mekanix/jail-dovecot
 USE_USED_ejabberd ?= https://github.com/mekanix/jail-ejabberd
 USE_USED_forgejo ?= https://github.com/mekanix/jail-forgejo
