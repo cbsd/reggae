@@ -170,7 +170,9 @@ chroot "${BSDINSTALL_CHROOT}" service sshd enable
 mkdir -p "${BSDINSTALL_CHROOT}/home/provision/.ssh"
 chmod 700 "${BSDINSTALL_CHROOT}/home/provision/.ssh"
 # TODO: specify key
-cp ~/.ssh/id_rsa.pub "${BSDINSTALL_CHROOT}/home/provision/.ssh/authorized_keys"
+if [ -e ~/.ssh/id_rsa.pub ]; then
+  cp ~/.ssh/id_rsa.pub "${BSDINSTALL_CHROOT}/home/provision/.ssh/authorized_keys"
+fi
 chmod 600 "${BSDINSTALL_CHROOT}/home/provision/.ssh/authorized_keys"
 chown -R 666:666 "${BSDINSTALL_CHROOT}/home/provision/.ssh"
 if [ "${NAME}" != "network" ]; then
