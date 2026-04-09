@@ -60,7 +60,7 @@ if [ -z "${NAME}" ]; then
 fi
 
 
-POOL="${POOL:=zroot}"
+ZFS_POOL="${ZFS_POOL:=zroot}"
 export BSDINSTALL_CHROOT="${BASE_WORKDIR}/${NAME}"
 if [ "${PKG_PROXY}" != "no" ]; then
   export HTTP_PROXY="${PKG_PROXY}"
@@ -107,7 +107,7 @@ generate_mac() {
 check "${NAME}" "${BSDINSTALL_CHROOT}"
 
 if [ "${USE_ZFS}" = "yes" ]; then
-  zfs create -p "${POOL}${BSDINSTALL_CHROOT}"
+  zfs create -p "${ZFS_POOL}${BSDINSTALL_CHROOT}"
 else
   mkdir -p "${BSDINSTALL_CHROOT}"
 fi
