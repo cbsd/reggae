@@ -10,15 +10,13 @@ BIN_FILES = reggae
 TEMPLATES = Makefile.project \
 	    Makefile.service \
 	    base-jail.conf \
-	    cbsd.conf.tpl \
 	    cbsd-bhyve.freebsd.conf.tpl \
 	    cbsd-vnet.conf.tpl \
+	    cbsd.conf.tpl \
 	    cloud-devops.sh \
 	    cloud-initial.sh \
 	    devfs.rules \
-	    dhcpd-hook.sh \
-	    dhcpd.conf \
-	    dhcpd6.conf \
+	    domain.zone \
 	    export-ports.sh \
 	    freebsd-update.conf \
 	    gitignore \
@@ -26,6 +24,12 @@ TEMPLATES = Makefile.project \
 	    initenv.conf \
 	    install-packages.sh \
 	    ip-by-mac.sh \
+	    kea-dhcp-ddns.conf \
+	    kea-dhcp4.conf \
+	    kea-dhcp6.conf \
+	    kea.sh \
+	    keactrl.conf \
+	    knot.conf \
 	    linux.conf.tpl \
 	    master.conf \
 	    master.fstab \
@@ -33,12 +37,11 @@ TEMPLATES = Makefile.project \
 	    netif \
 	    network \
 	    network-jail.conf \
-	    nsd.conf \
 	    pf-jail.conf \
 	    pf.conf \
 	    pkg.conf \
-	    reggae-register.sh \
 	    resolvconf.conf \
+	    reverse.zone \
 	    rtadvd.conf \
 	    rtsold \
 	    setup-vm.sh \

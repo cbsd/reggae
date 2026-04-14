@@ -1,0 +1,14 @@
+$ORIGIN REVERSE.
+$TTL 3600
+
+@	SOA	network.DOMAIN. hostmaster.DOMAIN. (
+		SERIAL	; serial
+		6h		; refresh
+		1h		; retry
+		1w		; expire
+		1d )		; minimum
+
+	NS	network.DOMAIN.
+
+REVERSE_IP	PTR	DOMAIN.
+REVERSE_MASTER_IP	PTR	network.DOMAIN.
