@@ -82,6 +82,7 @@ SCRIPTS = apply-proxy.sh \
 	  export.sh \
 	  get-config.sh \
 	  get-ip.sh \
+	  helpers.sh \
 	  host-init.sh \
 	  import.sh \
 	  init.sh \
