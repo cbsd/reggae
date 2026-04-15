@@ -1,0 +1,14 @@
+$ORIGIN DOMAIN.
+$TTL 3600
+
+@	SOA	network.DOMAIN. hostmaster.DOMAIN. (
+		SERIAL	; serial
+		6h		; refresh
+		1h		; retry
+		1w		; expire
+		1d )		; minimum
+
+	NS	network
+
+@	A	INTERFACE_IP 
+network	A	MASTER_IP

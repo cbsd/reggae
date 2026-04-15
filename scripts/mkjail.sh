@@ -224,12 +224,13 @@ ${NAME} {
   \$id = ${ID};
   .include "/etc/jail.conf.d/reggae.inc";
 EOF
+MOUNTS=$(get_mounts)
 if [ "${NAME}" = "network" ]; then
   sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0_alias0="ether 58:9c:fc:00:00:00"
-  echo -e "}" >>"/etc/jail.conf.d/${NAME}.conf"
+  OPTIONS="${MOUNTS}"
+  echo -e "${OPTIONS}\n}" >>"/etc/jail.conf.d/${NAME}.conf"
 else
   MAC=$(generate_mac)
-  MOUNTS=$(get_mounts)
   DEPENDS=$(get_dependencies)
   pkg -r "${BSDINSTALL_CHROOT}" install -y dhcpcd
   sysrc -R "${BSDINSTALL_CHROOT}" ifconfig_eth0_alias0="ether ${MAC}"
